@@ -1,4 +1,4 @@
-% 宏，一份实践介绍
+% 宏，实践介绍
 
 本章节将通过一个相对简单、可行的例子来介绍Rust的“示例宏”系统。我们将不会试图解释整个宏系统错综复杂的构造；而是试图让读者能够舒适地了解宏的书写方式，以及为何如斯。
 
@@ -62,9 +62,9 @@
 
 即，序列的前两个数分别为0和1，而第3个则为<em>F<sub>0</sub></em> + <em>F<sub>1</sub></em> = 0 + 1 = 1，第4个为<em>F<sub>1</sub></em> + <em>F<sub>2</sub></em> = 1 + 1 = 2，依此类推。
 
-由于这列值可以永远持续下去，定义一个`fibonacci`的求值函数实际上显得有些困难。显然，你不会想要返回一整列值。你所真正需要的，是某种具有怠惰求值性质的东西——只在必要的时候才会计算。
+由于这列值可以永远持续下去，定义一个`fibonacci`的求值函数将会显得有些困难。显然，你不会想它返回一整列值。我们所真正需要的，是某种具有怠惰求值性质的东西——只在必要的时候才进行计算。
 
-在Rust中这种需求表明，是`Iterator`上场的时候了。这并不是特别困难，但比较繁琐：你得自定义一个类型，弄明白该在其中存储什么东西，然后为它实现`Iterator` trait。
+在Rust中这种需求表明，是`Iterator`上场的时候了。实现迭代器并不十分困难，但比较繁琐：你得自定义一个类型，弄明白该在其中存储什么，然后为它实现`Iterator` trait。
 
 其实，递推关系足够简单；几乎所有的递推关系都可被抽象出来，变成一小段由宏驱动的代码生成机制。
 
@@ -72,7 +72,7 @@
 
 ## 构建过程
 
-通常来说，在构建一个新宏时，我所做的第一件事，是决定宏调用的形式。在我们所讨论的情况下，我的初次尝试是这样：
+通常来说，在构建新宏时，我所做的第一件事，是决定宏调用的形式。在我们当前所讨论的情况下，我的初次尝试是这样：
 
 ```rust
 let fib = recurrence![a[n] = 0, 1, ..., a[n-1] + a[n-2]];
@@ -80,7 +80,7 @@ let fib = recurrence![a[n] = 0, 1, ..., a[n-1] + a[n-2]];
 for e in fib.take(10) { println!("{}", e) }
 ```
 
-以此为基点，我们可以向宏的定义方式迈出第一步——虽然此时我们尚不了解宏的展开部分究竟是什么样子。这一步骤的用处在于，如果在此处你无法明确如何将输入语法转义，那就可能意味着，整个宏的构思需要改变。
+以此为基点，我们可以向宏的定义迈出第一步，即便在此时我们尚不了解该宏的展开部分究竟是什么样子。此步骤的用处在于，如果在此处无法明确如何将输入语法转义，那就可能意味着，整个宏的构思需要改变。
 
 ```rust
 macro_rules! recurrence {
@@ -89,7 +89,7 @@ macro_rules! recurrence {
 # fn main() {}
 ```
 
-假设你并不熟悉相应的语法，由我来进行解释。上述代码块使用`macro_rules!`系统定义了一个宏，称为`recurrence!`。此宏仅包含一条转义规则，它规定此宏必须依次匹配下列项目：
+假装你并不熟悉相应的语法，让我来解释。上述代码块使用`macro_rules!`系统定义了一个宏，称为`recurrence!`。此宏仅包含一条转义规则，它规定，此宏必须依次匹配下列项目：
 
 - 一段字面标记序列，`a` `[` `n` `]` `=`；
 - 一段重复 (`$( ... )`)序列，由`,`分隔，允许重复一或多次(`+`)；重复的内容允许：
@@ -97,11 +97,11 @@ macro_rules! recurrence {
 - 又一段字面标记序列， `...` `,`；
 - 一个有效的表达式，将被捕获至变量`recur` (`$recur:expr`)。
 
-最后，规则声明，如果输入与此规则成功匹配，则该宏调用将被标记序列`/* ... */`替换。
+最后，规则声明，如果输入被成功匹配，则对该宏的调用将被标记序列`/* ... */`替换。
 
-值得注意的是，`inits`，如它命名采用的复数形式所暗示的，实际上包含所有匹配进此重复的表达式，而非仅是第一或最后一个。不仅如此，它将它们捕获成一个序列，而不是——举个例子——把它们不可逆地粘贴在一起。还注意到，可以用`*`替换`+`来表示允许“0或多个”重复。并不支持“0或1个”或任何其它更加具体的重复形式。
+值得注意的是，`inits`，如它命名采用的复数形式所暗示的，实际上包含所有成功匹配进此重复的表达式，而不仅是第一或最后一个。不仅如此，它们将被捕获成一个序列，而不是——举例说——把它们不可逆地粘贴在一起。还注意到，可用`*`替换`+`来表示允许“0或多个”重复。宏系统并不支持“0或1个”或任何其它更加具体的重复形式。
 
-作为练习，我们将采用上面提及的输入，并研究它被处理的过程。“Position”列将揭示下一个需要被匹配的句法模式，由“⌂”表示。注意在某些情况下，可能存在多个可用的“下一个”元素。“Input”将包括所有尚未被消耗的标记。`inits`和`recur`将分别包含其对应绑定的内容。
+作为练习，我们将采用上面提及的输入，并研究它被处理的过程。“位置”列将揭示下一个需要被匹配的句法模式，由“⌂”标出。注意在某些情况下下一个可用元素可能存在多个。“输入”将包括所有尚未被消耗的标记。`inits`和`recur`将分别包含其对应绑定的内容。
 
 <style type="text/css">
     /* Customisations. */
@@ -139,8 +139,8 @@ macro_rules! recurrence {
 <table class="parse-table">
     <thead>
         <tr>
-            <th>Position</th>
-            <th>Input</th>
+            <th>位置</th>
+            <th>输入</th>
             <th><code>inits</code></th>
             <th><code>recur</code></th>
         </tr>
@@ -205,7 +205,7 @@ macro_rules! recurrence {
         <tr>
             <td colspan="4" style="font-size:.7em;">
 
-<em>注意</em>：此处有两个 ⌂，因为下一个输入标记既可以匹配重复元素间的分隔符逗号，也可以匹配标志重复结束的逗号。宏系统将同时追踪这两种可能，直到决定具体选择为止。
+<em>注意</em>：这有两个 ⌂，因为下一个输入标记既能匹配重复元素间的分隔符逗号，也能匹配标志重复结束的逗号。宏系统将同时追踪这两种可能，直到决定具体选择为止。
 
             </td>
         </tr>
@@ -226,7 +226,7 @@ macro_rules! recurrence {
         <tr>
             <td colspan="4" style="font-size:.7em;">
 
-<em>注意</em>：排在第三个的叉号表示，由于上一个标记被消耗掉，宏系统排除了一项先前存在的可能分支。
+<em>注意</em>：第三个被划掉的记号表明，基于上个被消耗的标记，宏系统排除了一项先前存在的分支可能。
 
             </td>
         </tr>
@@ -261,7 +261,7 @@ macro_rules! recurrence {
         <tr>
             <td colspan="4" style="font-size:.7em;">
 
-<em>注意</em>：这一步表明，类似 <tt>$recur:expr</tt>的绑定将消耗<em>一整个表达式</em>。此处什么组成一个有效的表达式由编译器决定。稍后我们会谈到，其它语言构造也能够有类似的行为。
+<em>注意</em>：这一步表明，类似<tt>$recur:expr</tt>的绑定将消耗<em>一整个表达式</em>。此处什么组成一个有效的表达式由编译器决定。稍后我们会谈到，其它语言构造也能够有类似的行为。
 
             </td>
         </tr>
@@ -270,9 +270,9 @@ macro_rules! recurrence {
 
 <p></p>
 
-此处的关键点在于，宏系统是依次尝试将每条规则与所输入的标记进行匹配的。我们稍后还将谈回到这一“尝试”。
+从此表中得到的最关键收获在于，宏系统会依次尝试将提供给它的每个标记当作输入，与提供给它的每条规则进行匹配。我们稍后还将谈回到这一“尝试”。
 
-现在，我们准备写出宏完全展开后的最终版本。对此，我们期望的结果类似：
+现在，我们将写出宏完全展开后的最终版本。对此，我们所期望的结果类似：
 
 ```rust
 let fib = {
@@ -282,11 +282,11 @@ let fib = {
     }
 ```
 
-这就是我们实际会采用的迭代器类型。其中，`mem`将负责存储最近算得的两个`fib`值，保证递推计算能够顺利进行；`pos`则负责记录当前的`n`值。
+这就是我们实际会使用的迭代器类型。其中，`mem`将负责存储最近算得的两个斐波那契值，保证递推计算能够顺利进行；`pos`则负责记录当前的`n`值。
 
-> **附注**：此处选用`u64`是因为，对此数列来说，它已经“足够大”了。先不必担心其它数列是否适用，我们会提到的。
+> **附注**：此处选用`u64`是因为，对斐波那契数列来说，它已经“足够大”了。先不必担心其它数列是否适用，我们会提到的。
 
-```ignore
+```rust
     impl Iterator for Recurrence {
         type Item = u64;
 
@@ -298,9 +298,9 @@ let fib = {
                 Some(next_val)
 ```
 
-We need a branch to yield the initial values of the sequence; nothing tricky.
+我们需要这个`if`分支来返回序列的初始值，没什么花哨。
 
-```ignore
+```rust
             } else {
                 let a = /* something */;
                 let n = self.pos;
@@ -315,9 +315,9 @@ We need a branch to yield the initial values of the sequence; nothing tricky.
     }
 ```
 
-This is a bit harder; we'll come back and look at *how* exactly to define `a`.  Also, `TODO_shuffle_down_and_append` is another placeholder; I want something that places `next_val` on the end of the array, shuffling the rest down by one space, dropping the 0th element.
+这段相对难些。对于具体如何定义`a`，我们稍后再提。`TODO_shuffle_down_and_append`的真面目也将留到稍后揭晓；我们想使之做到：将`next_val`放至数组末尾，并将数组中剩下的元素依次前移一格，丢掉首个元素。
 
-```ignore
+```rust
 
     Recurrence { mem: [0, 1], pos: 0 }
 };
@@ -325,9 +325,9 @@ This is a bit harder; we'll come back and look at *how* exactly to define `a`.  
 for e in fib.take(10) { println!("{}", e) }
 ```
 
-Lastly, return an instance of our new structure, which can then be iterated over.  To summarise, the complete expansion is:
+最后，我们返回一个该结构的实例。在随后的代码中，我们将用它来进行迭代。综上所述，完整的展开应该如下：
 
-```ignore
+```rust
 let fib = {
     struct Recurrence {
         mem: [u64; 2],
@@ -362,9 +362,9 @@ let fib = {
 for e in fib.take(10) { println!("{}", e) }
 ```
 
-> **Aside**: Yes, this *does* mean we're defining a different `Recurrence` struct and its implementation for each macro invocation.  Most of this will optimise away in the final binary, with some judicious use of `#[inline]` attributes.
+> **附注**：是的，这样做的确意味着每次调用该宏时，我们都会重新定义并实现一个`Recurrence`结构。如果`#[inline]`属性应用得当，在最终编译出的二进制文件中，大部分冗余都将被优化掉。
 
-It's also useful to check your expansion as you're writing it.  If you see anything in the expansion that needs to vary with the invocation, but *isn't* in the actual macro syntax, you should work out where to introduce it.  In this case, we've added `u64`, but that's not neccesarily what the user wants, nor is it in the macro syntax.  So let's fix that.
+写展开部分时，边写边检查也很有用。如果在过程中发现展开的某些内容需要根据调用的不同发生改变，但这些内容并未被我们的宏语法定义囊括，那就应去考虑清楚该在哪儿引入它们。在此示例中，我们先前用过一次`u64`，但调用端不一定想要这种类型；而且我们的宏语法定义并没有提供其他选择。因此，我们可以做一些修改。
 
 ```rust
 macro_rules! recurrence {
@@ -379,21 +379,21 @@ for e in fib.take(10) { println!("{}", e) }
 # fn main() {}
 ```
 
-Here, I've added a new capture: `sty` which should be a type.
+我们加入了一个新的捕获`sty`，它应该是一个类型(type)。
 
-> **Aside**: if you're wondering, the bit after the colon in a capture can be one of several kinds of syntax matchers.  The most common ones are `item`, `expr`, and `ty`.  A complete explanation can be found in [Macros, A Methodical Introduction; `macro_rules!` (Captures)](mbe-macro-rules.html#captures).
+> **附注**：在捕获的冒号之后的部分，可以是几种语法匹配候选项之一；如果你不清楚的话。最常用的包括`item`，`expr`和`ty`。完整的解释可在[宏，彻底解析-`macro_rules!`-捕获](mbe-macro-rules.html#captures)部分找到。
 >
-> There's one other thing to be aware of: in the interests of future-proofing the language, the compiler restricts what tokens you're allowed to put *after* a matcher, depending on what kind it is.  Typically, this comes up when trying to match expressions or statements; those can *only* be followed by one of `=>`, `,`, and `;`.
+> 还有一件事值得注意：为方便语言的未来发展，对于跟在某些特定的匹配之后的标记，编译器施加了一些限制。这种情况常常在试图匹配至表达式(expression)或语句(statement)时出现：仅允许`=>`，`,`和`;`这些标记之一跟在它们后面。
 >
-> A complete list can be found in [Macros, A Methodical Introduction; Minutiae; Captures and Expansion Redux](mbe-min-captures-and-expansion-redux.html).
+> 完整清单可在[宏，彻底解析-细枝末节-再探捕获与展开](mbe-min-captures-and-expansion-redux.md)找到。
 
-## Indexing and Shuffling
+## 索引与移位
 
-I will skim a bit over this part, since it's effectively tangential to the macro stuff.  We want to make it so that the user can access previous values in the sequence by indexing `a`; we want it to act as a sliding window keeping the last few (in this case, 2) elements of the sequence.
+在此节中我们将跳过一些内容，因为它们实际上与宏的联系不甚紧密。我们本节的目标是，让用户可以通过索引`a`来访问数列中先前的值；它应该就像切口一样，让我们能持续访问数列中最近的几个(在本例中，两个)值。
 
-We can do this pretty easily with a wrapper type:
+通过采用封装类，我们可以相对简单地做到这点：
 
-```ignore
+```rust
 struct IndexOffset<'a> {
     slice: &'a [u64; 2],
     offset: usize,
@@ -416,19 +416,19 @@ impl<'a> Index<usize> for IndexOffset<'a> {
 }
 ```
 
-> **Aside**: since lifetimes come up *a lot* with people new to Rust, a quick explanation: `'a` and `'b` are lifetime parameters that are used to track where a reference (*i.e.* a borrowed pointer to some data) is valid.  In this case, `IndexOffset` borrows a reference to our iterator's data, so it needs to keep track of how long it's allowed to hold that reference for, using `'a`.
+> **附注**：对于新接触Rust的人来说，生命周期的概念经常需要一番思考。我们给出一些简单的解释：`'a`和`'b`是生命周期参数，它们被用于记录引用(即一个指向某些数据的借用指针)的有效期。在此例中，`IndexOffset`借用了一个指向我们迭代器数据的引用，因此，它需要记录该引用的有效期，记录者正是`'a`。
 >
-> `'b` is used because the `Index::index` function (which is how subscript syntax is actually implemented) is *also* parameterised on a lifetime, on account of returning a borrowed reference.  `'a` and `'b` are not necessarily the same thing in all cases.  The borrow checker will make sure that even though we don't explicitly relate `'a` and `'b` to one another, we don't accidentally violate memory safety.
+> 我们用到`'b`，是因为`Index::index`函数(下标句法正是通过此函数实现的)的一个参数也需要生命周期。`'a`和`'b`不一定在所有情况下都相同。我们并没有显式地声明`'a`和`'b`之间有任何联系，但借用检查器(borrow checker)总会确保内存安全性不被意外破坏。
 
-This changes the definition of `a` to:
+`a`地定义将随之变为：
 
-```ignore
+```rust
 let a = IndexOffset { slice: &self.mem, offset: n };
 ```
 
-The only remaining question is what to do about `TODO_shuffle_down_and_append`.  I wasn't able to find a method in the standard library with exactly the semantics I wanted, but it isn't hard to do by hand.
+如何处理`TODO_shuffle_down_and_append`是我们现在唯一剩下的问题了。我没能在标准库中找到可以直接使用的方法，但自己造一个并不难。
 
-```ignore
+```rust
 {
     use std::mem::swap;
 
@@ -439,11 +439,11 @@ The only remaining question is what to do about `TODO_shuffle_down_and_append`. 
 }
 ```
 
-This swaps the new value into the end of the array, swapping the other elements down one space.
+它把新值替换至数组末尾，并把其他值向前移动一位。
 
-> **Aside**: doing it this way means that this code will work for non-copyable types, as well.
+> **附注**：采用这种做法，将使得我们的代码可同时被用于不可拷贝(non-copyable，即没有实现Copy trait)的类型。
 
-The working code thus far now looks like this:
+至此，最终起作用的代码将是：
 
 ```rust
 macro_rules! recurrence {
@@ -523,11 +523,11 @@ fn main() {
 }
 ```
 
-Note that I've changed the order of the declarations of `n` and `a`, as well as wrapped them (along with the recurrence expression) in a block.  The reason for the first should be obvious (`n` needs to be defined first so I can use it for `a`).  The reason for the second is that the borrowed reference `&self.mem` will prevent the swaps later on from happening (you cannot mutate something that is aliased elsewhere).  The block ensures that the `&self.mem` borrow expires before then.
+注意我们改变了`n`与`a`的声明顺序，同时将它们(与递推表达式一同)用一个新区块包裹了起来。改变声明顺序的理由很明显(`n`得在`a`前被定义才能被`a`使用)。而包裹的理由则是，如果不，借用引用`&self.mem`将会阻止随后的`swap`操作(在某物仍存在其它别名时，无法对其进行改变)。包裹块将确保`&self.mem`产生的借用在彼时过期。
 
-Incidentally, the only reason the code that does the `mem` swaps is in a block is to narrow the scope in which `std::mem::swap` is available, for the sake of being tidy.
+顺带一提，将交换`mem`的代码包进区块里的唯一原因，正是为了缩减`std::mem::swap`的可用范畴，以保持代码整洁。
 
-If we take this code and run it, we get:
+如果我们直接拿上段代码来跑，将会得到：
 
 ```text
 0
@@ -541,9 +541,9 @@ If we take this code and run it, we get:
 34
 ```
 
-Success!  Now, let's copy & paste this into the macro expansion, and replace the expanded code with an invocation.  This gives us:
+成功了！现在，让我们把这段代码复制粘贴进宏的展开部分，并在它们原本的位置换上一次宏调用。这样我们得到：
 
-```ignore
+```rust
 macro_rules! recurrence {
     ( a[n]: $sty:ty = $($inits:expr),+ , ... , $recur:expr ) => {
         {
@@ -624,7 +624,7 @@ fn main() {
 }
 ```
 
-Obviously, we aren't *using* the captures yet, but we can change that fairly easily.  However, if we try to compile this, `rustc` aborts, telling us:
+显然，宏的捕获尚未被用到，但这点很好改。不过，如果尝试编译上述代码，`rustc`会中止，并显示：
 
 ```text
 recurrence.rs:69:45: 69:48 error: local ambiguity: multiple parsing options: built-in NTs expr ('inits') or 1 other options.
@@ -632,17 +632,17 @@ recurrence.rs:69     let fib = recurrence![a[n]: u64 = 0, 1, ..., a[n-1] + a[n-2
                                                              ^~~
 ```
 
-Here, we've run into a limitation of `macro_rules`.  The problem is that second comma.  When it sees it during expansion, `macro_rules` can't decide if it's supposed to parse *another* expression for `inits`, or `...`.  Sadly, it isn't quite clever enough to realise that `...` isn't a valid expression, so it gives up.  Theoretically, this *should* work as desired, but currently doesn't.
+这里我们撞上了`macro_rules`的一处限制。问题出在那第二个逗号上。当在展开过程中遇见它时，编译器无法决定是该将它转义成`inits`中的又一个表达式，还是说把它转义成`...`。很遗憾，它不够聪明，没办法意识到`...`不是一个有效的表达式，所以它选择了放弃。理论上来说，上述代码应该能奏效，但当前它并不能。
 
-> **Aside**: I *did* fib a little about how our rule would be interpreted by the macro system.  In general, it *should* work as described, but doesn't in this case.  The `macro_rules` machinery, as it stands, has its foibles, and its worthwhile remembering that on occasion, you'll need to contort a little to get it to work.
+> **附注**：有关宏系统如何解读我们的规则，我之前的确撒了点小谎。通常来说，宏系统确实应当如我前述的那般运作，但在这里它没有。`macro_rules`的机制，由此看来，是存在一些小毛病的；我们得记得偶尔去做一些调控，好让它我们期许的那般运作。
 >
-> In this *particular* case, there are two issues.  First, the macro system doesn't know what does and does not constitute the various grammar elements (*e.g.* an expression); that's the parser's job.  As such, it doesn't know that `...` isn't an expression.  Secondly, it has no way of trying to capture a compound grammar element (like an expression) without 100% committing to that capture.
+> 在这例情况下，问题有两个。其一，宏系统不清楚什么东西能够组成各式语法元素(如表达式)而什么不能；那是语法解析器的工作。其二，在试图捕获复合语法元素(如表达式)的过程中，它没可能不100%地陷入该捕获中去。
 >
-> In other words, it can ask the parser to try and parse some input as an expression, but the parser will respond to any problems by aborting.  The only way the macro system can currently deal with this is to just try to forbid situations where this could be a problem.
+> 换句话说，宏系统可以请求语法解析器去试图把某些输入当作表达式来进行解析；但无论语法解析器在此间遇见任何问题，都将中止进程以示回应。目前，宏系统处理这种窘境的唯一方式，就是对任何可能产生这类问题的情境下达禁令。
 >
-> On the bright side, this is a state of affairs that exactly *no one* is enthusiastic about.  The `macro` keyword has already been reserved for a more rigorously-defined future macro system.  Until then, needs must.
+> 好的一面在于，对于这些情况，完全没有任何人感到高兴。关键词`macro`早已被预留，已被未来更加严密的宏系统采用。直到那天来临之前，该做的事我们只好做。
 
-Thankfully, the fix is relatively simple: we remove the comma from the syntax.  To keep things balanced, we'll remove *both* commas around `...`:
+还好，修正方案也挺简单：从宏句法中去掉逗号。出于平衡考量，我们将移除`...`双边的逗号：
 
 ```rust
 macro_rules! recurrence {
@@ -662,11 +662,11 @@ fn main() {
 }
 ```
 
-Success!  We can now start replacing things in the *expansion* with things we've *captured*.
+成功！现在，我们该将捕获部分捕获到的内容替代进展开部分中了。
 
-### Substitution
+### 替换
 
-Substituting something you've captured in a macro is quite simple; you can insert the contents of a capture `$sty:ty` by using `$sty`.  So, let's go through and fix the `u64`s:
+在宏中替换你捕获到的内容相对简单，通过`$sty:ty`捕获到的内容可以使用`$sty`来替换。好，让我们换掉那些`u64`吧：
 
 ```rust
 macro_rules! recurrence {
@@ -750,16 +750,16 @@ fn main() {
 }
 ```
 
-Let's tackle a harder one: how to turn `inits` into both the array literal `[0, 1]` *and* the array type, `[$sty; 2]`.  The first one we can do like so:
+现在让我们来尝试更难的：如何将`inits`同时转变为字面值`[0, 1]`以及数组类型`[$sty; 2]`。首先我们试试：
 
-```ignore
+```rust
             Recurrence { mem: [$($inits),+], pos: 0 }
 //                             ^~~~~~~~~~~ changed
 ```
 
-This effectively does the opposite of the capture: repeat `inits` one or more times, separating each with a comma.  This expands to the expected sequence of tokens: `0, 1`.
+此句与捕获的效果正好相反：将`inits`重复1或多次，用逗号分隔。展开结果与期望一致，我们得到标记序列：`0, 1`。
 
-Somehow turning `inits` into a literal `2` is a little trickier.  It turns out that there's no direct way to do this, but we *can* do it by using a second macro.  Let's take this one step at a time.
+不过，从`inits`转换出字面值`2`需要一些技巧。没有直接有效的方法，但我们可以通过另一个宏做到。我们一步一步来。
 
 ```rust
 macro_rules! count_exprs {
@@ -769,7 +769,7 @@ macro_rules! count_exprs {
 # fn main() {}
 ```
 
-The obvious case is: given zero expressions, you would expect `count_exprs` to expand to a literal `0`.
+先做显而易见的情况：未给表达式时，我们期望`count_exprs`展开为字面值`0`。
 
 ```rust
 macro_rules! count_exprs {
@@ -782,11 +782,11 @@ macro_rules! count_exprs {
 # }
 ```
 
-> **Aside**: You may have noticed I used parentheses here instead of curly braces for the expansion.  `macro_rules` really doesn't care *what* you use, so long as it's one of the "matcher" pairs: `( )`, `{ }` or `[ ]`.  In fact, you can switch out the matchers on the macro itself (*i.e.* the matchers right after the macro name), the matchers around the syntax rule, and the matchers around the corresponding expansion.
+> **附注**：你可能已经注意到了，这里的展开部分我用的是括号而非花括号。`macro_rules`其实不关心你用的是什么，只要它成对匹配即可：`( )`，`{ }`或`[ ]`。实际上，宏本身的匹配符(即紧跟宏名称后的匹配符)、语法规则外的匹配符及相应展开部分外的匹配符都可以替换。
 >
-> You can also switch out the matchers used when you *invoke* a macro, but in a more limited fashion: a macro invoked as `{ ... }` or `( ... );` will *always* be parsed as an *item* (*i.e.* like a `struct` or `fn` declaration).  This is important when using macros in a function body; it helps disambiguate between "parse like an expression" and "parse like a statement".
+> 在调用宏时它们也可被替换，但有些限制：当宏被以`{...}`或`(...);`形式调用时，它总是会被解析为一个条目(item，比如，`struct`或`fn`声明)。在函数体内这一点很重要，它将消除“解析成表达式”和“解析成语句”之间的歧义。
 
-What if you have *one* expression?  That should be a literal `1`.
+有一个表达式的情况该怎么办？应该展开为字面值`1`。
 
 ```rust
 macro_rules! count_exprs {
@@ -802,7 +802,7 @@ macro_rules! count_exprs {
 # }
 ```
 
-Two?
+两个呢？
 
 ```rust
 macro_rules! count_exprs {
@@ -840,7 +840,7 @@ macro_rules! count_exprs {
 # }
 ```
 
-This is fine since Rust can fold `1 + 1` into a constant value.  What if we have three expressions?
+这样做可行，因为Rust可将`1 + 1`封装成一个常量。那么三种表达式的情况呢？
 
 ```rust
 macro_rules! count_exprs {
@@ -862,9 +862,9 @@ macro_rules! count_exprs {
 # }
 ```
 
-> **Aside**: You might be wondering if we could reverse the order of these rules.  In this particular case, *yes*, but the macro system can sometimes be picky about what it is and is not willing to recover from.  If you ever find yourself with a multi-rule macro that you *swear* should work, but gives you errors about unexpected tokens, try changing the order of the rules.
+> **附注**：你可能会想，我们是否能反转这些规则的排序。在此情境下，可以。但在有些情况下，宏系统可能会对此挑剔。如果你发现自己的一个多规则宏系统老是报错或者给出期望外的结果，但你发誓它应该能用，试着调一下规则的排序吧。
 
-Hopefully, you can see the pattern here.  We can always reduce the list of expressions by matching one expression, followed by zero or more expressions, expanding that into 1 + a count.
+我们希望你现在已经能看出套路。通过匹配至一个表达式加上0或多个表达式并展开成1+a，我们可以减少规则列表的数目：
 
 ```rust
 macro_rules! count_exprs {
@@ -885,9 +885,9 @@ macro_rules! count_exprs {
 # }
 ```
 
-> **<abbr title="Just for this example">JFTE</abbr>**: this is not the *only*, or even the *best* way of counting things.  You may wish to peruse the [Counting](blk-counting.html) section later.
+> **<abbr title="Just for this example">仅对此例</abbr>**：这并非计数仅有或其最好的方法。稍后你可再研读[计数](blk-counting.md)一节。
 
-With this, we can now modify `recurrence` to determine the necessary size of `mem`.
+有此工具后，我们可修改`recurrence`以决定`mem`所需的大小。
 
 ```rust
 // added:
@@ -980,9 +980,9 @@ macro_rules! recurrence {
 # }
 ```
 
-With that done, we can now substitute the last thing: the `recur` expression.
+完成之后，我们开始替换最后的`recur`表达式。
 
-```ignore
+```rust
 # macro_rules! count_exprs {
 #     () => (0);
 #     ($head:expr $(, $tail:expr)*) => (1 + count_exprs!($($tail),*));
@@ -1044,7 +1044,7 @@ With that done, we can now substitute the last thing: the `recur` expression.
 # }
 ```
 
-And, when we compile our finished macro...
+现在，试图编译的话...
 
 ```text
 recurrence.rs:77:48: 77:49 error: unresolved name `a`
@@ -1069,13 +1069,13 @@ recurrence.rs:7:1: 74:2 note: in expansion of recurrence!
 recurrence.rs:77:15: 77:64 note: expansion site
 ```
 
-... wait, what?  That can't be right... let's check what the macro is expanding to.
+...等等，什么情况？这没道理...让我们看看宏究竟展开成了什么样子。
 
 ```shell
 $ rustc -Z unstable-options --pretty expanded recurrence.rs
 ```
 
-The `--pretty expanded` argument tells `rustc` to perform macro expansion, then turn the resulting AST back into source code.  Because this option isn't considered stable yet, we also need `-Z unstable-options`.  The output (after cleaning up some formatting) is shown below; in particular, note the place in the code where `$recur` was substituted:
+参数`--pretty expanded`将促使`rustc`展开宏，并将输出的AST重新转换为源代码。此选项当前被认定为不稳定，因此我们还要添加`-Z unstable-options`。输出信息(经过格式清理后)如下；特别留意`$recur`被替换的位置：
 
 ```ignore
 #![feature(no_std)]
@@ -1172,13 +1172,13 @@ fn main() {
 }
 ```
 
-But that looks fine!  If we add a few missing `#![feature(...)]` attributes and feed it to a nightly build of `rustc`, it even compiles!  ... *what?!*
+呃..这看起来完全可以！如果我们加上几条`#![feature(...)]`属性，并把它送去给一个nightly版本的`rustc`，甚至能够编译成功...什么情况？！
 
-> **Aside**: You can't compile the above with a non-nightly build of `rustc`.  This is because the expansion of the `println!` macro depends on internal compiler details which are *not* publicly stabilised.
+> **附注**：上述代码无法通过非nightly版`rustc`编译。这是因为，`println!`宏的展开结果依赖于编译器内部的细节，这些细节尚未被公开稳定化。
 
-### Being Hygienic
+### 保持卫生
 
-The issue here is that identifiers in Rust macros are *hygienic*.  That is, identifiers from two different contexts *cannot* collide.  To show the difference, let's take a simpler example.
+这儿的问题在于，Rust宏中的标识符具有卫生性。这就是说，出自不同上下文的标识符不可能发生冲突。作为演示，举个简单的例子。
 
 ```rust
 # /*
@@ -1196,27 +1196,27 @@ let four = using_a!(a / 10);
 # fn main() {}
 ```
 
-This macro simply takes an expression, then wraps it in a block with a variable `a` defined.  We then use this as a round-about way of computing `4`.  There are actually *two* syntax contexts involved in this example, but they're invisible.  So, to help with this, let's give each context a different colour.  Let's start with the unexpanded code, where there is only a single context:
+此宏接受一个表达式，然后把它包进一个定义了变量`a`的区块里。我们随后用它绕个弯子来求`4`。这个例子中实际上存在2种句法上下文，但我们看不见它们。为了帮助说明，我们给每个上下文都上一种不同的颜色。我们从未展开的代码开始，此时仅有一种上下文：
 
 <pre class="rust rust-example-rendered"><span class="synctx-0"><span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">using_a</span> {&#xa;    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> {&#xa;        {&#xa;            <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="number">42</span>;&#xa;            <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>&#xa;        }&#xa;    }&#xa;}&#xa;&#xa;<span class="kw">let</span> <span class="ident">four</span> <span class="op">=</span> <span class="macro">using_a</span><span class="macro">!</span>(<span class="ident">a</span> <span class="op">/</span> <span class="number">10</span>);</span></pre>
 
-Now, let's expand the invocation.
+现在，展开宏调用。
 
 <pre class="rust rust-example-rendered"><span class="synctx-0"><span class="kw">let</span> <span class="ident">four</span> <span class="op">=</span> </span><span class="synctx-1">{&#xa;    <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="number">42</span>;&#xa;    </span><span class="synctx-0"><span class="ident">a</span> <span class="op">/</span> <span class="number">10</span></span><span class="synctx-1">&#xa;}</span><span class="synctx-0">;</span></pre>
 
-As you can see, the <code><span class="synctx-1">a</span></code> that's defined by the macro is in a different context to the <code><span class="synctx-0">a</span></code> we provided in our invocation.  As such, the compiler treats them as completely different identifiers, *even though they have the same lexical appearance*.
+可以看到，在宏中定义的<code><span class="synctx-1">a</span></code>与调用所提供的<code><span class="synctx-0">a</span></code>处于不同的上下文中。因此，虽然它们的字母表示一致，编译器仍将它们视作完全不同的标识符。
 
-This is something to be *really* careful of when working on macros: macros can produce ASTs which will not compile, but which *will* compile if written out by hand, or dumped using `--pretty expanded`.
+宏的这一特性需要格外留意：它们可能会产生无法编译的AST，但同样的代码手写或者通过`--pretty expanded`转印出来则能够通过编译。
 
-The solution to this is to capture the identifier *with the appropriate syntax context*.  To do that, we need to again adjust our macro syntax.  To continue with our simpler example:
+解决方案是，采用适当的句法上下文来捕获标识符。我们沿用上例，并作修改：
 
 <pre class="rust rust-example-rendered"><span class="synctx-0"><span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">using_a</span> {&#xa;    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> {&#xa;        {&#xa;            <span class="kw">let</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="op">=</span> <span class="number">42</span>;&#xa;            <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>&#xa;        }&#xa;    }&#xa;}&#xa;&#xa;<span class="kw">let</span> <span class="ident">four</span> <span class="op">=</span> <span class="macro">using_a</span><span class="macro">!</span>(<span class="ident">a</span>, <span class="ident">a</span> <span class="op">/</span> <span class="number">10</span>);</span></pre>
 
-This now expands to:
+现在它将展开为：
 
 <pre class="rust rust-example-rendered"><span class="synctx-0"><span class="kw">let</span> <span class="ident">four</span> <span class="op">=</span> </span><span class="synctx-1">{&#xa;    <span class="kw">let</span> </span><span class="synctx-0"><span class="ident">a</span></span><span class="synctx-1"> <span class="op">=</span> <span class="number">42</span>;&#xa;    </span><span class="synctx-0"><span class="ident">a</span> <span class="op">/</span> <span class="number">10</span></span><span class="synctx-1">&#xa;}</span><span class="synctx-0">;</span></pre>
 
-Now, the contexts match, and the code will compile.  We can make this adjustment to our `recurrence!` macro by explicitly capturing `a` and `n`.  After making the necessary changes, we have:
+上下文现在匹配了，编译通过。我们的`recurrence!`宏也可被如此调整：显式地捕获`a`与`n`即可。调整后我们得到：
 
 ```rust
 macro_rules! count_exprs {
@@ -1304,7 +1304,7 @@ fn main() {
 }
 ```
 
-And it compiles!  Now, let's try with a different sequence.
+通过编译了！接下来，我们试试别的数列。
 
 ```rust
 # macro_rules! count_exprs {
@@ -1389,7 +1389,7 @@ for e in recurrence!(f[i]: f64 = 1.0 ... f[i-1] * i as f64).take(10) {
 # }
 ```
 
-Which gives us:
+运行上述代码得到：
 
 ```text
 1
@@ -1404,4 +1404,4 @@ Which gives us:
 362880
 ```
 
-Success!
+成功了！

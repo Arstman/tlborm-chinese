@@ -1,15 +1,15 @@
-% The Little Book of Rust Macros
+% Rust宏小册 中文版
 
-**Note**: this is a work in progress.
+**注意**: 本作品尚在建设过程中。
 
-This book is an attempt to distil the Rust community's collective knowledge of Rust macros.  As such, both additions (in the form of pull requests) and requests (in the form of issues) are welcome.
+本书试图提炼出一份Rust社区对Rust宏知识的集锦。因此，我们欢迎社区成员进行内容添补（通过pull）或提出需求（通过issue）。
 
-If you wish to contribute, see [the GitHub repository](https://github.com/DanielKeep/tlborm/).
+本文档为[The Little Book of Rust Macros](https://danielkeep.github.io/tlborm/)的中文翻译。如果希望为原文作出贡献，请移步至[原版的repository](https://github.com/DanielKeep/tlborm/)。中文版的repo[在这里](https://github.com/DaseinPhaos/tlborm)。
 
-## Thanks
+## 致谢
 
-Thanks to the following for suggestions and corrections: IcyFoxy, Rym, TheMicroWorm, Yurume, akavel, cmr, eddyb, ogham, and snake_case.
+感谢下列成员作出的建议及修正: IcyFoxy, Rym, TheMicroWorm, Yurume, akavel, cmr, eddyb, ogham, and snake_case.
 
-## License
+## 许可证
 
-This work is licensed under both the [Creative Commons Attribution-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-sa/4.0/) and the [MIT license](http://opensource.org/licenses/MIT).
+本作品同时采用 [知识共享署名 - 相同方式共享 4.0 国际许可协议 ](http://creativecommons.org/licenses/by-sa/4.0/) 以及 [MIT license](http://opensource.org/licenses/MIT).

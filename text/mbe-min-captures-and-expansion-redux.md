@@ -1,36 +1,36 @@
-% Captures and Expansion Redux
+% 再探捕获与展开
 
-Once the parser begins consuming tokens for a capture, *it cannot stop or backtrack*.  This means that the second rule of the following macro *cannot ever match*, no matter what input is provided:
+一旦语法分析器开始消耗标记以匹配某捕获，整个过程便无法停止或回溯。这意味着，下述宏的第二项规则将永远无法被匹配到，无论输入是什么样的：
 
-```ignore
+```rust
 macro_rules! dead_rule {
     ($e:expr) => { ... };
     ($i:ident +) => { ... };
 }
 ```
 
-Consider what happens if this macro is invoked as `dead_rule!(x+)`.  The interpreter will start at the first rule, and attempt to parse the input as an expression.  The first token (`x`) is valid as an expression.  The second token is *also* valid in an expression, forming a binary addition node.
+考虑当以`dead_rule!(x+)`形式调用此宏时，将会发生什么。解析器将从第一条规则开始试图进行匹配：它将试图将输入转义成一个表达式；第一个标记(`x`)作为表达式是有效的，第二个标记——作为二元加的节点——在表达式中也是有效的。
 
-At this point, given that there is no right-hand side of the addition, you might expect the parser to give up and try the next rule.  Instead, the parser will panic and abort the entire compilation, citing a syntax error.
+至此，由于输入中并不包含二元加的右手侧元素，你可能会以为，分析器将会放弃尝试这一规则，转而尝试下一条规则。实则不然：分析器将会`panic`并终止整个编译过程，返回一个语法错误。
 
-As such, it is important in general that you write macro rules from most-specific to least-specific.
+由于分析器的这一特点，下面这点尤为重要：一般而言，在书写宏规则时，应从最具体的开始写起，依次写至最不具体的。
 
-To defend against future syntax changes altering the interpretation of macro input, `macro_rules!` restricts what can follow various captures.  The complete list, as of Rust 1.3 is as follows:
+为防范未来宏输入的解读方式改变所可能带来的句法影响，`macro_rules!`对各式捕获之后所允许的内容施加了诸多限制。在Rust1.3下，完整的列表如下：
 
-* `item`: anything.
-* `block`: anything.
-* `stmt`: `=>` `,` `;`
-* `pat`: `=>` `,` `=` `if` `in`
-* `expr`: `=>` `,` `;`
-* `ty`: `,` `=>` `:` `=` `>` `;` `as`
-* `ident`: anything.
-* `path`: `,` `=>` `:` `=` `>` `;` `as`
-* `meta`: anything.
-* `tt`: anything.
+* `item`: 任何标记
+* `block`: 任何标记
+* `stmt`: `=>` `、` `;`
+* `pat`: `=>` `、` `=`、 `if`、 `in`
+* `expr`: `=>` `、` `;`
+* `ty`: `,`、 `=>`、 `:`、 `=`、 `>`、 `;`、 `as`
+* `ident`: 任何标记
+* `path`: `,`、 `=>`、 `:`、 `=`、 `>`、 `;`、 `as`
+* `meta`: 任何标记
+* `tt`: 任何标记
 
-Additionally, `macro_rules!` generally forbids a repetition to be followed by another repetition, even if the contents do not conflict.
+此外，`macro_rules!` 通常不允许一个重复紧跟在另一重复之后，即便它们的内容并不冲突。
 
-One aspect of substitution that often surprises people is that substitution is *not* token-based, despite very much *looking* like it.  Here is a simple demonstration:
+有一条关于替换的特征经常引人惊奇：尽管看起来很像，但替换**并非**基于标记(token-based)的。下例展示了这一点：
 
 ```rust
 macro_rules! capture_expr_then_stringify {
@@ -45,18 +45,18 @@ fn main() {
 }
 ```
 
-Note that `stringify!` is a built-in syntax extension which simply takes all tokens it is given and concatenates them into one big string.
+注意到`stringify!`，这是一条内置的语法扩充，将所有输入标记结合在一起，作为单个字符串输出。
 
-The output when run is:
+上述代码的输出将是：
 
 ```text
 "dummy ( 2 * ( 1 + ( 3 ) ) )"
 "dummy(2 * (1 + (3)))"
 ```
 
-Note that *despite* having the same input, the output is different.  This is because the first invocation is stringifying a sequence of token trees, whereas the second is stringifying *an AST expression node*.
+尽管二者的输入完全一致，它们的输出并不相同。这是因为，前者字符串化的是一列标记树，而后者字符串化的则是一个AST表达式节点。
 
-To visualise the difference another way, here is what the `stringify!` macro gets invoked with in the first case:
+我们另用一种方式展现二者的不同。第一种情况下，`stringify!`被调用时，输入是：
 
 ```text
 «dummy» «(   )»
@@ -68,7 +68,7 @@ To visualise the difference another way, here is what the `stringify!` macro get
                   «3»
 ```
 
-…and here is what it gets invoked with in the second case:
+…而第二种情况下，`stringify!`被调用时，输入是：
 
 ```text
 « »
@@ -88,9 +88,9 @@ To visualise the difference another way, here is what the `stringify!` macro get
                       └────────┘                 └────────┘
 ```
 
-As you can see, there is exactly *one* token tree, which contains the AST which was parsed from the input to the `capture_expr_then_stringify!` invocation.  Hence, what you see in the output is not the stringified tokens, it's the stringified *AST node*.
+如图所示，第二种情况下，输入仅有一棵标记树，它包含了一棵AST，这棵AST则是在转义`capture_expr_then_stringify!`的调用时，此调用的输入经由转义之后所得的输出。因此，在这种情况下，我们最终看到的是字符串化AST节点所得的输出，而非字符串化标记所得的输出。
 
-This has further implications.  Consider the following:
+这一特征还有更加深刻的影响。考虑如下代码段：
 
 ```rust
 macro_rules! capture_then_match_tokens {
@@ -115,7 +115,7 @@ fn main() {
 }
 ```
 
-The output is:
+其输出将是：
 
 ```text
 got an identifier
@@ -127,9 +127,9 @@ got something else
 got something else
 ```
 
-By parsing the input into an AST node, the substituted result becomes *un-destructible*; *i.e.* you cannot examine the contents or match against it ever again.
+因为输入被转义为AST节点，替换所得的结果将无法析构。也就是说，你没办法检查其内容，或是再按原先相符的匹配匹配它。
 
-Here is *another* example which can be particularly confusing:
+接下来这个例子尤其可能让人感到不解：
 
 ```rust
 macro_rules! capture_then_what_is {
@@ -153,7 +153,7 @@ fn main() {
 }
 ```
 
-The output is:
+输出将是：
 
 ```text
 no_mangle attribute
@@ -162,4 +162,4 @@ something else (# [ no_mangle ])
 something else (# [ inline ])
 ```
 
-The only way to avoid this is to capture using the `tt` or `ident` kinds.  Once you capture with anything else, the only thing you can do with the result from then on is substitute it directly into the output.
+得以幸免的捕获只有`tt`或`ident`两种。其余的任何捕获，一经替换，结果将只能被用于直接输出。

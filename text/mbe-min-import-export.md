@@ -1,6 +1,6 @@
-% Import/Export
+% 导入/导出
 
-There are two ways to expose a macro to a wider scope.  The first is the `#[macro_use]` attribute.  This can be applied to *either* modules or external crates.  For example:
+有两种将宏暴露给更广范围的方法。第一种是采用`#[macro_use]`属性。它不仅适用于模组，同样适用于`extern crate`。例如：
 
 ```rust
 #[macro_use]
@@ -14,49 +14,49 @@ X!();
 # fn main() {}
 ```
 
-Macros can be exported from the current crate using `#[macro_export]`.  Note that this *ignores* all visibility.
+可通过`#[macro_export]`将宏从当前`crate`导出。注意，这种方式无视所有可见性设定。
 
-Given the following definition for a library package `macs`:
+定义库包`macs`如下：
 
-```ignore
+```rust
 mod macros {
     #[macro_export] macro_rules! X { () => { Y!(); } }
     #[macro_export] macro_rules! Y { () => {} }
 }
 
-// X! and Y! are *not* defined here, but *are* exported,
-// despite `macros` being private.
+// X!和Y!并非在此处定义的，但它们**的确**被
+// 导出了，即便macros并非pub。
 ```
 
-The following code will work as expected:
+则下述代码将成立：
 
-```ignore
-X!(); // X is defined
+```rust
+X!(); // X!已被定义
 #[macro_use] extern crate macs;
 X!();
 # 
 # fn main() {}
 ```
 
-Note that you can *only* `#[macro_use]` an external crate from the root module.
+注意只有在根模组中，才可将`#[macro_use]`用于`extern crate`。
 
-Finally, when importing macros from an external crate, you can control *which* macros you import.  You can use this to limit namespace pollution, or to override specific macros, like so:
+最后，在从`extern crate`导入宏时，可显式控制导入**哪些**宏。可利用这一特性来限制命名空间污染，或是覆写某些特定的宏。就像这样：
 
-```ignore
-// Import *only* the `X!` macro.
+```rust
+// 只导入`X!`这一个宏
 #[macro_use(X)] extern crate macs;
 
-// X!(); // X is defined, but Y! is undefined
+// X!(); // X!已被定义，但Y!未被定义
 
 macro_rules! Y { () => {} }
 
-X!(); // X is defined, and so is Y!
+X!(); // 均已被定义
 
 fn main() {}
 ```
 
-When exporting macros, it is often useful to refer to non-macro symbols in the defining crate.  Because crates can be renamed, there is a special substitution variable available: `$crate`.  This will *always* expand to an absolute path prefix to the containing crate (*e.g.* `:: macs`).
+当导出宏时，常常出现的情况是，宏定义需要其引用所在`crate`内的非宏符号。由于`crate`可能被重命名等，我们可以使用一个特殊的替换变量：`$crate`。它总将被扩展为宏定义所在的`crate`在当前上下文中的绝对路径(比如 `:: macs`)。
 
-Note that this does *not* work for macros, since macros do not interact with regular name resolution in any way.  That is, you cannot use something like `$crate::Y!` to refer to a particular macro within your crate.  The implication, combined with selective imports via `#[macro_use]` is that there is currently *no way* to guarantee any given macro will be available when imported by another crate.
+注意这招并不适用于宏，因为通常名称的决定进程并不适用于宏。也就是说，你没办法采用类似`$crate::Y!`的代码来引用某个自己`crate`里的特定宏。结合采用`#[macro_use]`做到的选择性导入，我们得出：在宏被导入进其它`crate`时，当前没有办法保证其定义中的其它任一给定宏也一定可用。
 
-It is recommended that you *always* use absolute paths to non-macro names, to avoid conflicts, *including* names in the standard library.
+推荐的做法是，在引用非宏名称时，总是采用绝对路径。这样可以最大程度上避免冲突，包括跟标准库中名称的冲突。

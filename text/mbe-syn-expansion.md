@@ -1,30 +1,30 @@
-% Expansion
+% 展开
 
-Expansion is a relatively simple affair.  At some point *after* the construction of the AST, but before the compiler begins constructing its semantic understanding of the program, it will expand all macros.
+展开相对简单。编译器在生成AST之后，对程序进行语义理解之前的某个时间点，将会对所有宏进行展开。
 
-This involves traversing the AST, locating macro invocations and replacing them with their expansion.  In the case of non-macro syntax extensions, *how* this happens is up to the particular syntax extension.  That said, syntax extensions go through *exactly* the same process that macros do once their expansion is complete.
+这一过程包括，遍历AST，定位所有宏调用，并将它们用其展开进行替换。在非宏的语法扩展情境中，此过程具体如何发生根据具体情境各有不同。但所有语法扩展在展开完成之后所经历的历程都与宏所经历的相同。
 
-Once the compiler has run a syntax extension, it expects the result to be parseable as one of a limited set of syntax elements, based on context.  For example, if you invoke a macro at module scope, the compiler will parse the result into an AST node that represents an item.  If you invoke a macro in expression position, the compiler will parse the result into an expression AST node.
+每当编译器遇见一个语法扩展，都会根据上下文决定一个语法元素集。该语法扩展的展开结果应能被顺利转义成集合中的某个元素。举例来说，如果在模组作用域内调用了宏，那么编译器就会尝试将该宏的展开结果转义成一个表示某项条目(item)的AST节点。如果在需要表达式的位置调用了宏，那么编译器就会尝试将该宏的展开结果转义成一个表示表达式的AST节点。
 
-In fact, it can turn a syntax extension result into any of the following:
+事实上，语义扩展能够被转换成以下任意一种：
 
-* an expression,
-* a pattern,
-* zero or more items,
-* zero or more `impl` items, or
-* zero or more statements.
+* 一个表达式，
+* 一个模式，
+* 0或多个条目，
+* 0或多个`impl`条目，
+* 0或多个语句。
 
-In other words, *where* you can invoke a macro determines what its result will be interpreted as.
+换句话讲，宏调用所在的位置，决定了该宏展开之后的结果被解读的方式。
 
-The compiler will take this AST node and completely replace the macro's invocation node with the output node.  *This is a structural operation*, not a textural one!
+编译器将把AST中表示宏调用的节点用其宏展开的输出节点完全替换。这一替换是结构性(structural)的，而非织构性(textural)的。
 
-For example, consider the following:
+举例来说：
 
-```ignore
+```rust
 let eight = 2 * four!();
 ```
 
-We can visualise this partial AST as follows:
+我们可将这部分AST表示为：
 
 ```text
 ┌─────────────┐
@@ -40,7 +40,7 @@ We can visualise this partial AST as follows:
                                 └────────────┘
 ```
 
-From context, `four!()` *must* expand to an expression (the initialiser can *only* be an expression).  Thus, whatever the actual expansion is, it will be interpreted as a complete expression.  In this case, we will assume `four!` is defined such that it expands to the expression `1 + 3`.  As a result, expanding this invocation will result in the AST changing to:
+根据上下文，`four!()`**必须**展开成一个表达式 (初始化语句只可能是表达式)。因此，无论实际展开结果如何，它都将被解读成一个完整的表达式。此处我们假设，`four!`的定义保证它被展开为表达式 `1 + 3`。故而，展开这一宏调用将使整个AST变为
 
 ```text
 ┌─────────────┐
@@ -59,39 +59,40 @@ From context, `four!()` *must* expand to an expression (the initialiser can *onl
                    └────────┘                 └────────┘
 ```
 
-This can be written out like so:
+这又能被重写成
 
-```ignore
+```rust
 let eight = 2 * (1 + 3);
 ```
 
-Note that we added parens *despite* them not being in the expansion.  Remember that the compiler always treats the expansion of a macro as a complete AST node, **not** as a mere sequence of tokens.  To put it another way, even if you don't explicitly wrap a complex expression in parentheses, there is no way for the compiler to "misinterpret" the result, or change the order of evaluation.
+注意到虽然表达式本身不包含括号，我们仍加上了它们。这是因为，编译器总是将宏展开结果作为完整的AST节点对待，而**不是**仅仅作为一列标记。换句话说，即便不显式地把复杂的表达式用括号包起来，编译器也不可能“错意”宏替换的结果，或者改变求值顺序。
 
-It is important to understand that macro expansions are treated as AST nodes, as this design has two further implications:
+理解这一点——宏展开被当作AST节点看待——非常重要，它表明：
 
-* In addition to there being a limited number of invocation *positions*, macros can *only* expand to the kind of AST node the parser *expects* at that position.
-* As a consequence of the above, macros *absolutely cannot* expand to incomplete or syntactically invalid constructs.
+* 宏调用不仅可用的位置有限，其展开结果也只可能跟语法分析器在该位置所预期的AST节点种类相符合。
+* 因此，宏**必定无法**展开成不完整或不合语法的架构。
 
-There is one further thing to note about expansion: what happens when a syntax extension expands to something that contains *another* syntax extension invocation.  For example, consider an alternative definition of `four!`; what happens if it expands to `1 + three!()`?
+有关展开还有一条值得注意：如果某个语法扩展的展开结果包含了另一次语法扩展调用，那会怎么样？例如，上述`four!`如果被展开成了`1 + three!()`，会发生什么?
 
-```ignore
+```rust
 let x = four!();
 ```
 
-Expands to:
+展开成：
 
-```ignore
+```rust
 let x = 1 + three!();
 ```
 
-This is resolved by the compiler checking the result of expansions for additional macro invocations, and expanding them.  Thus, a second expansion step turns the above into:
+编译器将会检查扩展结果中是否包含更多的宏调用；如果有，它们将被进一步展开。因此，上述AST节点将被再次展开成：
 
-```ignore
+```rust
 let x = 1 + 3;
 ```
 
-The takeaway here is that expansion happens in "passes"; as many as is needed to completely expand all invocations.
+此处我们了解到，展开是按“趟”发生的；要多少趟才能完全展开所有调用，那就会展开多少趟。
 
-Well, not *quite*.  In fact, the compiler imposes an upper limit on the number of such recursive passes it is willing to run before giving up.  This is known as the macro recursion limit and defaults to 32.  If the 32nd expansion contains a macro invocation, the compiler will abort with an error indicating that the recursion limit was exceeded.
+嗯，也不全是如此。事实上，编译器为此设置了一个上限。它被称作宏递归上限，默认值为32.如果第32次展开结果仍然包含宏调用，编译器将会终止并返回一个递归上限溢出的错误信息。
 
-This limit can be raised using the `#![recursion_limit="…"]` attribute, though it *must* be done crate-wide.  Generally, it is recommended to try and keep macros below this limit wherever possible.
+此上限可通过属性 `#![recursion_limit="…"]`被改写，但这种改写必须是crate级别的。 一般来讲，可能的话最好还是尽量让宏展开递归次数保持在默认值以下。
+

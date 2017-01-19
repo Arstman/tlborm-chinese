@@ -1,14 +1,14 @@
-% Macros, A Practical Introduction
+% 宏，一份实践介绍
 
-This chapter will introduce the Rust macro-by-example system using a relatively simple, practical example.  It does *not* attempt to explain all of the intricacies of the system; its goal is to get you comfortable with how and why macros are written.
+本章节将通过一个相对简单、可行的例子来介绍Rust的“示例宏”系统。我们将不会试图解释整个宏系统错综复杂的构造；而是试图让读者能够舒适地了解宏的书写方式，以及为何如斯。
 
-There is also the [Macros chapter of the Rust Book](http://doc.rust-lang.org/book/macros.html) which is another high-level explanation, and the [methodical introduction](mbe-README.html) chapter of this book, which explains the macro system in detail.
+在[Rust官方教程中也有一章讲解宏](http://doc.rust-lang.org/book/macros.html)([中文版](https://kaisery.gitbooks.io/rust-book-chinese/content/content/Macros%20%E5%AE%8F.html))，同样提供了高层面的讲解。同时，本书也有一章[更富条理的介绍](mbe-README.html)，旨在详细阐释宏系统。
 
-## A Little Context
+## 一点背景知识
 
-> **Note**: don't panic!  What follows is the only math will be talked about.  You can quite safely skip this section if you just want to get to the meat of the article.
+> **注意**：别慌！我们通篇只会涉及到下面这一点点数学。如果想直接看重点，本小节可被安全跳过。
 
-If you aren't familiar, a recurrence relation is a sequence where each value is defined in terms of one or more *previous* values, with one or more initial values to get the whole thing started.  For example, the [Fibonacci sequence](https://en.wikipedia.org/wiki/Fibonacci_number) can be defined by the relation:
+如果你不了解的话，所谓“递推(recurrence)关系”是指这样一个序列，其中的每一个值都由先前的一个或多个值决定，并最终由一个或多个初始值完全决定。举例来说，[Fibonacci数列](https://en.wikipedia.org/wiki/Fibonacci_number)可被定义为如下关系：
 
 <!-- MATH START: $F_n = 0, 1, \ldots, F_n-1 + F_n - 2$ -->
 <style type="text/css">
@@ -17,39 +17,39 @@ If you aren't familiar, a recurrence relation is a sequence where each value is 
         white-space: nowrap;
         font-family: "Cambria Math", "Cambria", serif;
     }
-
+    
     .katex .vlist > span > {
         display: inline-block;
     }
-
+    
     .mathit {
         font-style: italic;
     }
-
+    
     .katex .reset-textstyle.scriptstyle {
         font-size: 0.7em;
     }
-
+    
     .katex .reset-textstyle.textstyle {
         font-size: 1em;
     }
-
+    
     .katex .textstyle > .mord + .mrel {
         margin-left: 0.27778em;
     }
-
+    
     .katex .textstyle > .mrel + .minner, .katex .textstyle > .mrel + .mop, .katex .textstyle > .mrel + .mopen, .katex .textstyle > .mrel + .mord {
         margin-left: 0.27778em;
     }
-
+    
     .katex .textstyle > .mclose + .minner, .katex .textstyle > .minner + .mop, .katex .textstyle > .minner + .mord, .katex .textstyle > .mpunct + .mclose, .katex .textstyle > .mpunct + .minner, .katex .textstyle > .mpunct + .mop, .katex .textstyle > .mpunct + .mopen, .katex .textstyle > .mpunct + .mord, .katex .textstyle > .mpunct + .mpunct, .katex .textstyle > .mpunct + .mrel {
         margin-left: 0.16667em;
     }
-
+    
     .katex .textstyle > .mord + .mbin {
         margin-left: 0.22222em;
     }
-
+    
     .katex .textstyle > .mbin + .minner, .katex .textstyle > .mbin + .mop, .katex .textstyle > .mbin + .mopen, .katex .textstyle > .mbin + .mord {
         margin-left: 0.22222em;
     }
@@ -60,27 +60,27 @@ If you aren't familiar, a recurrence relation is a sequence where each value is 
 </div>
 <!-- MATH END -->
 
-Thus, the first two numbers in the sequence are 0 and 1, with the third being <em>F<sub>0</sub></em> + <em>F<sub>1</sub></em> = 0 + 1 = 1, the fourth <em>F<sub>1</sub></em> + <em>F<sub>2</sub></em> = 1 + 1 = 2, and so on forever.
+即，序列的前两个数分别为0和1，而第3个则为<em>F<sub>0</sub></em> + <em>F<sub>1</sub></em> = 0 + 1 = 1，第4个为<em>F<sub>1</sub></em> + <em>F<sub>2</sub></em> = 1 + 1 = 2，依此类推。
 
-Now, *because* such a sequence can go on forever, that makes defining a `fibonacci` function a little tricky, since you obviously don't want to try returning a complete vector.  What you *want* is to return something which will lazily compute elements of the sequence as needed.
+由于这列值可以永远持续下去，定义一个`fibonacci`的求值函数实际上显得有些困难。显然，你不会想要返回一整列值。你所真正需要的，是某种具有怠惰求值性质的东西——只在必要的时候才会计算。
 
-In Rust, that means producing an `Iterator`.  This is not especially *hard*, but there is a fair amount of boilerplate involved: you need to define a custom type, work out what state needs to be stored in it, then implement the `Iterator` trait for it.
+在Rust中这种需求表明，是`Iterator`上场的时候了。这并不是特别困难，但比较繁琐：你得自定义一个类型，弄明白该在其中存储什么东西，然后为它实现`Iterator` trait。
 
-However, recurrence relations are simple enough that almost all of these details can be abstracted out with a little macro-based code generation.
+其实，递推关系足够简单；几乎所有的递推关系都可被抽象出来，变成一小段由宏驱动的代码生成机制。
 
-So, with all that having been said, let's get started.
+好了，说得已经足够多了，让我们开始干活吧。
 
-## Construction
+## 构建过程
 
-Usually, when working on a new macro, the first thing I do is decide what the macro invocation should look like.  In this specific case, my first attempt looked like this:
+通常来说，在构建一个新宏时，我所做的第一件事，是决定宏调用的形式。在我们所讨论的情况下，我的初次尝试是这样：
 
-```ignore
+```rust
 let fib = recurrence![a[n] = 0, 1, ..., a[n-1] + a[n-2]];
 
 for e in fib.take(10) { println!("{}", e) }
 ```
 
-From that, we can take a stab at how the macro should be defined, even if we aren't sure of the actual expansion.  This is useful because if you can't figure out how to parse the input syntax, then *maybe* you need to change it.
+以此为基点，我们可以向宏的定义方式迈出第一步——虽然此时我们尚不了解宏的展开部分究竟是什么样子。这一步骤的用处在于，如果在此处你无法明确如何将输入语法转义，那就可能意味着，整个宏的构思需要改变。
 
 ```rust
 macro_rules! recurrence {
@@ -89,19 +89,19 @@ macro_rules! recurrence {
 # fn main() {}
 ```
 
-Assuming you aren't familiar with the syntax, allow me to elucidate.  This is defining a macro, using the `macro_rules!` system, called `recurrence!`.  This macro has a single parsing rule.  That rule says the input to the macro must match:
+假设你并不熟悉相应的语法，由我来进行解释。上述代码块使用`macro_rules!`系统定义了一个宏，称为`recurrence!`。此宏仅包含一条转义规则，它规定此宏必须依次匹配下列项目：
 
-- the literal token sequence `a` `[` `n` `]` `=`,
-- a repeating (the `$( ... )`) sequence, using `,` as a separator, and one or more (`+`) repeats of:
-    - a valid *expression* captured into the variable `inits` (`$inits:expr`)
-- the literal token sequence `,` `...` `,`,
-- a valid *expression* captured into the variable `recur` (`$recur:expr`).
+- 一段字面标记序列，`a` `[` `n` `]` `=`；
+- 一段重复 (`$( ... )`)序列，由`,`分隔，允许重复一或多次(`+`)；重复的内容允许：
+    - 一个有效的表达式，它将被捕获至变量`inits` (`$inits:expr`)
+- 又一段字面标记序列， `...` `,`；
+- 一个有效的表达式，将被捕获至变量`recur` (`$recur:expr`)。
 
-Finally, the rule says that *if* the input matches this rule, then the macro invocation should be replaced by the token sequence `/* ... */`.
+最后，规则声明，如果输入与此规则成功匹配，则该宏调用将被标记序列`/* ... */`替换。
 
-It's worth noting that `inits`, as implied by the name, actually contains *all* the expressions that match in this position, not just the first or last.  What's more, it captures them *as a sequence* as opposed to, say, irreversibly pasting them all together.  Also note that you can do "zero or more" with a repetition by using `*` instead of `+`.  There is no support for "zero or one" or more specific numbers of repetitions.
+值得注意的是，`inits`，如它命名采用的复数形式所暗示的，实际上包含所有匹配进此重复的表达式，而非仅是第一或最后一个。不仅如此，它将它们捕获成一个序列，而不是——举个例子——把它们不可逆地粘贴在一起。还注意到，可以用`*`替换`+`来表示允许“0或多个”重复。并不支持“0或1个”或任何其它更加具体的重复形式。
 
-As an exercise, let's take the proposed input and feed it through the rule, to see how it is processed.  The "Position" column will show which part of the syntax pattern needs to be matched against next, denoted by a "⌂".  Note that in some cases, there might be more than one possible "next" element to match against.  "Input" will contain all of the tokens that have *not* been consumed yet.  `inits` and `recur` will contain the contents of those bindings.
+作为练习，我们将采用上面提及的输入，并研究它被处理的过程。“Position”列将揭示下一个需要被匹配的句法模式，由“⌂”表示。注意在某些情况下，可能存在多个可用的“下一个”元素。“Input”将包括所有尚未被消耗的标记。`inits`和`recur`将分别包含其对应绑定的内容。
 
 <style type="text/css">
     /* Customisations. */
@@ -109,28 +109,28 @@ As an exercise, let's take the proposed input and feed it through the rule, to s
     .small-code code {
         font-size: 60%;
     }
-
+    
     table pre.rust {
         margin: 0;
         border: 0;
     }
-
+    
     table.parse-table code {
         white-space: pre-wrap;
         background-color: transparent;
         border: none;
     }
-
+    
     table.parse-table tbody > tr > td:nth-child(1) > code:nth-of-type(2) {
         color: red;
         margin-top: -0.7em;
         margin-bottom: -0.6em;
     }
-
+    
     table.parse-table tbody > tr > td:nth-child(1) > code {
         display: block;
     }
-
+    
     table.parse-table tbody > tr > td:nth-child(2) > code {
         display: block;
     }
@@ -205,7 +205,7 @@ As an exercise, let's take the proposed input and feed it through the rule, to s
         <tr>
             <td colspan="4" style="font-size:.7em;">
 
-<em>Note</em>: there are two ⌂ here, because the next input token might match <em>either</em> the comma separator <em>between</em>em> elements in the repetition, <em>or</em> the comma <em>after</em> the repetition.  The macro system will keep track of both possibilities, until it is able to decide which one to follow.
+<em>注意</em>：此处有两个 ⌂，因为下一个输入标记既可以匹配重复元素间的分隔符逗号，也可以匹配标志重复结束的逗号。宏系统将同时追踪这两种可能，直到决定具体选择为止。
 
             </td>
         </tr>
@@ -226,7 +226,7 @@ As an exercise, let's take the proposed input and feed it through the rule, to s
         <tr>
             <td colspan="4" style="font-size:.7em;">
 
-<em>Note</em>: the third, crossed-out marker indicates that the macro system has, as a consequence of the last token consumed, eliminated one of the previous possible branches.
+<em>注意</em>：排在第三个的叉号表示，由于上一个标记被消耗掉，宏系统排除了一项先前存在的可能分支。
 
             </td>
         </tr>
@@ -261,7 +261,7 @@ As an exercise, let's take the proposed input and feed it through the rule, to s
         <tr>
             <td colspan="4" style="font-size:.7em;">
 
-<em>Note</em>: this particular step should make it clear that a binding like <tt>$recur:expr</tt> will consume an <em>entire expression</em>, using the compiler's knowledge of what constitutes a valid expression.  As will be noted later, you can do this for other language constructs, too.
+<em>注意</em>：这一步表明，类似 <tt>$recur:expr</tt>的绑定将消耗<em>一整个表达式</em>。此处什么组成一个有效的表达式由编译器决定。稍后我们会谈到，其它语言构造也能够有类似的行为。
 
             </td>
         </tr>
@@ -270,11 +270,11 @@ As an exercise, let's take the proposed input and feed it through the rule, to s
 
 <p></p>
 
-The key take-away from this is that the macro system will *try* to incrementally match the tokens provided as input to the macro against the provided rules.  We'll come back to the "try" part.
+此处的关键点在于，宏系统是依次尝试将每条规则与所输入的标记进行匹配的。我们稍后还将谈回到这一“尝试”。
 
-Now, let's begin writing the final, fully expanded form.  For this expansion, I was looking for something like:
+现在，我们准备写出宏完全展开后的最终版本。对此，我们期望的结果类似：
 
-```ignore
+```rust
 let fib = {
     struct Recurrence {
         mem: [u64; 2],
@@ -282,9 +282,9 @@ let fib = {
     }
 ```
 
-This will be the actual iterator type.  `mem` will be the memo buffer to hold the last few values so the recurrence can be computed.  `pos` is to keep track of the value of `n`.
+这就是我们实际会采用的迭代器类型。其中，`mem`将负责存储最近算得的两个`fib`值，保证递推计算能够顺利进行；`pos`则负责记录当前的`n`值。
 
-> **Aside**: I've chosen `u64` as a "sufficiently large" type for the elements of this sequence.  Don't worry about how this will work out for *other* sequences; we'll come to it.
+> **附注**：此处选用`u64`是因为，对此数列来说，它已经“足够大”了。先不必担心其它数列是否适用，我们会提到的。
 
 ```ignore
     impl Iterator for Recurrence {

@@ -1,3 +1,3 @@
-% Syntax Extensions
+% 语法扩展
 
-Before talking about *macros*, it is worthwhile to discuss the general mechanism they are built on: *syntax extensions*.  To do *that*, we must discuss how Rust source is processed by the compiler, and the general mechanisms on which user-defined macros are built.
+在谈及宏之前，我们首先应当讨论**语法扩展**这一一般性机制。宏正是在它之上构建的。而想要弄明白语法扩展，我们则应该首先阐述编译器处理Rust源代码的机制。

@@ -1,3 +1,3 @@
-% Minutiae
+% 细枝末节
 
-This section goes through some of the finer details of the macro system.  At a minimum, you should try to be at least *aware* of these details and issues.
+本节将介绍宏系统的一些细枝末节。你最少应该记住有这些东西存在。

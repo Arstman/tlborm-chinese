@@ -1,5 +1,5 @@
-% Macros, A Methodical Introduction
+% 宏，一份条理清晰的介绍
 
-This chapter will introduce Rust's Macro-By-Example system: `macro_rules!`.  Rather than trying to cover it based on practical examples, it will instead attempt to give you a complete and thorough explanation of *how* the system works.  As such, this is intended for people who just want the system as a whole explained, rather than be guided through it.
+本章节将介绍Rust的“示例宏”(Macro-By-Example)系统:`macro_rules`。我们不会通过实际的示例来介绍它，而将尝试对此系统的**运作方式**给出完备且彻底的解释。因此，本章的目标读者应是那些想要理清这整个系统的人，而非那些仅仅想要了解它一般该怎么用的人。
 
-There is also the [Macros chapter of the Rust Book](http://doc.rust-lang.org/book/macros.html) which is a more approachable, high-level explanation, and the [practical introduction](https://danielkeep.github.io/practical-intro-to-macros.html) chapter of this book, which is a guided implementation of a single macro.
+在[Rust官方教程中也有一章讲解宏](http://doc.rust-lang.org/book/macros.html)([中文版](https://kaisery.gitbooks.io/rust-book-chinese/content/content/Macros%20%E5%AE%8F.html))，它更易理解，提供的解释更加高层。本书也有一章[实践介绍](https://danielkeep.github.io/practical-intro-to-macros.html)，旨在阐释如何在实践中实现一个宏。

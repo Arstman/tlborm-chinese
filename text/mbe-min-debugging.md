@@ -1,6 +1,6 @@
-% Debugging
+% 调试
 
-`rustc` provides a number of tools to debug macros.  One of the most useful is `trace_macros!`, which is a directive to the compiler instructing it to dump every macro invocation prior to expansion.  For example, given the following:
+`rustc`提供了一些工具用来调试宏。其中，最有用的之一是`trace_macros!`。它会指示编译器，在每一个宏调用被展开之前将其转印出来。例如，给定下列代码：
 
 ```rust
 # // Note: make sure to use a nightly channel compiler.
@@ -20,7 +20,7 @@ each_tt!(trom qlip winp xod);
 # fn main() {}
 ```
 
-The output is:
+编译输出将包含：
 
 ```text
 each_tt! { spim wak plee whum }
@@ -30,9 +30,9 @@ each_tt! { whum }
 each_tt! {  }
 ```
 
-This is *particularly* invaluable when debugging deeply recursive macros.  You can also enable this from the command-line by adding `-Z trace-macros` to the compiler command line.
+它在调试递归很深的宏时尤其有用。同时，它可以在命令提示符中被打开，在编译指令中附加`-Z trace-macros`即可。
 
-Secondly, there is `log_syntax!` which causes the compiler to output all tokens passed to it.  For example, this makes the compiler sing a song:
+第二个有用的宏是`log_syntax!`。它将使得编译器输出所有经过编译器处理的标记。举个例子，下述代码可以让编译器唱一首歌：
 
 ```rust
 # // Note: make sure to use a nightly channel compiler.
@@ -55,11 +55,11 @@ sing! {
 # fn main() {}
 ```
 
-This can be used to do slightly more targeted debugging than `trace_macros!`.
+比起`trace_macros!`来说，它能够做一些更有针对性的调试。
 
-Sometimes, it is what the macro *expands to* that proves problematic.  For this, the `--pretty` argument to the compiler can be used.  Given the following code:
+有时问题出在宏展开后的结果里。对于这种情况，可用编译命令`--pretty`来勘察。给出下列代码：
 
-```ignore
+```rust
 // Shorthand for initialising a `String`.
 macro_rules! S {
     ($e:expr) => {String::from($e)};
@@ -71,15 +71,15 @@ fn main() {
 }
 ```
 
-compiled with the following command:
+并用如下编译命令进行编译，
 
 ```shell
 rustc -Z unstable-options --pretty expanded hello.rs
 ```
 
-produces the following output (modified for formatting):
+将输出如下内容(略经修改以符合排版)：
 
-```ignore
+```rust
 #![feature(no_std, prelude_import)]
 #![no_std]
 #[prelude_import]
@@ -104,4 +104,4 @@ fn main() {
 }
 ```
 
-Other options to `--pretty` can be listed using `rustc -Z unstable-options --help -v`; a full list is not provided since, as implied by the name, any such list would be subject to change at any time.
+`--pretty`还有其它一些可用选项，可通过`rustc -Z unstable-options --help -v`来列出。此处并不提供该选项表；因为，正如指令本身所暗示的，表中的一切内容在任何时间点都有可能发生改变。

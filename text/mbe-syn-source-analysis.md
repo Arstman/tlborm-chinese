@@ -1,23 +1,32 @@
-% Source Analysis
+% 源码分析
 
-The first stage of compilation for a Rust program is tokenisation.  This is where the source text is transformed into a sequence of tokens (*i.e.* indivisible lexical units; the programming language equivalent of "words").  Rust has various kinds of tokens, such as:
+Rust程序编译过程的第一阶段是标记解析(tokenization)。在这一过程中，源代码将被转换成一系列的标记(token，即无法被分割的词法单元；在编程语言世界中等价于“单词”)。Rust包含多种标记，比如：
 
-* Identifiers: `foo`, `Bambous`, `self`, `we_can_dance`, `LaCaravane`, …
-* Integers: `42`, `72u32`, `0_______0`, …
-* Keywords: `_`, `fn`, `self`, `match`, `yield`, `macro`, …
-* Lifetimes: `'a`, `'b`, `'a_rare_long_lifetime_name`, …
-* Strings: `""`, `"Leicester"`, `r##"venezuelan beaver"##`, …
-* Symbols: `[`, `:`, `::`, `->`, `@`, `<-`, …
+- 标识符(identifiers)：`foo`, `Bambous`, `self`, `we_can_dance`, `LaCaravane`, …
+- 整数(integers)：`42`, `72u32`, `0_______0`, …
+- 关键词(keywords)：`_`, `fn`, `self`, `match`, `yield`, `macro`, …
+- 生命周期(lifetimes)：`'a`, `'b`, `'a_rare_long_lifetime_name`, …
+- 字符串(strings)：`""`, `"Leicester"`, `r##"venezuelan beaver"##`, …
+- 符号(symbols)：`[`, `:`, `::`, `->`, `@`, `<-`, …
 
-…among others.  There are some things to note about the above: first, `self` is both an identifier *and* a keyword.  In almost all cases, `self` is a keyword, but it *is* possible for it to be *treated* as an identifier, which will come up later (along with much cursing).  Secondly, the list of keywords includes some suspicious entries such as `yield` and `macro` that aren't *actually* in the language, but *are* parsed by the compiler—these are reserved for future use.  Third, the list of symbols *also* includes entries that aren't used by the language.  In the case of `<-`, it is vestigial: it was removed from the grammar, but not from the lexer.  As a final point, note that `::` is a distinct token; it is not simply two adjacent `:` tokens.  The same is true of all multi-character symbol tokens in Rust, as of Rust 1.2. [^wither-at]
+…等等。
 
-[^wither-at]: `@` has a purpose, though most people seem to forget about it completely: it is used in patterns to bind a non-terminal part of the pattern to a name.  Even a member of the Rust core team, proof-reading this chapter, who *specifically* brought up this section, didn't remember that `@` has a purpose.  Poor, poor swirly.
+上面的叙述中有些地方值得注意。
 
-As a point of comparison, it is at *this* stage that some languages have their macro layer, though Rust does *not*.  For example, C/C++ macros are *effectively* processed at this point.[^lies-damn-lies-cpp]  This is why the following code works:[^cpp-it-seemed-like-a-good-idea-at-the-time]
+首先，`self`既是一个标识符又是一个关键词。几乎在所有情况下它都被视作是一个关键词，但它**有可能**被视为标识符。我们稍后会（带着咒骂）提到这种情况。
 
-[^lies-damn-lies-cpp]: In fact, the C preprocessor uses a different lexical structure to C itself, but the distinction is *broadly* irrelevant.
+其次，关键词里列有一些可疑的家伙，比如`yield`和`macro`。它们在当前的Rust语言中并没有任何含义，但编译器的确会把它们视作关键词进行转义。这些词语被保留作语言未来扩充时使用。
 
-[^cpp-it-seemed-like-a-good-idea-at-the-time]: *Whether* it should work is an entirely *different* question.
+第三，符号里**也**列有一些未被当前语言使用的条目。比如`<-`，这是历史残留：目前它被移除了Rust语法，但词法分析器仍然没丢掉它。
+
+最后，注意`::`被视作一个独立的标记，而非两个连续的`:`。这一规则适用于Rust中所有的多字符符号标记。[^逝去的@]
+
+[^逝去的@]: `@`是有意义的，虽然大多数人好像都已经完全不记得它了。它用于在模式中把某个模式的非终结部分绑定给一个名称。甚至一位Rust核心团队的成员，在审阅这一章节并特意提起这一小节时，都没记起它的含义。可怜，真是可怜。
+
+作为对比，某些语言的宏系统正扎根于这一阶段。Rust并非如此。举例来说，从效果来看，C/C++的宏就是在这里得到处理的。[^其实不是]这也正是下列代码能够运行的原因:[^这看起来不错]
+
+[^其实不是]: 事实上，C的预处理器采用了跟C语言本身不同的词法结构。但总体来说个中区别并不相干。
+[^这看起来不错]: 它是不是真该奏效又是另外一码事了。
 
 ```c
 #define SUB void
@@ -29,7 +38,7 @@ SUB main() BEGIN
 END
 ```
 
-The next stage is parsing, where the stream of tokens is turned into an Abstract Syntax Tree (AST).  This involves building up the syntactic structure of the program in memory.  For example, the token sequence `1 + 2` is transformed into the equivalent of:
+编译过程的下一个阶段是语法解析(parsing)。这一过程中，一系列的标记将被转换成一棵抽象语法树(Abstract Syntax Tree, AST)。此过程将在内存中建立起程序的语法结构。举例来说，标记序列`1+2`将被转换成某种类似于:
 
 ```text
 ┌─────────┐   ┌─────────┐
@@ -42,21 +51,21 @@ The next stage is parsing, where the stream of tokens is turned into an Abstract
               └─────────┘
 ```
 
-The AST contains the structure of the *entire* program, though it is based on purely *lexical* information.  For example, although the compiler may know that a particular expression is referring to a variable called "`a`", at this stage, it has *no way* of knowing what "`a`" is, or even *where* it comes from.
+的东西。生成出的AST将包含**整个**程序的结构，但这一结构仅包含**词法**信息。举例来讲，在这个阶段编译器虽然可能知道某个表达式提及了某个名为`a`的变量，但它并**没有**办法知道`a`究竟是什么，或者它在哪儿。
 
-It is *after* the AST has been constructed that macros are processed.  However, before we can discuss that, we have to talk about token trees.
+在AST生成**之后**，宏处理过程才开始。但在讨论宏处理过程之前，我们需要先谈谈标记树(token tree)。
 
-## Token trees
+## 标记树
 
-Token trees are somewhere between tokens and the AST.  Firstly, *almost* all tokens are also token trees; more specifically, they are *leaves*.  There is one other kind of thing that can be a token tree leaf, but we will come back to that later.
+标记树是介于标记与AST之间的东西。首先明确一点，**几乎所有**标记都构成标记树。具体来说，它们可被看作标记树叶节点。另有一类存在可被看作标记树叶节点，我们将在稍后提到它。
 
-The only basic tokens that are *not* leaves are the "grouping" tokens: `(...)`, `[...]`, and `{...}`.  These three are the *interior nodes* of token trees, and what give them their structure.  To give a concrete example, this sequence of tokens:
+只有一种基础标记**不是**标记树叶节点，“分组”标记：`(...)`， `[...]`和`{...}`。这三者属于标记树内节点， 正是它们给标记树带来了树状的结构。给个具体的例子，这列标记：
 
 ```ignore
 a + b + (c + d[0]) + e
 ```
 
-would be parsed into the following token trees:
+将被转换为这样的标记树：
 
 ```text
 «a» «+» «b» «+» «(   )» «+» «e»
@@ -66,7 +75,7 @@ would be parsed into the following token trees:
                          «0»
 ```
 
-Note that this has *no relationship* to the AST the expression would produce; instead of a single root node, there are *nine* token trees at the root level.  For reference, the AST would be:
+注意它跟最后生成的AST并没有关联。AST将仅有一个根节点，而这棵标记树有九（原文如此）个。作为参照，最后生成的AST应该是这样：
 
 ```text
               ┌─────────┐
@@ -94,6 +103,6 @@ Note that this has *no relationship* to the AST the expression would produce; in
                             └─────────┘                 └─────────┘
 ```
 
-It is important to understand the distinction between the AST and token trees.  When writing macros, you have to deal with *both* as distinct things.
+理解AST与标记树间的区别至关重要。写宏时，你将同时与这两者打交道。
 
-One other aspect of this to note: it is *impossible* to have an unpaired paren, bracket or brace; nor is it possible to have incorrectly nested groups in a token tree.
+还有一条需要注意：不可能出现不匹配的小/中/大括号，也不可能存在包含错误嵌套结构的标记树。

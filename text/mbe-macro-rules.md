@@ -1,8 +1,8 @@
 % macro_rules!
 
-With all that in mind, we can introduce `macro_rules!` itself.  As noted previously, `macro_rules!` is *itself* a syntax extension, meaning it is *technically* not part of the Rust syntax.  It uses the following form:
+有了这些知识，我们终于可以引入`macro_rules!` 了。 如前所述，`macro_rules!`本身就是一个语法扩展，也就是说它并不是Rust语法的一部分。它的形式如下：
 
-```ignore
+```rust
 macro_rules! $name {
     $rule0 ;
     $rule1 ;
@@ -11,37 +11,37 @@ macro_rules! $name {
 }
 ```
 
-There must be *at least* one rule, and you can omit the semicolon after the last rule.
+至少得有一条规则，最后一条规则后面的分号可被省略。
 
-Each "`rule`" looks like so:
+每条“规则”(`rule`)都形如：
 
 ```ignore
     ($pattern) => {$expansion}
 ```
 
-Actually, the parens and braces can be any kind of group, but parens around the pattern and braces around the expansion are somewhat conventional.
+实际上，分组符号可以是任意一种，选用这种(`pattern`外小括号、`expansion`外花括号)只是出于传统。
 
-If you are wondering, the `macro_rules!` invocation expands to... *nothing*.  At least, nothing that appears in the AST; rather, it manipulates compiler-internal structures to register the macro.  As such, you can *technically* use `macro_rules!` in any position where an empty expansion is valid.
+如果你好奇的话，`macro_rules!`的调用将被展开为空。至少可以说，在AST中它被展开为空。它所影响的是编译器内部的结构，以将该宏注册进系统中去。因此，技术上讲你可以在任何一个空展开合法的位置插入`macro_rules!`的调用。
 
-## Matching
+## 匹配
 
-When a macro is invoked, the `macro_rules!` interpreter goes through the rules one by one, in lexical order.  For each rule, it tries to match the contents of the input token tree against that rule's `pattern`.  A pattern must match the *entirety* of the input to be considered a match.
+当一个宏被调用时，对应的`macro_rules`解释器将一一依序检查规则。对每条规则，它都将尝试将输入标记树的内容与该规则的`pattern`进行匹配。某个模式必须与输入**完全**匹配才能被选中为匹配项。
 
-If the input matches the pattern, the invocation is replaced by the `expansion`; otherwise, the next rule is tried.  If all rules fail to match, macro expansion fails with an error.
+如果输入与某个模式相匹配，则该调用项将被相应的`expansion`内容所取代；否则，将尝试匹配下条规则。如果所有规则均匹配失败，则宏展开会失败并报错。
 
-The simplest example is of an empty pattern:
+最简单的例子是空模式：
 
-```ignore
+```rust
 macro_rules! four {
     () => {1 + 3};
 }
 ```
 
-This matches if and only if the input is also empty (*i.e.* `four!()`, `four![]` or `four!{}`).
+它将且仅将匹配到空的输入(即`four!()`， `four![]`或`four!{}`)。
 
-Note that the specific grouping tokens you use when you invoke the macro *are not* matched.  That is, you can invoke the above macro as `four![]` and it will still match.  Only the *contents* of the input token tree are considered.
+注意调用所用的分组标记并不需要匹配定义时采用的分组标记。也就是说，你可以通过`four![]`调用上述宏，此调用仍将被视作匹配。只有调用时的输入**内容**才会被纳入匹配考量范围。
 
-Patterns can also contain literal token trees, which must be matched exactly.  This is done by simply writing the token trees normally.  For example, to match the sequence `4 fn ['spang "whammo"] @_@`, you would use:
+模式中也可以包含字面标记树。这些标记树必须被完全匹配。将整个对应标记树在相应位置写下即可。比如，为匹配标记序列`4 fn ['spang "whammo"] @_@`，我们可以使用：
 
 ```ignore
 macro_rules! gibberish {
@@ -49,92 +49,92 @@ macro_rules! gibberish {
 }
 ```
 
-You can use any token tree that you can write.
 
-## Captures
 
-Patterns can also contain captures.  These allow input to be matched based on some general grammar category, with the result captured to a variable which can then be substituted into the output.
+## 捕获
 
-Captures are written as a dollar (`$`) followed by an identifier, a colon (`:`), and finally the kind of capture, which must be one of the following:
+宏模式中还可以包含捕获。这允许输入匹配在某种通用语法基础上进行，并使得结果被捕获进某个变量中。此变量可在输出中被替换使用。Patterns can also contain captures.  These allow input to be matched based on some general grammar category, with the result captured to a variable which can then be substituted into the output.
 
-* `item`: an item, like a function, struct, module, etc.
-* `block`: a block (i.e. a block of statements and/or an expression, surrounded by braces)
-* `stmt`: a statement
-* `pat`: a pattern
-* `expr`: an expression
-* `ty`: a type
-* `ident`: an identifier
-* `path`: a path (e.g. `foo`, `::std::mem::replace`, `transmute::<_, int>`, …)
-* `meta`: a meta item; the things that go inside `#[...]` and `#![...]` attributes
-* `tt`: a single token tree
+捕获由`$`符号紧跟一个标识符(identifier)紧跟一个冒号(`:`)紧跟捕获种类组成。捕获种类须是如下之一：
 
-For example, here is a macro which captures its input as an expression:
+* `item`: 条目，比如函数、结构体、模组等。
+* `block`: 区块(即由花括号包起的一些语句加上/或是一项表达式)。
+* `stmt`: 语句
+* `pat`: 模式
+* `expr`: 表达式
+* `ty`: 类型
+* `ident`: 标识符
+* `path`: 路径 (例如 `foo`, `::std::mem::replace`, `transmute::<_, int>`, …)
+* `meta`: 元条目，即被包含在 `#[...]`及`#![...]`属性内的东西。
+* `tt`: 标记树
 
-```ignore
+举例来说，下列宏将其输入捕获为一个表达式：
+
+```rust
 macro_rules! one_expression {
     ($e:expr) => {...};
 }
 ```
 
-These captures leverage the Rust compiler's parser, ensuring that they are always "correct".  An `expr` capture will *always* capture a complete, valid expression for the version of Rust being compiled.
+此类捕获将使得Rust编译器的语法转义器保证的“准确性”。一个`expr`捕获总是会捕获到一个对当前Rust版本来说完整、有效的表达式。
 
-You can mix literal token trees and captures, within limits (explained below).
+你可以将字面标记树与捕获混合使用，但有些限制(接下来将阐明它们)。
 
-A capture `$name:kind` can be substituted into the expansion by writing `$name`.  For example:
+在扩展过程中，对于某捕获`$name:kind`，我们可以通过在`expansion`中写下`$name`来使用它。比如：
 
-```ignore
+```rust
 macro_rules! times_five {
     ($e:expr) => {5 * $e};
 }
 ```
 
-Much like macro expansion, captures are substituted as complete AST nodes.  This means that no matter what sequence of tokens is captured by `$e`, it will be interpreted as a single, complete expression.
+如同宏扩展本身一样，每一处捕获也都将被替换为一个完整的AST节点。也就是说，在上例中无论`$e`所捕获的是怎样的标记序列，它总会被解读成一个完整的表达式。
 
-You can also have multiple captures in a single pattern:
+在一条模式中也可以出现多次捕获：
 
-```ignore
+```rust
 macro_rules! multiply_add {
     ($a:expr, $b:expr, $c:expr) => {$a * ($b + $c)};
 }
 ```
 
-## Repetitions
+## 重复
 
-Patterns can contain repetitions.  These allow a sequence of tokens to be matched.  These have the general form `$ ( ... ) sep rep`.
+模式中可以包含重复。这使得匹配标记序列成为可能。重复的一般形式为`$ ( ... ) sep rep`.
 
-* `$` is a literal dollar token.
-* `( ... )` is the paren-grouped pattern being repeated.
-* `sep` is an *optional* separator token.  Common examples are `,`, and `;`.
-* `rep` is the *required* repeat control.  Currently, this can be *either* `*` (indicating zero or more repeats) or `+` (indicating one or more repeats).  You cannot write "zero or one" or any other more specific counts or ranges.
+* `$` 是字面标记。
+* `( ... )` 代表了将要被重复匹配的模式，由小括号包围。
+* `sep`是一个可选的分隔标记。常用例子包括`,`和`;`。
+* `rep`是重复控制标记。当前有两种选择，分别是`*` (代表接受0或多次重复)以及`+` (代表1或多次重复)。目前没有办法指定“0或1”或者任何其它更加具体的重复计数或区间。
 
-Repetitions can contain any other valid pattern, including literal token trees, captures, and other repetitions.
+重复中可以包含任意有效模式，包括字面标记树，捕获，以及其它的重复。
 
-Repetitions use the same syntax in the expansion.
+在扩展部分，重复也采用相同的语法。
 
-For example, below is a macro which formats each element as a string.  It matches zero or more comma-separated expressions and expands to an expression that constructs a vector.
+举例来说，下述宏将每一个`element`都通过`format!`转换成字符串。它将匹配0或多个由逗号分隔的表达式，并分别将它们展开成一个`Vec`的`push`语句。
 
 ```rust
 macro_rules! vec_strs {
     (
-        // Start a repetition:
+        // 重复开始：
         $(
-            // Each repeat must contain an expression...
+            // 每次重复必须有一个表达式...
             $element:expr
         )
-        // ...separated by commas...
+        // ...重复之间由“,”分隔...
         ,
-        // ...zero or more times.
+        // ...总共重复0或多次.
         *
     ) => {
-        // Enclose the expansion in a block so that we can use
-        // multiple statements.
+        // 为了能包含多条语句，
+        // 我们将扩展部分包裹在花括号中...
         {
             let mut v = Vec::new();
 
-            // Start a repetition:
+            // 重复开始：
             $(
-                // Each repeat will contain the following statement, with
-                // $element replaced with the corresponding expression.
+                // 每次重复将包含如下元素，其中
+                // “$element”将被替换成其相应的展开...
                 v.push(format!("{}", $element));
             )*
 
@@ -148,3 +148,4 @@ macro_rules! vec_strs {
 #     assert_eq!(&*s, &["1", "a", "true", "3.14159"]);
 # }
 ```
+

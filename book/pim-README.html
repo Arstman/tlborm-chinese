@@ -119,7 +119,7 @@
 <p><strong>注意</strong>：别慌！我们通篇只会涉及到下面这一点点数学。如果想直接看重点，本小节可被安全跳过。</p>
 </blockquote>
 
-<p>如果你不了解的话，所谓“递推(recurrence)关系”是指这样一个序列，其中的每一个值都由先前的一个或多个值决定，并最终由一个或多个初始值完全决定。举例来说，<a href="https://en.wikipedia.org/wiki/Fibonacci_number">Fibonacci数列</a>可被定义为如下关系：</p>
+<p>如果你不了解，所谓“递推(recurrence)关系”是指这样一个序列，其中的每个值都由先前的一个或多个值决定，并最终由一个或多个初始值完全决定。举例来说，<a href="https://en.wikipedia.org/wiki/Fibonacci_number">Fibonacci数列</a>可被定义为如下关系：</p>
 
 <!-- MATH START: $F_n = 0, 1, \ldots, F_n-1 + F_n - 2$ -->
 
@@ -175,9 +175,9 @@
 
 <p>即，序列的前两个数分别为0和1，而第3个则为<em>F<sub>0</sub></em> + <em>F<sub>1</sub></em> = 0 + 1 = 1，第4个为<em>F<sub>1</sub></em> + <em>F<sub>2</sub></em> = 1 + 1 = 2，依此类推。</p>
 
-<p>由于这列值可以永远持续下去，定义一个<code>fibonacci</code>的求值函数将会显得有些困难。显然，你不会想它返回一整列值。我们所真正需要的，是某种具有怠惰求值性质的东西——只在必要的时候才进行计算。</p>
+<p>由于这列值可以永远持续下去，定义一个<code>fibonacci</code>的求值函数略显困难。显然，返回一整列值并不实际。我们真正需要的，应是某种具有怠惰求值性质的东西——只在必要的时候才进行运算求值。</p>
 
-<p>在Rust中这种需求表明，是<code>Iterator</code>上场的时候了。实现迭代器并不十分困难，但比较繁琐：你得自定义一个类型，弄明白该在其中存储什么，然后为它实现<code>Iterator</code> trait。</p>
+<p>在Rust中，这样的需求表明，是<code>Iterator</code>派上用场的时候了。实现迭代器并不十分困难，但比较繁琐：你得自定义一个类型，弄明白该在其中存储什么，然后为它实现<code>Iterator</code> trait。</p>
 
 <p>其实，递推关系足够简单；几乎所有的递推关系都可被抽象出来，变成一小段由宏驱动的代码生成机制。</p>
 
@@ -191,14 +191,14 @@
 
 <span class='kw'>for</span> <span class='ident'>e</span> <span class='kw'>in</span> <span class='ident'>fib</span>.<span class='ident'>take</span>(<span class='number'>10</span>) { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='ident'>e</span>) }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Alet%20fib%20%3D%20recurrence!%5Ba%5Bn%5D%20%3D%200%2C%201%2C%20...%2C%20a%5Bn-1%5D%20%2B%20a%5Bn-2%5D%5D%3B%0A%0Afor%20e%20in%20fib.take(10)%20%7B%20println!(%22%7B%7D%22%2C%20e)%20%7D%0A%7D">Run</a></pre>
 
-<p>以此为基点，我们可以向宏的定义迈出第一步，即便在此时我们尚不了解该宏的展开部分究竟是什么样子。此步骤的用处在于，如果在此处无法明确如何将输入语法转义，那就可能意味着，整个宏的构思需要改变。</p>
+<p>以此为基点，我们可以向宏的定义迈出第一步，即便在此时我们尚不了解该宏的展开部分究竟是什么样子。此步骤的用处在于，如果在此处无法明确如何解析输入语法，那就可能意味着，整个宏的构思需要改变。</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>recurrence</span> {
     ( <span class='ident'>a</span>[<span class='ident'>n</span>] <span class='op'>=</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inits</span>:<span class='ident'>expr</span>),<span class='op'>+</span> , ... , <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>recur</span>:<span class='ident'>expr</span> ) <span class='op'>=&gt;</span> { <span class='comment'>/* ... */</span> };
 }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20recurrence%20%7B%0A%20%20%20%20(%20a%5Bn%5D%20%3D%20%24(%24inits%3Aexpr)%2C%2B%20%2C%20...%20%2C%20%24recur%3Aexpr%20)%20%3D%3E%20%7B%20%2F*%20...%20*%2F%20%7D%3B%0A%7D%0Afn%20main()%20%7B%7D%0A">Run</a></pre>
 
-<p>假装你并不熟悉相应的语法，让我来解释。上述代码块使用<code>macro_rules!</code>系统定义了一个宏，称为<code>recurrence!</code>。此宏仅包含一条转义规则，它规定，此宏必须依次匹配下列项目：</p>
+<p>假装你并不熟悉相应的语法，让我来解释。上述代码块使用<code>macro_rules!</code>系统定义了一个宏，称为<code>recurrence!</code>。此宏仅包含一条解析规则，它规定，此宏必须依次匹配下列项目：</p>
 
 <ul>
 <li>一段字面标记序列，<code>a</code> <code>[</code> <code>n</code> <code>]</code> <code>=</code>；</li>
@@ -493,7 +493,7 @@ for e in fib.take(10) { println!(&quot;{}&quot;, e) }
 <p>我们加入了一个新的捕获<code>sty</code>，它应该是一个类型(type)。</p>
 
 <blockquote>
-<p><strong>附注</strong>：在捕获的冒号之后的部分，可以是几种语法匹配候选项之一；如果你不清楚的话。最常用的包括<code>item</code>，<code>expr</code>和<code>ty</code>。完整的解释可在<a href="mbe-macro-rules.html#captures">宏，彻底解析-<code>macro_rules!</code>-捕获</a>部分找到。</p>
+<p><strong>附注</strong>：在捕获的冒号之后的部分，可以是几种语法匹配候选项之一；如果你不清楚的话。最常用的包括<code>item</code>，<code>expr</code>和<code>ty</code>。完整的解释可在<a href="mbe-macro-rules.html#%E6%8D%95%E8%8E%B7">宏，彻底解析-<code>macro_rules!</code>-捕获</a>部分找到。</p>
 
 <p>还有一件事值得注意：为方便语言的未来发展，对于跟在某些特定的匹配之后的标记，编译器施加了一些限制。这种情况常常在试图匹配至表达式(expression)或语句(statement)时出现：仅允许<code>=&gt;</code>，<code>,</code>和<code>;</code>这些标记之一跟在它们后面。</p>
 
@@ -741,7 +741,7 @@ recurrence.rs:69     let fib = recurrence![a[n]: u64 = 0, 1, ..., a[n-1] + a[n-2
                                                              ^~~
 </code></pre>
 
-<p>这里我们撞上了<code>macro_rules</code>的一处限制。问题出在那第二个逗号上。当在展开过程中遇见它时，编译器无法决定是该将它转义成<code>inits</code>中的又一个表达式，还是说把它转义成<code>...</code>。很遗憾，它不够聪明，没办法意识到<code>...</code>不是一个有效的表达式，所以它选择了放弃。理论上来说，上述代码应该能奏效，但当前它并不能。</p>
+<p>这里我们撞上了<code>macro_rules</code>的一处限制。问题出在那第二个逗号上。当在展开过程中遇见它时，编译器无法决定是该将它解析成<code>inits</code>中的又一个表达式，还是解析成<code>...</code>。很遗憾，它不够聪明，没办法意识到<code>...</code>不是一个有效的表达式，所以它选择了放弃。理论上来说，上述代码应该能奏效，但当前它并不能。</p>
 
 <blockquote>
 <p><strong>附注</strong>：有关宏系统如何解读我们的规则，我之前的确撒了点小谎。通常来说，宏系统确实应当如我前述的那般运作，但在这里它没有。<code>macro_rules</code>的机制，由此看来，是存在一些小毛病的；我们得记得偶尔去做一些调控，好让它我们期许的那般运作。</p>

@@ -179,7 +179,7 @@
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {...};
 }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Amacro_rules!%20one_expression%20%7B%0A%20%20%20%20(%24e%3Aexpr)%20%3D%3E%20%7B...%7D%3B%0A%7D%0A%7D">Run</a></pre>
 
-<p>此类捕获将使得Rust编译器的语法转义器保证的“准确性”。一个<code>expr</code>捕获总是会捕获到一个对当前Rust版本来说完整、有效的表达式。</p>
+<p>Rust编译器的语法转义器将保证捕获的“准确性”。一个<code>expr</code>捕获总是会捕获到一个对当前Rust版本来说完整、有效的表达式。</p>
 
 <p>你可以将字面标记树与捕获混合使用，但有些限制(接下来将阐明它们)。</p>
 

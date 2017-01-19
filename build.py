@@ -6,6 +6,7 @@ BOOK_OUT_PATH = OUT_PATH + '/book'
 STATIC_PATH = 'static'
 RUSTBOOK_OUT_PATH = '_book'
 REDIRECTS = 'redirects.json'
+RUSTBOOK_BIN_PATH = r'C:\Users\asus\Desktop\playground-rs\rustbook\target\release\rustbook.exe'
 
 PUBLISH_BRANCH = 'gh-pages'
 
@@ -87,7 +88,7 @@ def main():
 
 def build():
     msg('Building...')
-    sh('rustbook', 'build', TEXT_PATH)
+    sh(RUSTBOOK_BIN_PATH, 'build', TEXT_PATH)
 
     if os.path.exists(OUT_PATH):
         really_rmtree(OUT_PATH)

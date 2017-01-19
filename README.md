@@ -2,7 +2,7 @@
 
 **注意**: 本项目尚在建设过程中。
 
-查看正式版本([英文原版](https://danielkeep.github.io/tlborm/)).
+查看渲染后的[正式版本](https://daseinphaos.github.io/tlborm-chinese/)([英文原版](https://danielkeep.github.io/tlborm/)).
 
 本书试图提炼出Rust社区对Rust宏的知识集锦。因此，我们欢迎社区成员进行内容添补（通过pull）或提出需求（通过issue）。
 

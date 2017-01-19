@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <title>Non-Identifier Identifiers</title>
+    <title>不是标识符的标识符</title>
 
     <link rel="stylesheet" type="text/css" href="rustbook.css">
 
@@ -28,25 +28,25 @@
                     </button>
                 </div>
 <div id='toc' class='mobile-hidden'>
-<ul class='chapter'>
+<ol class='chapter'>
 <li><a  href='README.html'><b>1.</b> Introduction</a>
 </li>
 <li><a  href='mbe-README.html'><b>2.</b> Macros, A Methodical Introduction</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-README.html'><b>2.1.</b> Syntax Extensions</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-source-analysis.html'><b>2.1.1.</b> Source Analysis</a>
 </li>
 <li><a  href='mbe-syn-macros-in-the-ast.html'><b>2.1.2.</b> Macros in the AST</a>
 </li>
 <li><a  href='mbe-syn-expansion.html'><b>2.1.3.</b> Expansion</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='mbe-macro-rules.html'><b>2.2.</b> macro_rules!</a>
 </li>
 <li><a  href='mbe-min-README.html'><b>2.3.</b> Minutiae</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-min-captures-and-expansion-redux.html'><b>2.3.1.</b> Captures and Expansion Redux</a>
 </li>
 <li><a  href='mbe-min-hygiene.html'><b>2.3.2.</b> Hygiene</a>
@@ -59,14 +59,14 @@
 </li>
 <li><a  href='mbe-min-import-export.html'><b>2.3.6.</b> Import/Export</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='pim-README.html'><b>3.</b> Macros, A Practical Introduction</a>
 </li>
 <li><a  href='pat-README.html'><b>4.</b> Patterns</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
 </li>
 <li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
@@ -85,49 +85,36 @@
 </li>
 <li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
 </li>
 <li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
 </li>
 <li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </div>
 <div id='page-wrapper'>
 <div id='page'>
 
 
-    <h1 class="title">Non-Identifier Identifiers</h1>
-    <p>There are two tokens which you are likely to run into eventually that <em>look</em> like identifiers, but aren&#39;t.  Except when they are.</p>
+    <h1 class="title">不是标识符的标识符</h1>
+    <p>有两个标记，当你撞见时，很有可能最终认为它们是标识符，但实际上它们不是。然而正是这些标记，在某些情况下又的确是标识符。</p>
 
-<p>First is <code>self</code>.  This is <em>very definitely</em> a keyword.  However, it also happens to fit the definition of an identifier.  In regular Rust code, there&#39;s no way for <code>self</code> to be interpreted as an identifier, but it <em>can</em> happen with macros:</p>
+<p>第一个是<code>self</code>。毫无疑问，它是一个关键词。在一般的Rust代码中，不可能出现把它解读成标识符的情况；但在宏中这种情况则有可能发生：</p>
 
-<span class='rusttest'>macro_rules! what_is {
-    (self) =&gt; {&quot;the keyword `self`&quot;};
-    ($i:ident) =&gt; {concat!(&quot;the identifier `&quot;, stringify!($i), &quot;`&quot;)};
-}
-
-macro_rules! call_with_ident {
-    ($c:ident($i:ident)) =&gt; {$c!($i)};
-}
-
-fn main() {
-    println!(&quot;{}&quot;, what_is!(self));
-    println!(&quot;{}&quot;, call_with_ident!(what_is(self)));
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>what_is</span> {
     (<span class='self'>self</span>) <span class='op'>=&gt;</span> {<span class='string'>&quot;the keyword `self`&quot;</span>};
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>:<span class='ident'>ident</span>) <span class='op'>=&gt;</span> {<span class='macro'>concat</span><span class='macro'>!</span>(<span class='string'>&quot;the identifier `&quot;</span>, <span class='macro'>stringify</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>), <span class='string'>&quot;`&quot;</span>)};
@@ -140,34 +127,17 @@ fn main() {
 <span class='kw'>fn</span> <span class='ident'>main</span>() {
     <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='macro'>what_is</span><span class='macro'>!</span>(<span class='self'>self</span>));
     <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='macro'>call_with_ident</span><span class='macro'>!</span>(<span class='ident'>what_is</span>(<span class='self'>self</span>)));
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20what_is%20%7B%0A%20%20%20%20(self)%20%3D%3E%20%7B%22the%20keyword%20%60self%60%22%7D%3B%0A%20%20%20%20(%24i%3Aident)%20%3D%3E%20%7Bconcat!(%22the%20identifier%20%60%22%2C%20stringify!(%24i)%2C%20%22%60%22)%7D%3B%0A%7D%0A%0Amacro_rules!%20call_with_ident%20%7B%0A%20%20%20%20(%24c%3Aident(%24i%3Aident))%20%3D%3E%20%7B%24c!(%24i)%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20what_is!(self))%3B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20call_with_ident!(what_is(self)))%3B%0A%7D%0A">Run</a></pre>
 
-<p>The above outputs:</p>
+<p>上述代码的输出将是：</p>
 
 <pre><code class="language-text">the keyword `self`
 the keyword `self`
 </code></pre>
 
-<p>But that makes no sense; <code>call_with_ident!</code> required an identifier, matched one, and substituted it!  So <code>self</code> is both a keyword and not a keyword at the same time.  You might wonder how this is in any way important.  Take this example:</p>
+<p>但这没有任何道理！<code>call_with_ident!</code>要求一个标识符，而且它的确匹配到了，还成功替换了！所以，<code>self</code>同时是一个关键词，但又不是。你可能会想，好吧，但这鬼东西哪里重要呢？看看这个：</p>
 
-<span class='rusttest'>macro_rules! make_mutable {
-    ($i:ident) =&gt; {let mut $i = $i;};
-}
-
-struct Dummy(i32);
-
-impl Dummy {
-    fn double(self) -&gt; Dummy {
-        make_mutable!(self);
-        self.0 *= 2;
-        self
-    }
-}
-
-fn main() {
-    println!(&quot;{:?}&quot;, Dummy(4).double().0);
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>make_mutable</span> {
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>:<span class='ident'>ident</span>) <span class='op'>=&gt;</span> {<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span> <span class='op'>=</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>;};
 }
@@ -180,35 +150,18 @@ fn main() {
         <span class='self'>self</span>.<span class='number'>0</span> <span class='op'>*=</span> <span class='number'>2</span>;
         <span class='self'>self</span>
     }
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20make_mutable%20%7B%0A%20%20%20%20(%24i%3Aident)%20%3D%3E%20%7Blet%20mut%20%24i%20%3D%20%24i%3B%7D%3B%0A%7D%0A%0Astruct%20Dummy(i32)%3B%0A%0Aimpl%20Dummy%20%7B%0A%20%20%20%20fn%20double(self)%20-%3E%20Dummy%20%7B%0A%20%20%20%20%20%20%20%20make_mutable!(self)%3B%0A%20%20%20%20%20%20%20%20self.0%20*%3D%202%3B%0A%20%20%20%20%20%20%20%20self%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%22%7B%3A%3F%7D%22%2C%20Dummy(4).double().0)%3B%0A%7D%0A">Run</a></pre>
 
-<p>This fails to compile with:</p>
+<p>编译它会失败，并报错：</p>
 
 <pre><code class="language-text">&lt;anon&gt;:2:28: 2:30 error: expected identifier, found keyword `self`
 &lt;anon&gt;:2     ($i:ident) =&gt; {let mut $i = $i;};
                                     ^~
 </code></pre>
 
-<p>So the macro will happily match <code>self</code> as an identifier, allowing you to use it in cases where you can&#39;t actually use it.  But, fine; it somehow remembers that <code>self</code> is a keyword even when it&#39;s an identifier, so you <em>should</em> be able to do this, right?</p>
+<p>所以说，宏在匹配的时候，会欣然把<code>self</code>当作标识符接受，进而允许你把<code>self</code>带到那些实际上没办法使用的情况中去。但是，也成吧，既然得同时记住<code>self</code>既是关键词又是标识符，那下面这个**讲道理**应该可行，对吧？</p>
 
-<span class='rusttest'>macro_rules! make_self_mutable {
-    ($i:ident) =&gt; {let mut $i = self;};
-}
-
-struct Dummy(i32);
-
-impl Dummy {
-    fn double(self) -&gt; Dummy {
-        make_self_mutable!(mut_self);
-        mut_self.0 *= 2;
-        mut_self
-    }
-}
-
-fn main() {
-    println!(&quot;{:?}&quot;, Dummy(4).double().0);
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>make_self_mutable</span> {
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>:<span class='ident'>ident</span>) <span class='op'>=&gt;</span> {<span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span> <span class='op'>=</span> <span class='self'>self</span>;};
 }
@@ -221,38 +174,18 @@ fn main() {
         <span class='ident'>mut_self</span>.<span class='number'>0</span> <span class='op'>*=</span> <span class='number'>2</span>;
         <span class='ident'>mut_self</span>
     }
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20make_self_mutable%20%7B%0A%20%20%20%20(%24i%3Aident)%20%3D%3E%20%7Blet%20mut%20%24i%20%3D%20self%3B%7D%3B%0A%7D%0A%0Astruct%20Dummy(i32)%3B%0A%0Aimpl%20Dummy%20%7B%0A%20%20%20%20fn%20double(self)%20-%3E%20Dummy%20%7B%0A%20%20%20%20%20%20%20%20make_self_mutable!(mut_self)%3B%0A%20%20%20%20%20%20%20%20mut_self.0%20*%3D%202%3B%0A%20%20%20%20%20%20%20%20mut_self%0A%20%20%20%20%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%22%7B%3A%3F%7D%22%2C%20Dummy(4).double().0)%3B%0A%7D%0A">Run</a></pre>
 
-<p>This fails with:</p>
+<p>实际上也不行，编译错误变成：</p>
 
 <pre><code class="language-text">&lt;anon&gt;:2:33: 2:37 error: `self` is not available in a static method. Maybe a `self` argument is missing? [E0424]
 &lt;anon&gt;:2     ($i:ident) =&gt; {let mut $i = self;};
                                          ^~~~
 </code></pre>
 
-<p><em>That</em> doesn&#39;t make any sense, either.  It&#39;s <em>not</em> in a static method.  It&#39;s almost like it&#39;s complaining that the <code>self</code> it&#39;s trying to use isn&#39;t the <em>same</em> <code>self</code>... as though the <code>self</code> keyword has hygiene, like an... identifier.</p>
+<p>这同样也没有任何道理。它明明不在静态方法里。这简直就像是在抱怨说，它看见的两个<code>self</code>不是同一个<code>self</code>... 就搞得像关键词<code>self</code>也有卫生性一样，类似...标识符。</p>
 
-<span class='rusttest'>macro_rules! double_method {
-    ($body:expr) =&gt; {
-        fn double(mut self) -&gt; Dummy {
-            $body
-        }
-    };
-}
-
-struct Dummy(i32);
-
-impl Dummy {
-    double_method! {{
-        self.0 *= 2;
-        self
-    }}
-}
-
-fn main() {
-    println!(&quot;{:?}&quot;, Dummy(4).double().0);
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>double_method</span> {
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>body</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {
         <span class='kw'>fn</span> <span class='ident'>double</span>(<span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Dummy</span> {
@@ -268,31 +201,11 @@ fn main() {
         <span class='self'>self</span>.<span class='number'>0</span> <span class='op'>*=</span> <span class='number'>2</span>;
         <span class='self'>self</span>
     }}
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20double_method%20%7B%0A%20%20%20%20(%24body%3Aexpr)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20fn%20double(mut%20self)%20-%3E%20Dummy%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%24body%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%7D%0A%0Astruct%20Dummy(i32)%3B%0A%0Aimpl%20Dummy%20%7B%0A%20%20%20%20double_method!%20%7B%7B%0A%20%20%20%20%20%20%20%20self.0%20*%3D%202%3B%0A%20%20%20%20%20%20%20%20self%0A%20%20%20%20%7D%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%22%7B%3A%3F%7D%22%2C%20Dummy(4).double().0)%3B%0A%7D%0A">Run</a></pre>
 
-<p>Same error.  What about...</p>
+<p>还是报同样的错。那这个如何：</p>
 
-<span class='rusttest'>macro_rules! double_method {
-    ($self_:ident, $body:expr) =&gt; {
-        fn double(mut $self_) -&gt; Dummy {
-            $body
-        }
-    };
-}
-
-struct Dummy(i32);
-
-impl Dummy {
-    double_method! {self, {
-        self.0 *= 2;
-        self
-    }}
-}
-
-fn main() {
-    println!(&quot;{:?}&quot;, Dummy(4).double().0);
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>double_method</span> {
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>self_</span>:<span class='ident'>ident</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>body</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {
         <span class='kw'>fn</span> <span class='ident'>double</span>(<span class='kw-2'>mut</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>self_</span>) <span class='op'>-&gt;</span> <span class='ident'>Dummy</span> {
@@ -308,28 +221,11 @@ fn main() {
         <span class='self'>self</span>.<span class='number'>0</span> <span class='op'>*=</span> <span class='number'>2</span>;
         <span class='self'>self</span>
     }}
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20double_method%20%7B%0A%20%20%20%20(%24self_%3Aident%2C%20%24body%3Aexpr)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20fn%20double(mut%20%24self_)%20-%3E%20Dummy%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%24body%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%7D%0A%0Astruct%20Dummy(i32)%3B%0A%0Aimpl%20Dummy%20%7B%0A%20%20%20%20double_method!%20%7Bself%2C%20%7B%0A%20%20%20%20%20%20%20%20self.0%20*%3D%202%3B%0A%20%20%20%20%20%20%20%20self%0A%20%20%20%20%7D%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%22%7B%3A%3F%7D%22%2C%20Dummy(4).double().0)%3B%0A%7D%0A">Run</a></pre>
 
-<p>At last, <em>this works</em>.  So <code>self</code> is both a keyword <em>and</em> an identifier when it feels like it.  Surely this works for other, similar constructs, right?</p>
+<p>终于管用了。所以说，<code>self</code>是关键词，但当它想的时候，它**同时**也能是一个标识符。那么，相同的道理对类似的其它东西有用吗？</p>
 
-<span class='rusttest'>macro_rules! double_method {
-    ($self_:ident, $body:expr) =&gt; {
-        fn double($self_) -&gt; Dummy {
-            $body
-        }
-    };
-}
-
-struct Dummy(i32);
-
-impl Dummy {
-    double_method! {_, 0}
-}
-
-fn main() {
-    println!(&quot;{:?}&quot;, Dummy(4).double().0);
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>double_method</span> {
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>self_</span>:<span class='ident'>ident</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>body</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {
         <span class='kw'>fn</span> <span class='ident'>double</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>self_</span>) <span class='op'>-&gt;</span> <span class='ident'>Dummy</span> {
@@ -342,24 +238,20 @@ fn main() {
 
 <span class='kw'>impl</span> <span class='ident'>Dummy</span> {
     <span class='macro'>double_method</span><span class='macro'>!</span> {_, <span class='number'>0</span>}
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20double_method%20%7B%0A%20%20%20%20(%24self_%3Aident%2C%20%24body%3Aexpr)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20fn%20double(%24self_)%20-%3E%20Dummy%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%24body%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%7D%0A%0Astruct%20Dummy(i32)%3B%0A%0Aimpl%20Dummy%20%7B%0A%20%20%20%20double_method!%20%7B_%2C%200%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%22%7B%3A%3F%7D%22%2C%20Dummy(4).double().0)%3B%0A%7D%0A">Run</a></pre>
 
 <pre><code class="language-text">&lt;anon&gt;:12:21: 12:22 error: expected ident, found _
 &lt;anon&gt;:12     double_method! {_, 0}
                               ^
 </code></pre>
 
-<p>No, of course not.  <code>_</code> is a keyword that is valid in patterns and expressions, but somehow <em>isn&#39;t</em> an identifier like the keyword <code>self</code> is, despite matching the definition of an identifier just the same.</p>
+<p>哈，当然不行。 <code>_</code>是一个关键词，在模式以及表达式中有效，但不知为何，并不像<code>self</code>，它并不是一个标识符；即便它——如同<code>self</code>——从定义上讲符合标识符的特性。</p>
 
-<p>You might think you can get around this by using <code>$self_:pat</code> instead; that way, <code>_</code> will match!  Except, no, because <code>self</code> isn&#39;t a pattern.  Joy.</p>
+<p>你可能觉得，既然<code>_</code>在模式中有效，那换成<code>$self_:pat</code>是不是就能一石二鸟了呢？可惜了，也不行，因为<code>self</code>不是一个有效的模式。真棒。</p>
 
-<p>The only work around for this (in cases where you want to accept some combination of these tokens) is to use a <code>tt</code> matcher instead.</p>
+<p>如果你真想同时匹配这两个标记，仅有的办法是换用<code>tt</code>来匹配。</p>
 
-    <script type="text/javascript">
-        window.playgroundUrl = "https://play.rust-lang.org";
-    </script>
     <script src='rustbook.js'></script>
-<script src='playpen.js'></script>
 </div></div>
 
 

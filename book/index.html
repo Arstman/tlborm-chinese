@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <title>The Little Book of Rust Macros</title>
+    <title>Rust宏小册 中文版</title>
 
     <link rel="stylesheet" type="text/css" href="rustbook.css">
 
@@ -28,25 +28,25 @@
                     </button>
                 </div>
 <div id='toc' class='mobile-hidden'>
-<ul class='chapter'>
+<ol class='chapter'>
 <li><a class='active' href='README.html'><b>1.</b> Introduction</a>
 </li>
 <li><a  href='mbe-README.html'><b>2.</b> Macros, A Methodical Introduction</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-README.html'><b>2.1.</b> Syntax Extensions</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-source-analysis.html'><b>2.1.1.</b> Source Analysis</a>
 </li>
 <li><a  href='mbe-syn-macros-in-the-ast.html'><b>2.1.2.</b> Macros in the AST</a>
 </li>
 <li><a  href='mbe-syn-expansion.html'><b>2.1.3.</b> Expansion</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='mbe-macro-rules.html'><b>2.2.</b> macro_rules!</a>
 </li>
 <li><a  href='mbe-min-README.html'><b>2.3.</b> Minutiae</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-min-captures-and-expansion-redux.html'><b>2.3.1.</b> Captures and Expansion Redux</a>
 </li>
 <li><a  href='mbe-min-hygiene.html'><b>2.3.2.</b> Hygiene</a>
@@ -59,14 +59,14 @@
 </li>
 <li><a  href='mbe-min-import-export.html'><b>2.3.6.</b> Import/Export</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='pim-README.html'><b>3.</b> Macros, A Practical Introduction</a>
 </li>
 <li><a  href='pat-README.html'><b>4.</b> Patterns</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
 </li>
 <li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
@@ -85,48 +85,44 @@
 </li>
 <li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
 </li>
 <li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
 </li>
 <li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </div>
 <div id='page-wrapper'>
 <div id='page'>
 
 
-    <h1 class="title">The Little Book of Rust Macros</h1>
-    <p><strong>Note</strong>: this is a work in progress.</p>
+    <h1 class="title">Rust宏小册 中文版</h1>
+    <p><strong>注意</strong>: 本作品尚在建设过程中。</p>
 
-<p>This book is an attempt to distil the Rust community&#39;s collective knowledge of Rust macros.  As such, both additions (in the form of pull requests) and requests (in the form of issues) are welcome.</p>
+<p>本书试图提炼出一份Rust社区对Rust宏知识的集锦。因此，我们欢迎社区成员进行内容添补（通过pull）或提出需求（通过issue）。</p>
 
-<p>If you wish to contribute, see <a href="https://github.com/DanielKeep/tlborm/">the GitHub repository</a>.</p>
+<p>本文档为<a href="https://danielkeep.github.io/tlborm/">The Little Book of Rust Macros</a>的中文翻译。如果希望为原文作出贡献，请移步至<a href="https://github.com/DanielKeep/tlborm/">原版的repository</a>。中文版的repo<a href="https://github.com/DaseinPhaos/tlborm">在这里</a>。</p>
 
-<h2 id='thanks' class='section-header'><a href='#thanks'>Thanks</a></h2>
-<p>Thanks to the following for suggestions and corrections: IcyFoxy, Rym, TheMicroWorm, Yurume, akavel, cmr, eddyb, ogham, and snake_case.</p>
+<h2 id='致谢' class='section-header'><a href='#致谢'>致谢</a></h2>
+<p>感谢下列成员作出的建议及修正: IcyFoxy, Rym, TheMicroWorm, Yurume, akavel, cmr, eddyb, ogham, and snake_case.</p>
 
-<h2 id='license' class='section-header'><a href='#license'>License</a></h2>
-<p>This work is licensed under both the <a href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a> and the <a href="http://opensource.org/licenses/MIT">MIT license</a>.</p>
+<h2 id='许可证' class='section-header'><a href='#许可证'>许可证</a></h2>
+<p>本作品同时采用 <a href="http://creativecommons.org/licenses/by-sa/4.0/">知识共享署名 - 相同方式共享 4.0 国际许可协议 </a> 以及 <a href="http://opensource.org/licenses/MIT">MIT license</a>.</p>
 
-    <script type="text/javascript">
-        window.playgroundUrl = "https://play.rust-lang.org";
-    </script>
     <script src='rustbook.js'></script>
-<script src='playpen.js'></script>
 </div></div>
 
 

@@ -28,25 +28,25 @@
                     </button>
                 </div>
 <div id='toc' class='mobile-hidden'>
-<ul class='chapter'>
+<ol class='chapter'>
 <li><a  href='README.html'><b>1.</b> Introduction</a>
 </li>
 <li><a  href='mbe-README.html'><b>2.</b> Macros, A Methodical Introduction</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-README.html'><b>2.1.</b> Syntax Extensions</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-source-analysis.html'><b>2.1.1.</b> Source Analysis</a>
 </li>
 <li><a  href='mbe-syn-macros-in-the-ast.html'><b>2.1.2.</b> Macros in the AST</a>
 </li>
 <li><a  href='mbe-syn-expansion.html'><b>2.1.3.</b> Expansion</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a class='active' href='mbe-macro-rules.html'><b>2.2.</b> macro_rules!</a>
 </li>
 <li><a  href='mbe-min-README.html'><b>2.3.</b> Minutiae</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-min-captures-and-expansion-redux.html'><b>2.3.1.</b> Captures and Expansion Redux</a>
 </li>
 <li><a  href='mbe-min-hygiene.html'><b>2.3.2.</b> Hygiene</a>
@@ -59,14 +59,14 @@
 </li>
 <li><a  href='mbe-min-import-export.html'><b>2.3.6.</b> Import/Export</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='pim-README.html'><b>3.</b> Macros, A Practical Introduction</a>
 </li>
 <li><a  href='pat-README.html'><b>4.</b> Patterns</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
 </li>
 <li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
@@ -85,235 +85,167 @@
 </li>
 <li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
 </li>
 <li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
 </li>
 <li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </div>
 <div id='page-wrapper'>
 <div id='page'>
 
 
     <h1 class="title">macro_rules!</h1>
-    <p>With all that in mind, we can introduce <code>macro_rules!</code> itself.  As noted previously, <code>macro_rules!</code> is <em>itself</em> a syntax extension, meaning it is <em>technically</em> not part of the Rust syntax.  It uses the following form:</p>
+    <p>有了这些知识，我们终于可以引入<code>macro_rules!</code> 了。 如前所述，<code>macro_rules!</code>本身就是一个语法扩展，也就是说它并不是Rust语法的一部分。它的形式如下：</p>
 
-<span class='rusttest'>fn main() {
-    macro_rules! $name {
-        $rule0 ;
-        $rule1 ;
-        // …
-        $ruleN ;
-    }
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span> {
     <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>rule0</span> ;
     <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>rule1</span> ;
     <span class='comment'>// …</span>
     <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>ruleN</span> ;
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Amacro_rules!%20%24name%20%7B%0A%20%20%20%20%24rule0%20%3B%0A%20%20%20%20%24rule1%20%3B%0A%20%20%20%20%2F%2F%20%E2%80%A6%0A%20%20%20%20%24ruleN%20%3B%0A%7D%0A%7D">Run</a></pre>
 
-<p>There must be <em>at least</em> one rule, and you can omit the semicolon after the last rule.</p>
+<p>至少得有一条规则，最后一条规则后面的分号可被省略。</p>
 
-<p>Each &quot;<code>rule</code>&quot; looks like so:</p>
+<p>每条“规则”(<code>rule</code>)都形如：</p>
 
-<span class='rusttest'>fn main() {
-        ($pattern) =&gt; {$expansion}
-}</span><pre class='rust rust-example-rendered'>
-    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>pattern</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>expansion</span>}</pre>
+<pre class='rust rust-example-rendered'>
+    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>pattern</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>expansion</span>}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0A%20%20%20%20(%24pattern)%20%3D%3E%20%7B%24expansion%7D%0A%7D">Run</a></pre>
 
-<p>Actually, the parens and braces can be any kind of group, but parens around the pattern and braces around the expansion are somewhat conventional.</p>
+<p>实际上，分组符号可以是任意一种，选用这种(<code>pattern</code>外小括号、<code>expansion</code>外花括号)只是出于传统。</p>
 
-<p>If you are wondering, the <code>macro_rules!</code> invocation expands to... <em>nothing</em>.  At least, nothing that appears in the AST; rather, it manipulates compiler-internal structures to register the macro.  As such, you can <em>technically</em> use <code>macro_rules!</code> in any position where an empty expansion is valid.</p>
+<p>如果你好奇的话，<code>macro_rules!</code>的调用将被展开为空。至少可以说，在AST中它被展开为空。它所影响的是编译器内部的结构，以将该宏注册进系统中去。因此，技术上讲你可以在任何一个空展开合法的位置插入<code>macro_rules!</code>的调用。</p>
 
-<h2 id='matching' class='section-header'><a href='#matching'>Matching</a></h2>
-<p>When a macro is invoked, the <code>macro_rules!</code> interpreter goes through the rules one by one, in lexical order.  For each rule, it tries to match the contents of the input token tree against that rule&#39;s <code>pattern</code>.  A pattern must match the <em>entirety</em> of the input to be considered a match.</p>
+<h2 id='匹配' class='section-header'><a href='#匹配'>匹配</a></h2>
+<p>当一个宏被调用时，对应的<code>macro_rules</code>解释器将一一依序检查规则。对每条规则，它都将尝试将输入标记树的内容与该规则的<code>pattern</code>进行匹配。某个模式必须与输入**完全**匹配才能被选中为匹配项。</p>
 
-<p>If the input matches the pattern, the invocation is replaced by the <code>expansion</code>; otherwise, the next rule is tried.  If all rules fail to match, macro expansion fails with an error.</p>
+<p>如果输入与某个模式相匹配，则该调用项将被相应的<code>expansion</code>内容所取代；否则，将尝试匹配下条规则。如果所有规则均匹配失败，则宏展开会失败并报错。</p>
 
-<p>The simplest example is of an empty pattern:</p>
+<p>最简单的例子是空模式：</p>
 
-<span class='rusttest'>fn main() {
-    macro_rules! four {
-        () =&gt; {1 + 3};
-    }
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>four</span> {
     () <span class='op'>=&gt;</span> {<span class='number'>1</span> <span class='op'>+</span> <span class='number'>3</span>};
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Amacro_rules!%20four%20%7B%0A%20%20%20%20()%20%3D%3E%20%7B1%20%2B%203%7D%3B%0A%7D%0A%7D">Run</a></pre>
 
-<p>This matches if and only if the input is also empty (<em>i.e.</em> <code>four!()</code>, <code>four![]</code> or <code>four!{}</code>).</p>
+<p>它将且仅将匹配到空的输入(即<code>four!()</code>， <code>four![]</code>或<code>four!{}</code>)。</p>
 
-<p>Note that the specific grouping tokens you use when you invoke the macro <em>are not</em> matched.  That is, you can invoke the above macro as <code>four![]</code> and it will still match.  Only the <em>contents</em> of the input token tree are considered.</p>
+<p>注意调用所用的分组标记并不需要匹配定义时采用的分组标记。也就是说，你可以通过<code>four![]</code>调用上述宏，此调用仍将被视作匹配。只有调用时的输入**内容**才会被纳入匹配考量范围。</p>
 
-<p>Patterns can also contain literal token trees, which must be matched exactly.  This is done by simply writing the token trees normally.  For example, to match the sequence <code>4 fn [&#39;spang &quot;whammo&quot;] @_@</code>, you would use:</p>
+<p>模式中也可以包含字面标记树。这些标记树必须被完全匹配。将整个对应标记树在相应位置写下即可。比如，为匹配标记序列<code>4 fn [&#39;spang &quot;whammo&quot;] @_@</code>，我们可以使用：</p>
 
-<span class='rusttest'>fn main() {
-    macro_rules! gibberish {
-        (4 fn [&#39;spang &quot;whammo&quot;] @_@) =&gt; {...};
-    }
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>gibberish</span> {
-    (<span class='number'>4</span> <span class='kw'>fn</span> [<span class='lifetime'>&#39;spang</span> <span class='string'>&quot;whammo&quot;</span>] <span class='kw-2'>@</span>_<span class='kw-2'>@</span>) <span class='op'>=&gt;</span> {...};
-}</pre>
+    (<span class='number'>4</span> <span class='kw'>fn</span> [<span class='lifetime'>&#39;spang</span> <span class='string'>&quot;whammo&quot;</span>] @_@) <span class='op'>=&gt;</span> {...};
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Amacro_rules!%20gibberish%20%7B%0A%20%20%20%20(4%20fn%20%5B'spang%20%22whammo%22%5D%20%40_%40)%20%3D%3E%20%7B...%7D%3B%0A%7D%0A%7D">Run</a></pre>
 
-<p>You can use any token tree that you can write.</p>
+<h2 id='捕获' class='section-header'><a href='#捕获'>捕获</a></h2>
+<p>宏模式中还可以包含捕获。这允许输入匹配在某种通用语法基础上进行，并使得结果被捕获进某个变量中。此变量可在输出中被替换使用。Patterns can also contain captures.  These allow input to be matched based on some general grammar category, with the result captured to a variable which can then be substituted into the output.</p>
 
-<h2 id='captures' class='section-header'><a href='#captures'>Captures</a></h2>
-<p>Patterns can also contain captures.  These allow input to be matched based on some general grammar category, with the result captured to a variable which can then be substituted into the output.</p>
-
-<p>Captures are written as a dollar (<code>$</code>) followed by an identifier, a colon (<code>:</code>), and finally the kind of capture, which must be one of the following:</p>
+<p>捕获由<code>$</code>符号紧跟一个标识符(identifier)紧跟一个冒号(<code>:</code>)紧跟捕获种类组成。捕获种类须是如下之一：</p>
 
 <ul>
-<li><code>item</code>: an item, like a function, struct, module, etc.</li>
-<li><code>block</code>: a block (i.e. a block of statements and/or an expression, surrounded by braces)</li>
-<li><code>stmt</code>: a statement</li>
-<li><code>pat</code>: a pattern</li>
-<li><code>expr</code>: an expression</li>
-<li><code>ty</code>: a type</li>
-<li><code>ident</code>: an identifier</li>
-<li><code>path</code>: a path (e.g. <code>foo</code>, <code>::std::mem::replace</code>, <code>transmute::&lt;_, int&gt;</code>, …)</li>
-<li><code>meta</code>: a meta item; the things that go inside <code>#[...]</code> and <code>#![...]</code> attributes</li>
-<li><code>tt</code>: a single token tree</li>
+<li><code>item</code>: 条目，比如函数、结构体、模组等。</li>
+<li><code>block</code>: 区块(即由花括号包起的一些语句加上/或是一项表达式)。</li>
+<li><code>stmt</code>: 语句</li>
+<li><code>pat</code>: 模式</li>
+<li><code>expr</code>: 表达式</li>
+<li><code>ty</code>: 类型</li>
+<li><code>ident</code>: 标识符</li>
+<li><code>path</code>: 路径 (例如 <code>foo</code>, <code>::std::mem::replace</code>, <code>transmute::&lt;_, int&gt;</code>, …)</li>
+<li><code>meta</code>: 元条目，即被包含在 <code>#[...]</code>及<code>#![...]</code>属性内的东西。</li>
+<li><code>tt</code>: 标记树</li>
 </ul>
 
-<p>For example, here is a macro which captures its input as an expression:</p>
+<p>举例来说，下列宏将其输入捕获为一个表达式：</p>
 
-<span class='rusttest'>fn main() {
-    macro_rules! one_expression {
-        ($e:expr) =&gt; {...};
-    }
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>one_expression</span> {
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {...};
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Amacro_rules!%20one_expression%20%7B%0A%20%20%20%20(%24e%3Aexpr)%20%3D%3E%20%7B...%7D%3B%0A%7D%0A%7D">Run</a></pre>
 
-<p>These captures leverage the Rust compiler&#39;s parser, ensuring that they are always &quot;correct&quot;.  An <code>expr</code> capture will <em>always</em> capture a complete, valid expression for the version of Rust being compiled.</p>
+<p>此类捕获将使得Rust编译器的语法转义器保证的“准确性”。一个<code>expr</code>捕获总是会捕获到一个对当前Rust版本来说完整、有效的表达式。</p>
 
-<p>You can mix literal token trees and captures, within limits (explained below).</p>
+<p>你可以将字面标记树与捕获混合使用，但有些限制(接下来将阐明它们)。</p>
 
-<p>A capture <code>$name:kind</code> can be substituted into the expansion by writing <code>$name</code>.  For example:</p>
+<p>在扩展过程中，对于某捕获<code>$name:kind</code>，我们可以通过在<code>expansion</code>中写下<code>$name</code>来使用它。比如：</p>
 
-<span class='rusttest'>fn main() {
-    macro_rules! times_five {
-        ($e:expr) =&gt; {5 * $e};
-    }
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>times_five</span> {
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {<span class='number'>5</span> <span class='op'>*</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>};
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Amacro_rules!%20times_five%20%7B%0A%20%20%20%20(%24e%3Aexpr)%20%3D%3E%20%7B5%20*%20%24e%7D%3B%0A%7D%0A%7D">Run</a></pre>
 
-<p>Much like macro expansion, captures are substituted as complete AST nodes.  This means that no matter what sequence of tokens is captured by <code>$e</code>, it will be interpreted as a single, complete expression.</p>
+<p>如同宏扩展本身一样，每一处捕获也都将被替换为一个完整的AST节点。也就是说，在上例中无论<code>$e</code>所捕获的是怎样的标记序列，它总会被解读成一个完整的表达式。</p>
 
-<p>You can also have multiple captures in a single pattern:</p>
+<p>在一条模式中也可以出现多次捕获：</p>
 
-<span class='rusttest'>fn main() {
-    macro_rules! multiply_add {
-        ($a:expr, $b:expr, $c:expr) =&gt; {$a * ($b + $c)};
-    }
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>multiply_add</span> {
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>b</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>c</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span> <span class='op'>*</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>b</span> <span class='op'>+</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>c</span>)};
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Amacro_rules!%20multiply_add%20%7B%0A%20%20%20%20(%24a%3Aexpr%2C%20%24b%3Aexpr%2C%20%24c%3Aexpr)%20%3D%3E%20%7B%24a%20*%20(%24b%20%2B%20%24c)%7D%3B%0A%7D%0A%7D">Run</a></pre>
 
-<h2 id='repetitions' class='section-header'><a href='#repetitions'>Repetitions</a></h2>
-<p>Patterns can contain repetitions.  These allow a sequence of tokens to be matched.  These have the general form <code>$ ( ... ) sep rep</code>.</p>
+<h2 id='重复' class='section-header'><a href='#重复'>重复</a></h2>
+<p>模式中可以包含重复。这使得匹配标记序列成为可能。重复的一般形式为<code>$ ( ... ) sep rep</code>.</p>
 
 <ul>
-<li><code>$</code> is a literal dollar token.</li>
-<li><code>( ... )</code> is the paren-grouped pattern being repeated.</li>
-<li><code>sep</code> is an <em>optional</em> separator token.  Common examples are <code>,</code>, and <code>;</code>.</li>
-<li><code>rep</code> is the <em>required</em> repeat control.  Currently, this can be <em>either</em> <code>*</code> (indicating zero or more repeats) or <code>+</code> (indicating one or more repeats).  You cannot write &quot;zero or one&quot; or any other more specific counts or ranges.</li>
+<li><code>$</code> 是字面标记。</li>
+<li><code>( ... )</code> 代表了将要被重复匹配的模式，由小括号包围。</li>
+<li><code>sep</code>是一个可选的分隔标记。常用例子包括<code>,</code>和<code>;</code>。</li>
+<li><code>rep</code>是重复控制标记。当前有两种选择，分别是<code>*</code> (代表接受0或多次重复)以及<code>+</code> (代表1或多次重复)。目前没有办法指定“0或1”或者任何其它更加具体的重复计数或区间。</li>
 </ul>
 
-<p>Repetitions can contain any other valid pattern, including literal token trees, captures, and other repetitions.</p>
+<p>重复中可以包含任意有效模式，包括字面标记树，捕获，以及其它的重复。</p>
 
-<p>Repetitions use the same syntax in the expansion.</p>
+<p>在扩展部分，重复也采用相同的语法。</p>
 
-<p>For example, below is a macro which formats each element as a string.  It matches zero or more comma-separated expressions and expands to an expression that constructs a vector.</p>
+<p>举例来说，下述宏将每一个<code>element</code>都通过<code>format!</code>转换成字符串。它将匹配0或多个由逗号分隔的表达式，并分别将它们展开成一个<code>Vec</code>的<code>push</code>语句。</p>
 
-<span class='rusttest'>macro_rules! vec_strs {
-    (
-        // Start a repetition:
-        $(
-            // Each repeat must contain an expression...
-            $element:expr
-        )
-        // ...separated by commas...
-        ,
-        // ...zero or more times.
-        *
-    ) =&gt; {
-        // Enclose the expansion in a block so that we can use
-        // multiple statements.
-        {
-            let mut v = Vec::new();
-
-            // Start a repetition:
-            $(
-                // Each repeat will contain the following statement, with
-                // $element replaced with the corresponding expression.
-                v.push(format!(&quot;{}&quot;, $element));
-            )*
-
-            v
-        }
-    };
-}
-
-fn main() {
-    let s = vec_strs![1, &quot;a&quot;, true, 3.14159f32];
-    assert_eq!(&amp;*s, &amp;[&quot;1&quot;, &quot;a&quot;, &quot;true&quot;, &quot;3.14159&quot;]);
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>vec_strs</span> {
     (
-        <span class='comment'>// Start a repetition:</span>
+        <span class='comment'>// 重复开始：</span>
         $(
-            <span class='comment'>// Each repeat must contain an expression...</span>
+            <span class='comment'>// 每次重复必须有一个表达式...</span>
             <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>element</span>:<span class='ident'>expr</span>
         )
-        <span class='comment'>// ...separated by commas...</span>
+        <span class='comment'>// ...重复之间由“,”分隔...</span>
         ,
-        <span class='comment'>// ...zero or more times.</span>
+        <span class='comment'>// ...总共重复0或多次.</span>
         <span class='op'>*</span>
     ) <span class='op'>=&gt;</span> {
-        <span class='comment'>// Enclose the expansion in a block so that we can use</span>
-        <span class='comment'>// multiple statements.</span>
+        <span class='comment'>// 为了能包含多条语句，</span>
+        <span class='comment'>// 我们将扩展部分包裹在花括号中...</span>
         {
             <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>v</span> <span class='op'>=</span> <span class='ident'>Vec</span>::<span class='ident'>new</span>();
 
-            <span class='comment'>// Start a repetition:</span>
+            <span class='comment'>// 重复开始：</span>
             $(
-                <span class='comment'>// Each repeat will contain the following statement, with</span>
-                <span class='comment'>// $element replaced with the corresponding expression.</span>
+                <span class='comment'>// 每次重复将包含如下元素，其中</span>
+                <span class='comment'>// “$element”将被替换成其相应的展开...</span>
                 <span class='ident'>v</span>.<span class='ident'>push</span>(<span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>element</span>));
             )<span class='op'>*</span>
 
             <span class='ident'>v</span>
         }
     };
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20vec_strs%20%7B%0A%20%20%20%20(%0A%20%20%20%20%20%20%20%20%2F%2F%20%E9%87%8D%E5%A4%8D%E5%BC%80%E5%A7%8B%EF%BC%9A%0A%20%20%20%20%20%20%20%20%24(%0A%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20%E6%AF%8F%E6%AC%A1%E9%87%8D%E5%A4%8D%E5%BF%85%E9%A1%BB%E6%9C%89%E4%B8%80%E4%B8%AA%E8%A1%A8%E8%BE%BE%E5%BC%8F...%0A%20%20%20%20%20%20%20%20%20%20%20%20%24element%3Aexpr%0A%20%20%20%20%20%20%20%20)%0A%20%20%20%20%20%20%20%20%2F%2F%20...%E9%87%8D%E5%A4%8D%E4%B9%8B%E9%97%B4%E7%94%B1%E2%80%9C%2C%E2%80%9D%E5%88%86%E9%9A%94...%0A%20%20%20%20%20%20%20%20%2C%0A%20%20%20%20%20%20%20%20%2F%2F%20...%E6%80%BB%E5%85%B1%E9%87%8D%E5%A4%8D0%E6%88%96%E5%A4%9A%E6%AC%A1.%0A%20%20%20%20%20%20%20%20*%0A%20%20%20%20)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20%E4%B8%BA%E4%BA%86%E8%83%BD%E5%8C%85%E5%90%AB%E5%A4%9A%E6%9D%A1%E8%AF%AD%E5%8F%A5%EF%BC%8C%0A%20%20%20%20%20%20%20%20%2F%2F%20%E6%88%91%E4%BB%AC%E5%B0%86%E6%89%A9%E5%B1%95%E9%83%A8%E5%88%86%E5%8C%85%E8%A3%B9%E5%9C%A8%E8%8A%B1%E6%8B%AC%E5%8F%B7%E4%B8%AD...%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20let%20mut%20v%20%3D%20Vec%3A%3Anew()%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20%E9%87%8D%E5%A4%8D%E5%BC%80%E5%A7%8B%EF%BC%9A%0A%20%20%20%20%20%20%20%20%20%20%20%20%24(%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20%E6%AF%8F%E6%AC%A1%E9%87%8D%E5%A4%8D%E5%B0%86%E5%8C%85%E5%90%AB%E5%A6%82%E4%B8%8B%E5%85%83%E7%B4%A0%EF%BC%8C%E5%85%B6%E4%B8%AD%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F%2F%20%E2%80%9C%24element%E2%80%9D%E5%B0%86%E8%A2%AB%E6%9B%BF%E6%8D%A2%E6%88%90%E5%85%B6%E7%9B%B8%E5%BA%94%E7%9A%84%E5%B1%95%E5%BC%80...%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20v.push(format!(%22%7B%7D%22%2C%20%24element))%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20)*%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20v%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20s%20%3D%20vec_strs!%5B1%2C%20%22a%22%2C%20true%2C%203.14159f32%5D%3B%0A%20%20%20%20assert_eq!(%26*s%2C%20%26%5B%221%22%2C%20%22a%22%2C%20%22true%22%2C%20%223.14159%22%5D)%3B%0A%7D%0A">Run</a></pre>
 
-    <script type="text/javascript">
-        window.playgroundUrl = "https://play.rust-lang.org";
-    </script>
     <script src='rustbook.js'></script>
-<script src='playpen.js'></script>
 </div></div>
 
 

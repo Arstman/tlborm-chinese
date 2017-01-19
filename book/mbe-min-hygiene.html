@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <title>Hygiene</title>
+    <title>卫生性</title>
 
     <link rel="stylesheet" type="text/css" href="rustbook.css">
 
@@ -28,25 +28,25 @@
                     </button>
                 </div>
 <div id='toc' class='mobile-hidden'>
-<ul class='chapter'>
+<ol class='chapter'>
 <li><a  href='README.html'><b>1.</b> Introduction</a>
 </li>
 <li><a  href='mbe-README.html'><b>2.</b> Macros, A Methodical Introduction</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-README.html'><b>2.1.</b> Syntax Extensions</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-source-analysis.html'><b>2.1.1.</b> Source Analysis</a>
 </li>
 <li><a  href='mbe-syn-macros-in-the-ast.html'><b>2.1.2.</b> Macros in the AST</a>
 </li>
 <li><a  href='mbe-syn-expansion.html'><b>2.1.3.</b> Expansion</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='mbe-macro-rules.html'><b>2.2.</b> macro_rules!</a>
 </li>
 <li><a  href='mbe-min-README.html'><b>2.3.</b> Minutiae</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-min-captures-and-expansion-redux.html'><b>2.3.1.</b> Captures and Expansion Redux</a>
 </li>
 <li><a class='active' href='mbe-min-hygiene.html'><b>2.3.2.</b> Hygiene</a>
@@ -59,14 +59,14 @@
 </li>
 <li><a  href='mbe-min-import-export.html'><b>2.3.6.</b> Import/Export</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='pim-README.html'><b>3.</b> Macros, A Practical Introduction</a>
 </li>
 <li><a  href='pat-README.html'><b>4.</b> Patterns</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
 </li>
 <li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
@@ -85,68 +85,38 @@
 </li>
 <li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
 </li>
 <li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
 </li>
 <li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </div>
 <div id='page-wrapper'>
 <div id='page'>
 
 
-    <h1 class="title">Hygiene</h1>
-    <p>Macros in Rust are <em>partially</em> hygienic.  Specifically, they are hygienic when it comes to most identifiers, but <em>not</em> when it comes to generic type parameters or lifetimes.</p>
+    <h1 class="title">卫生性</h1>
+    <p>Rust宏是**部分**卫生的。具体来说，对于绝大多数标识符，它是卫生的；但对泛型参数和生命周期来算，它不是。</p>
 
-<p>Hygiene works by attaching an invisible &quot;syntax context&quot; value to all identifiers.  When two identifiers are compared, <em>both</em> the identifiers&#39; textural names <em>and</em> syntax contexts must be identical for the two to be considered equal.</p>
+<p>之所以能做到“卫生”，在于每个标识符都被赋予了一个看不见的“句法上下文”。在比较两个标识符时，只有在标识符的明面名字和句法上下文**都**一致的情况下，两个标识符才能被视作等同。</p>
 
-<p>To illustrate this, consider the following code:</p>
+<p>为阐释这一点，考虑下述代码：</p>
 
-<pre class="rust rust-example-rendered"><span class="synctx-0"><span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">using_a</span> {&#xa;    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> {&#xa;        {&#xa;            <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="number">42</span>;&#xa;            <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>&#xa;        }&#xa;    }&#xa;}&#xa;&#xa;<span class="kw">let</span> <span class="ident">four</span> <span class="op">=</span> <span class="macro">using_a</span><span class="macro">!</span>(<span class="ident">a</span> <span class="op">/</span> <span class="number">10</span>);</span></pre>
-
-<p>We will use the background colour to denote the syntax context.  Now, let&#39;s expand the macro invocation:</p>
-
-<pre class="rust rust-example-rendered"><span class="synctx-0"><span class="kw">let</span> <span class="ident">four</span> <span class="op">=</span> </span><span class="synctx-1">{&#xa;    <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="number">42</span>;&#xa;    </span><span class="synctx-0"><span class="ident">a</span> <span class="op">/</span> <span class="number">10</span></span><span class="synctx-1">&#xa;}</span><span class="synctx-0">;</span></pre>
-
-<p>First, recall that <code>macro_rules!</code> invocations effectively <em>disappear</em> during expansion.</p>
-
-<p>Second, if you attempt to compile this code, the compiler will respond with something along the following lines:</p>
-
-<pre><code class="language-text">&lt;anon&gt;:11:21: 11:22 error: unresolved name `a`
-&lt;anon&gt;:11 let four = using_a!(a / 10);
-</code></pre>
-
-<p>Note that the background colour (<em>i.e.</em> syntax context) for the expanded macro <em>changes</em> as part of expansion.  Each macro expansion is given a new, unique syntax context for its contents.  As a result, there are <em>two different <code>a</code>s</em> in the expanded code: one in the first syntax context, the second in the other.  In other words, <code><span class="synctx-0">a</span></code> is not the same identifier as <code><span class="synctx-1">a</span></code>, however similar they may appear.</p>
-
-<p>That said, tokens that were substituted <em>into</em> the expanded output <em>retain</em> their original syntax context (by virtue of having been provided to the macro as opposed to being part of the macro itself).  Thus, the solution is to modify the macro as follows:</p>
-
-<pre class="rust rust-example-rendered"><span class="synctx-0"><span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">using_a</span> {&#xa;    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> {&#xa;        {&#xa;            <span class="kw">let</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="op">=</span> <span class="number">42</span>;&#xa;            <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>&#xa;        }&#xa;    }&#xa;}&#xa;&#xa;<span class="kw">let</span> <span class="ident">four</span> <span class="op">=</span> <span class="macro">using_a</span><span class="macro">!</span>(<span class="ident">a</span>, <span class="ident">a</span> <span class="op">/</span> <span class="number">10</span>);</span></pre>
-
-<p>Which, upon expansion becomes:</p>
-
-<pre class="rust rust-example-rendered"><span class="synctx-0"><span class="kw">let</span> <span class="ident">four</span> <span class="op">=</span> </span><span class="synctx-1">{&#xa;    <span class="kw">let</span> </span><span class="synctx-0"><span class="ident">a</span></span><span class="synctx-1"> <span class="op">=</span> <span class="number">42</span>;&#xa;    </span><span class="synctx-0"><span class="ident">a</span> <span class="op">/</span> <span class="number">10</span></span><span class="synctx-1">&#xa;}</span><span class="synctx-0">;</span></pre>
-
-<p>The compiler will accept this code because there is only one <code>a</code> being used.</p>
-
-    <script type="text/javascript">
-        window.playgroundUrl = "https://play.rust-lang.org";
-    </script>
     <script src='rustbook.js'></script>
-<script src='playpen.js'></script>
 </div></div>
 
 

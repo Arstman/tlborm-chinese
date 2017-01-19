@@ -28,25 +28,25 @@
                     </button>
                 </div>
 <div id='toc' class='mobile-hidden'>
-<ul class='chapter'>
+<ol class='chapter'>
 <li><a  href='README.html'><b>1.</b> Introduction</a>
 </li>
 <li><a  href='mbe-README.html'><b>2.</b> Macros, A Methodical Introduction</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-README.html'><b>2.1.</b> Syntax Extensions</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-source-analysis.html'><b>2.1.1.</b> Source Analysis</a>
 </li>
 <li><a  href='mbe-syn-macros-in-the-ast.html'><b>2.1.2.</b> Macros in the AST</a>
 </li>
 <li><a  href='mbe-syn-expansion.html'><b>2.1.3.</b> Expansion</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='mbe-macro-rules.html'><b>2.2.</b> macro_rules!</a>
 </li>
 <li><a  href='mbe-min-README.html'><b>2.3.</b> Minutiae</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-min-captures-and-expansion-redux.html'><b>2.3.1.</b> Captures and Expansion Redux</a>
 </li>
 <li><a  href='mbe-min-hygiene.html'><b>2.3.2.</b> Hygiene</a>
@@ -59,14 +59,14 @@
 </li>
 <li><a  href='mbe-min-import-export.html'><b>2.3.6.</b> Import/Export</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='pim-README.html'><b>3.</b> Macros, A Practical Introduction</a>
 </li>
 <li><a  href='pat-README.html'><b>4.</b> Patterns</a>
-<ul class='section'>
+<ol class='section'>
 <li><a class='active' href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
 </li>
 <li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
@@ -85,25 +85,25 @@
 </li>
 <li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
 </li>
 <li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
 </li>
 <li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </div>
 <div id='page-wrapper'>
 <div id='page'>
@@ -111,28 +111,7 @@
 
     <h1 class="title">Callbacks</h1>
     
-<span class='rusttest'>macro_rules! call_with_larch {
-    ($callback:ident) =&gt; { $callback!(larch) };
-}
-
-macro_rules! expand_to_larch {
-    () =&gt; { larch };
-}
-
-macro_rules! recognise_tree {
-    (larch) =&gt; { println!(&quot;#1, the Larch.&quot;) };
-    (redwood) =&gt; { println!(&quot;#2, the Mighty Redwood.&quot;) };
-    (fir) =&gt; { println!(&quot;#3, the Fir.&quot;) };
-    (chestnut) =&gt; { println!(&quot;#4, the Horse Chestnut.&quot;) };
-    (pine) =&gt; { println!(&quot;#5, the Scots Pine.&quot;) };
-    ($($other:tt)*) =&gt; { println!(&quot;I don&#39;t know; some kind of birch maybe?&quot;) };
-}
-
-fn main() {
-    recognise_tree!(expand_to_larch!());
-    call_with_larch!(recognise_tree);
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>call_with_larch</span> {
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>callback</span>:<span class='ident'>ident</span>) <span class='op'>=&gt;</span> { <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>callback</span><span class='op'>!</span>(<span class='ident'>larch</span>) };
 }
@@ -147,28 +126,19 @@ fn main() {
     (<span class='ident'>fir</span>) <span class='op'>=&gt;</span> { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;#3, the Fir.&quot;</span>) };
     (<span class='ident'>chestnut</span>) <span class='op'>=&gt;</span> { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;#4, the Horse Chestnut.&quot;</span>) };
     (<span class='ident'>pine</span>) <span class='op'>=&gt;</span> { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;#5, the Scots Pine.&quot;</span>) };
-    ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>other</span>:<span class='ident'>tt</span>)<span class='op'>*</span>) <span class='op'>=&gt;</span> { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;I don&#39;t know; some kind of birch maybe?&quot;</span>) };
+    ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>other</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;I don&#39;t know; some kind of birch maybe?&quot;</span>) };
 }
 
 <span class='kw'>fn</span> <span class='ident'>main</span>() {
     <span class='macro'>recognise_tree</span><span class='macro'>!</span>(<span class='macro'>expand_to_larch</span><span class='macro'>!</span>());
     <span class='macro'>call_with_larch</span><span class='macro'>!</span>(<span class='ident'>recognise_tree</span>);
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20call_with_larch%20%7B%0A%20%20%20%20(%24callback%3Aident)%20%3D%3E%20%7B%20%24callback!(larch)%20%7D%3B%0A%7D%0A%0Amacro_rules!%20expand_to_larch%20%7B%0A%20%20%20%20()%20%3D%3E%20%7B%20larch%20%7D%3B%0A%7D%0A%0Amacro_rules!%20recognise_tree%20%7B%0A%20%20%20%20(larch)%20%3D%3E%20%7B%20println!(%22%231%2C%20the%20Larch.%22)%20%7D%3B%0A%20%20%20%20(redwood)%20%3D%3E%20%7B%20println!(%22%232%2C%20the%20Mighty%20Redwood.%22)%20%7D%3B%0A%20%20%20%20(fir)%20%3D%3E%20%7B%20println!(%22%233%2C%20the%20Fir.%22)%20%7D%3B%0A%20%20%20%20(chestnut)%20%3D%3E%20%7B%20println!(%22%234%2C%20the%20Horse%20Chestnut.%22)%20%7D%3B%0A%20%20%20%20(pine)%20%3D%3E%20%7B%20println!(%22%235%2C%20the%20Scots%20Pine.%22)%20%7D%3B%0A%20%20%20%20(%24(%24other%3Att)*)%20%3D%3E%20%7B%20println!(%22I%20don't%20know%3B%20some%20kind%20of%20birch%20maybe%3F%22)%20%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20recognise_tree!(expand_to_larch!())%3B%0A%20%20%20%20call_with_larch!(recognise_tree)%3B%0A%7D%0A">Run</a></pre>
 
 <p>Due to the order that macros are expanded in, it is (as of Rust 1.2) impossible to pass information to a macro from the expansion of <em>another</em> macro.  This can make modularising macros very difficult.</p>
 
 <p>An alternative is to use recursion and pass a callback.  Here is a trace of the above example to demonstrate how this takes place:</p>
 
-<span class='rusttest'>fn main() {
-    recognise_tree! { expand_to_larch ! (  ) }
-    println! { &quot;I don&#39;t know; some kind of birch maybe?&quot; }
-    // ...
-    
-    call_with_larch! { recognise_tree }
-    recognise_tree! { larch }
-    println! { &quot;#1, the Larch.&quot; }
-    // ...
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>recognise_tree</span><span class='macro'>!</span> { <span class='ident'>expand_to_larch</span> <span class='op'>!</span> (  ) }
 <span class='macro'>println</span><span class='macro'>!</span> { <span class='string'>&quot;I don&#39;t know; some kind of birch maybe?&quot;</span> }
 <span class='comment'>// ...</span>
@@ -176,37 +146,24 @@ fn main() {
 <span class='macro'>call_with_larch</span><span class='macro'>!</span> { <span class='ident'>recognise_tree</span> }
 <span class='macro'>recognise_tree</span><span class='macro'>!</span> { <span class='ident'>larch</span> }
 <span class='macro'>println</span><span class='macro'>!</span> { <span class='string'>&quot;#1, the Larch.&quot;</span> }
-<span class='comment'>// ...</span></pre>
+<span class='comment'>// ...</span><a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Arecognise_tree!%20%7B%20expand_to_larch%20!%20(%20%20)%20%7D%0Aprintln!%20%7B%20%22I%20don't%20know%3B%20some%20kind%20of%20birch%20maybe%3F%22%20%7D%0A%2F%2F%20...%0A%0Acall_with_larch!%20%7B%20recognise_tree%20%7D%0Arecognise_tree!%20%7B%20larch%20%7D%0Aprintln!%20%7B%20%22%231%2C%20the%20Larch.%22%20%7D%0A%2F%2F%20...%0A%7D">Run</a></pre>
 
 <p>Using a <code>tt</code> repetition, one can also forward arbitrary arguments to a callback.</p>
 
-<span class='rusttest'>macro_rules! callback {
-    ($callback:ident($($args:tt)*)) =&gt; {
-        $callback!($($args)*)
-    };
-}
-
-fn main() {
-    callback!(callback(println(&quot;Yes, this *was* unnecessary.&quot;)));
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>callback</span> {
-    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>callback</span>:<span class='ident'>ident</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>args</span>:<span class='ident'>tt</span>)<span class='op'>*</span>)) <span class='op'>=&gt;</span> {
-        <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>callback</span><span class='op'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>args</span>)<span class='op'>*</span>)
+    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>callback</span>:<span class='ident'>ident</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>args</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>)) <span class='op'>=&gt;</span> {
+        <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>callback</span><span class='op'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>args</span>)<span class='kw-2'>*</span>)
     };
 }
 
 <span class='kw'>fn</span> <span class='ident'>main</span>() {
     <span class='macro'>callback</span><span class='macro'>!</span>(<span class='ident'>callback</span>(<span class='ident'>println</span>(<span class='string'>&quot;Yes, this *was* unnecessary.&quot;</span>)));
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20callback%20%7B%0A%20%20%20%20(%24callback%3Aident(%24(%24args%3Att)*))%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%24callback!(%24(%24args)*)%0A%20%20%20%20%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20callback!(callback(println(%22Yes%2C%20this%20*was*%20unnecessary.%22)))%3B%0A%7D%0A">Run</a></pre>
 
 <p>You can, of course, insert additional tokens in the arguments as needed.</p>
 
-    <script type="text/javascript">
-        window.playgroundUrl = "https://play.rust-lang.org";
-    </script>
     <script src='rustbook.js'></script>
-<script src='playpen.js'></script>
 </div></div>
 
 

@@ -28,25 +28,25 @@
                     </button>
                 </div>
 <div id='toc' class='mobile-hidden'>
-<ul class='chapter'>
+<ol class='chapter'>
 <li><a  href='README.html'><b>1.</b> Introduction</a>
 </li>
 <li><a  href='mbe-README.html'><b>2.</b> Macros, A Methodical Introduction</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-README.html'><b>2.1.</b> Syntax Extensions</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-source-analysis.html'><b>2.1.1.</b> Source Analysis</a>
 </li>
 <li><a  href='mbe-syn-macros-in-the-ast.html'><b>2.1.2.</b> Macros in the AST</a>
 </li>
 <li><a  href='mbe-syn-expansion.html'><b>2.1.3.</b> Expansion</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='mbe-macro-rules.html'><b>2.2.</b> macro_rules!</a>
 </li>
 <li><a  href='mbe-min-README.html'><b>2.3.</b> Minutiae</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-min-captures-and-expansion-redux.html'><b>2.3.1.</b> Captures and Expansion Redux</a>
 </li>
 <li><a  href='mbe-min-hygiene.html'><b>2.3.2.</b> Hygiene</a>
@@ -59,14 +59,14 @@
 </li>
 <li><a  href='mbe-min-import-export.html'><b>2.3.6.</b> Import/Export</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='pim-README.html'><b>3.</b> Macros, A Practical Introduction</a>
 </li>
 <li><a  href='pat-README.html'><b>4.</b> Patterns</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
 </li>
 <li><a class='active' href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
@@ -85,25 +85,25 @@
 </li>
 <li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
 </li>
 <li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
 </li>
 <li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </div>
 <div id='page-wrapper'>
 <div id='page'>
@@ -111,52 +111,23 @@
 
     <h1 class="title">Incremental TT munchers</h1>
     
-<span class='rusttest'>macro_rules! mixed_rules {
-    () =&gt; {};
-    (trace $name:ident; $($tail:tt)*) =&gt; {
-        {
-            println!(concat!(stringify!($name), &quot; = {:?}&quot;), $name);
-            mixed_rules!($($tail)*);
-        }
-    };
-    (trace $name:ident = $init:expr; $($tail:tt)*) =&gt; {
-        {
-            let $name = $init;
-            println!(concat!(stringify!($name), &quot; = {:?}&quot;), $name);
-            mixed_rules!($($tail)*);
-        }
-    };
-}
-
-fn main() {
-    let a = 42;
-    let b = &quot;Ho-dee-oh-di-oh-di-oh!&quot;;
-    let c = (false, 2, &#39;c&#39;);
-    mixed_rules!(
-        trace a;
-        trace b;
-        trace c;
-        trace b = &quot;They took her where they put the crazies.&quot;;
-        trace b;
-    );
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>mixed_rules</span> {
     () <span class='op'>=&gt;</span> {};
-    (<span class='ident'>trace</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>:<span class='ident'>ident</span>; $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>) <span class='op'>=&gt;</span> {
+    (<span class='ident'>trace</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>:<span class='ident'>ident</span>; $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> {
         {
             <span class='macro'>println</span><span class='macro'>!</span>(<span class='macro'>concat</span><span class='macro'>!</span>(<span class='macro'>stringify</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>), <span class='string'>&quot; = {:?}&quot;</span>), <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>);
-            <span class='macro'>mixed_rules</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>);
+            <span class='macro'>mixed_rules</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>);
         }
     };
-    (<span class='ident'>trace</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>:<span class='ident'>ident</span> <span class='op'>=</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>init</span>:<span class='ident'>expr</span>; $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>) <span class='op'>=&gt;</span> {
+    (<span class='ident'>trace</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>:<span class='ident'>ident</span> <span class='op'>=</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>init</span>:<span class='ident'>expr</span>; $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> {
         {
             <span class='kw'>let</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span> <span class='op'>=</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>init</span>;
             <span class='macro'>println</span><span class='macro'>!</span>(<span class='macro'>concat</span><span class='macro'>!</span>(<span class='macro'>stringify</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>), <span class='string'>&quot; = {:?}&quot;</span>), <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>);
-            <span class='macro'>mixed_rules</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>);
+            <span class='macro'>mixed_rules</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>);
         }
     };
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20mixed_rules%20%7B%0A%20%20%20%20()%20%3D%3E%20%7B%7D%3B%0A%20%20%20%20(trace%20%24name%3Aident%3B%20%24(%24tail%3Att)*)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20println!(concat!(stringify!(%24name)%2C%20%22%20%3D%20%7B%3A%3F%7D%22)%2C%20%24name)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20mixed_rules!(%24(%24tail)*)%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%20%20%20%20(trace%20%24name%3Aident%20%3D%20%24init%3Aexpr%3B%20%24(%24tail%3Att)*)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20let%20%24name%20%3D%20%24init%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20println!(concat!(stringify!(%24name)%2C%20%22%20%3D%20%7B%3A%3F%7D%22)%2C%20%24name)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20mixed_rules!(%24(%24tail)*)%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20a%20%3D%2042%3B%0A%20%20%20%20let%20b%20%3D%20%22Ho-dee-oh-di-oh-di-oh!%22%3B%0A%20%20%20%20let%20c%20%3D%20(false%2C%202%2C%20'c')%3B%0A%20%20%20%20mixed_rules!(%0A%20%20%20%20%20%20%20%20trace%20a%3B%0A%20%20%20%20%20%20%20%20trace%20b%3B%0A%20%20%20%20%20%20%20%20trace%20c%3B%0A%20%20%20%20%20%20%20%20trace%20b%20%3D%20%22They%20took%20her%20where%20they%20put%20the%20crazies.%22%3B%0A%20%20%20%20%20%20%20%20trace%20b%3B%0A%20%20%20%20)%3B%0A%7D%0A">Run</a></pre>
 
 <p>This pattern is perhaps the <em>most powerful</em> macro parsing technique available, allowing one to parse grammars of significant complexity.</p>
 
@@ -173,11 +144,7 @@ fn main() {
 
 <p>It is important, however, to keep the macro recursion limit in mind.  <code>macro_rules!</code> does not have <em>any</em> form of tail recursion elimination or optimisation.  It is recommended that, when writing a TT muncher, you make reasonable efforts to keep recursion as limited as possible.  This can be done by adding additional rules to account for variation in the input (as opposed to recursion into an intermediate layer), or by making compromises on the input syntax to make using standard repetitions more tractable.</p>
 
-    <script type="text/javascript">
-        window.playgroundUrl = "https://play.rust-lang.org";
-    </script>
     <script src='rustbook.js'></script>
-<script src='playpen.js'></script>
 </div></div>
 
 

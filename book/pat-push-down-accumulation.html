@@ -28,25 +28,25 @@
                     </button>
                 </div>
 <div id='toc' class='mobile-hidden'>
-<ul class='chapter'>
+<ol class='chapter'>
 <li><a  href='README.html'><b>1.</b> Introduction</a>
 </li>
 <li><a  href='mbe-README.html'><b>2.</b> Macros, A Methodical Introduction</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-README.html'><b>2.1.</b> Syntax Extensions</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-source-analysis.html'><b>2.1.1.</b> Source Analysis</a>
 </li>
 <li><a  href='mbe-syn-macros-in-the-ast.html'><b>2.1.2.</b> Macros in the AST</a>
 </li>
 <li><a  href='mbe-syn-expansion.html'><b>2.1.3.</b> Expansion</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='mbe-macro-rules.html'><b>2.2.</b> macro_rules!</a>
 </li>
 <li><a  href='mbe-min-README.html'><b>2.3.</b> Minutiae</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-min-captures-and-expansion-redux.html'><b>2.3.1.</b> Captures and Expansion Redux</a>
 </li>
 <li><a  href='mbe-min-hygiene.html'><b>2.3.2.</b> Hygiene</a>
@@ -59,14 +59,14 @@
 </li>
 <li><a  href='mbe-min-import-export.html'><b>2.3.6.</b> Import/Export</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='pim-README.html'><b>3.</b> Macros, A Practical Introduction</a>
 </li>
 <li><a  href='pat-README.html'><b>4.</b> Patterns</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
 </li>
 <li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
@@ -85,25 +85,25 @@
 </li>
 <li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
 </li>
 <li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
 </li>
 <li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </div>
 <div id='page-wrapper'>
 <div id='page'>
@@ -111,110 +111,64 @@
 
     <h1 class="title">Push-down Accumulation</h1>
     
-<span class='rusttest'>fn main() {
-    macro_rules! init_array {
-        (@accum (0, $_e:expr) -&gt; ($($body:tt)*))
-            =&gt; {init_array!(@as_expr [$($body)*])};
-        (@accum (1, $e:expr) -&gt; ($($body:tt)*))
-            =&gt; {init_array!(@accum (0, $e) -&gt; ($($body)* $e,))};
-        (@accum (2, $e:expr) -&gt; ($($body:tt)*))
-            =&gt; {init_array!(@accum (1, $e) -&gt; ($($body)* $e,))};
-        (@accum (3, $e:expr) -&gt; ($($body:tt)*))
-            =&gt; {init_array!(@accum (2, $e) -&gt; ($($body)* $e,))};
-        (@as_expr $e:expr) =&gt; {$e};
-        [$e:expr; $n:tt] =&gt; {
-            {
-                let e = $e;
-                init_array!(@accum ($n, e.clone()) -&gt; ())
-            }
-        };
-    }
-    
-    let strings: [String; 3] = init_array![String::from(&quot;hi!&quot;); 3];
-    assert_eq!(format!(&quot;{:?}&quot;, strings), &quot;[\&quot;hi!\&quot;, \&quot;hi!\&quot;, \&quot;hi!\&quot;]&quot;);
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>init_array</span> {
-    (<span class='kw-2'>@</span><span class='ident'>accum</span> (<span class='number'>0</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_e</span>:<span class='ident'>expr</span>) <span class='op'>-&gt;</span> ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>body</span>:<span class='ident'>tt</span>)<span class='op'>*</span>))
-        <span class='op'>=&gt;</span> {<span class='macro'>init_array</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>as_expr</span> [$(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>body</span>)<span class='op'>*</span>])};
-    (<span class='kw-2'>@</span><span class='ident'>accum</span> (<span class='number'>1</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>-&gt;</span> ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>body</span>:<span class='ident'>tt</span>)<span class='op'>*</span>))
-        <span class='op'>=&gt;</span> {<span class='macro'>init_array</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>accum</span> (<span class='number'>0</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>) <span class='op'>-&gt;</span> ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>body</span>)<span class='op'>*</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>,))};
-    (<span class='kw-2'>@</span><span class='ident'>accum</span> (<span class='number'>2</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>-&gt;</span> ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>body</span>:<span class='ident'>tt</span>)<span class='op'>*</span>))
-        <span class='op'>=&gt;</span> {<span class='macro'>init_array</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>accum</span> (<span class='number'>1</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>) <span class='op'>-&gt;</span> ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>body</span>)<span class='op'>*</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>,))};
-    (<span class='kw-2'>@</span><span class='ident'>accum</span> (<span class='number'>3</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>-&gt;</span> ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>body</span>:<span class='ident'>tt</span>)<span class='op'>*</span>))
-        <span class='op'>=&gt;</span> {<span class='macro'>init_array</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>accum</span> (<span class='number'>2</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>) <span class='op'>-&gt;</span> ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>body</span>)<span class='op'>*</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>,))};
-    (<span class='kw-2'>@</span><span class='ident'>as_expr</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>};
+    (@<span class='ident'>accum</span> (<span class='number'>0</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_e</span>:<span class='ident'>expr</span>) <span class='op'>-&gt;</span> ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>body</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>))
+        <span class='op'>=&gt;</span> {<span class='macro'>init_array</span><span class='macro'>!</span>(@<span class='ident'>as_expr</span> [$(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>body</span>)<span class='kw-2'>*</span>])};
+    (@<span class='ident'>accum</span> (<span class='number'>1</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>-&gt;</span> ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>body</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>))
+        <span class='op'>=&gt;</span> {<span class='macro'>init_array</span><span class='macro'>!</span>(@<span class='ident'>accum</span> (<span class='number'>0</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>) <span class='op'>-&gt;</span> ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>body</span>)<span class='op'>*</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>,))};
+    (@<span class='ident'>accum</span> (<span class='number'>2</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>-&gt;</span> ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>body</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>))
+        <span class='op'>=&gt;</span> {<span class='macro'>init_array</span><span class='macro'>!</span>(@<span class='ident'>accum</span> (<span class='number'>1</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>) <span class='op'>-&gt;</span> ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>body</span>)<span class='op'>*</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>,))};
+    (@<span class='ident'>accum</span> (<span class='number'>3</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>-&gt;</span> ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>body</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>))
+        <span class='op'>=&gt;</span> {<span class='macro'>init_array</span><span class='macro'>!</span>(@<span class='ident'>accum</span> (<span class='number'>2</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>) <span class='op'>-&gt;</span> ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>body</span>)<span class='op'>*</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>,))};
+    (@<span class='ident'>as_expr</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>};
     [<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>; <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>n</span>:<span class='ident'>tt</span>] <span class='op'>=&gt;</span> {
         {
             <span class='kw'>let</span> <span class='ident'>e</span> <span class='op'>=</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>;
-            <span class='macro'>init_array</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>accum</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>n</span>, <span class='ident'>e</span>.<span class='ident'>clone</span>()) <span class='op'>-&gt;</span> ())
+            <span class='macro'>init_array</span><span class='macro'>!</span>(@<span class='ident'>accum</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>n</span>, <span class='ident'>e</span>.<span class='ident'>clone</span>()) <span class='op'>-&gt;</span> ())
         }
     };
 }
 
-<span class='kw'>let</span> <span class='ident'>strings</span>: [<span class='ident'>String</span>; <span class='number'>3</span>] <span class='op'>=</span> <span class='macro'>init_array</span><span class='macro'>!</span>[<span class='ident'>String</span>::<span class='ident'>from</span>(<span class='string'>&quot;hi!&quot;</span>); <span class='number'>3</span>];</pre>
+<span class='kw'>let</span> <span class='ident'>strings</span>: [<span class='ident'>String</span>; <span class='number'>3</span>] <span class='op'>=</span> <span class='macro'>init_array</span><span class='macro'>!</span>[<span class='ident'>String</span>::<span class='ident'>from</span>(<span class='string'>&quot;hi!&quot;</span>); <span class='number'>3</span>];<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Amacro_rules!%20init_array%20%7B%0A%20%20%20%20(%40accum%20(0%2C%20%24_e%3Aexpr)%20-%3E%20(%24(%24body%3Att)*))%0A%20%20%20%20%20%20%20%20%3D%3E%20%7Binit_array!(%40as_expr%20%5B%24(%24body)*%5D)%7D%3B%0A%20%20%20%20(%40accum%20(1%2C%20%24e%3Aexpr)%20-%3E%20(%24(%24body%3Att)*))%0A%20%20%20%20%20%20%20%20%3D%3E%20%7Binit_array!(%40accum%20(0%2C%20%24e)%20-%3E%20(%24(%24body)*%20%24e%2C))%7D%3B%0A%20%20%20%20(%40accum%20(2%2C%20%24e%3Aexpr)%20-%3E%20(%24(%24body%3Att)*))%0A%20%20%20%20%20%20%20%20%3D%3E%20%7Binit_array!(%40accum%20(1%2C%20%24e)%20-%3E%20(%24(%24body)*%20%24e%2C))%7D%3B%0A%20%20%20%20(%40accum%20(3%2C%20%24e%3Aexpr)%20-%3E%20(%24(%24body%3Att)*))%0A%20%20%20%20%20%20%20%20%3D%3E%20%7Binit_array!(%40accum%20(2%2C%20%24e)%20-%3E%20(%24(%24body)*%20%24e%2C))%7D%3B%0A%20%20%20%20(%40as_expr%20%24e%3Aexpr)%20%3D%3E%20%7B%24e%7D%3B%0A%20%20%20%20%5B%24e%3Aexpr%3B%20%24n%3Att%5D%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20let%20e%20%3D%20%24e%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20init_array!(%40accum%20(%24n%2C%20e.clone())%20-%3E%20())%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%7D%0A%0Alet%20strings%3A%20%5BString%3B%203%5D%20%3D%20init_array!%5BString%3A%3Afrom(%22hi!%22)%3B%203%5D%3B%0Aassert_eq!(format!(%22%7B%3A%3F%7D%22%2C%20strings)%2C%20%22%5B%5C%22hi!%5C%22%2C%20%5C%22hi!%5C%22%2C%20%5C%22hi!%5C%22%5D%22)%3B%0A%7D">Run</a></pre>
 
 <p>All macros in Rust <strong>must</strong> result in a complete, supported syntax element (such as an expression, item, <em>etc.</em>).  This means that it is impossible to have a macro expand to a partial construct.</p>
 
 <p>One might hope that the above example could be more directly expressed like so:</p>
 
-<span class='rusttest'>fn main() {
-    macro_rules! init_array {
-        (@accum 0, $_e:expr) =&gt; {/* empty */};
-        (@accum 1, $e:expr) =&gt; {$e};
-        (@accum 2, $e:expr) =&gt; {$e, init_array!(@accum 1, $e)};
-        (@accum 3, $e:expr) =&gt; {$e, init_array!(@accum 2, $e)};
-        [$e:expr; $n:tt] =&gt; {
-            {
-                let e = $e;
-                [init_array!(@accum $n, e)]
-            }
-        };
-    }
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>init_array</span> {
-    (<span class='kw-2'>@</span><span class='ident'>accum</span> <span class='number'>0</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {<span class='comment'>/* empty */</span>};
-    (<span class='kw-2'>@</span><span class='ident'>accum</span> <span class='number'>1</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>};
-    (<span class='kw-2'>@</span><span class='ident'>accum</span> <span class='number'>2</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>, <span class='macro'>init_array</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>accum</span> <span class='number'>1</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>)};
-    (<span class='kw-2'>@</span><span class='ident'>accum</span> <span class='number'>3</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>, <span class='macro'>init_array</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>accum</span> <span class='number'>2</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>)};
+    (@<span class='ident'>accum</span> <span class='number'>0</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {<span class='comment'>/* empty */</span>};
+    (@<span class='ident'>accum</span> <span class='number'>1</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>};
+    (@<span class='ident'>accum</span> <span class='number'>2</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>, <span class='macro'>init_array</span><span class='macro'>!</span>(@<span class='ident'>accum</span> <span class='number'>1</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>)};
+    (@<span class='ident'>accum</span> <span class='number'>3</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>, <span class='macro'>init_array</span><span class='macro'>!</span>(@<span class='ident'>accum</span> <span class='number'>2</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>)};
     [<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>; <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>n</span>:<span class='ident'>tt</span>] <span class='op'>=&gt;</span> {
         {
             <span class='kw'>let</span> <span class='ident'>e</span> <span class='op'>=</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>;
-            [<span class='macro'>init_array</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>accum</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>n</span>, <span class='ident'>e</span>)]
+            [<span class='macro'>init_array</span><span class='macro'>!</span>(@<span class='ident'>accum</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>n</span>, <span class='ident'>e</span>)]
         }
     };
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Amacro_rules!%20init_array%20%7B%0A%20%20%20%20(%40accum%200%2C%20%24_e%3Aexpr)%20%3D%3E%20%7B%2F*%20empty%20*%2F%7D%3B%0A%20%20%20%20(%40accum%201%2C%20%24e%3Aexpr)%20%3D%3E%20%7B%24e%7D%3B%0A%20%20%20%20(%40accum%202%2C%20%24e%3Aexpr)%20%3D%3E%20%7B%24e%2C%20init_array!(%40accum%201%2C%20%24e)%7D%3B%0A%20%20%20%20(%40accum%203%2C%20%24e%3Aexpr)%20%3D%3E%20%7B%24e%2C%20init_array!(%40accum%202%2C%20%24e)%7D%3B%0A%20%20%20%20%5B%24e%3Aexpr%3B%20%24n%3Att%5D%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20let%20e%20%3D%20%24e%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%5Binit_array!(%40accum%20%24n%2C%20e)%5D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%7D%0A%7D">Run</a></pre>
 
 <p>The expectation is that the expansion of the array literal would proceed as follows:</p>
 
-<span class='rusttest'>fn main() {
-                [init_array!(@accum 3, e)]
-                [e, init_array!(@accum 2, e)]
-                [e, e, init_array!(@accum 1, e)]
-                [e, e, e]
-}</span><pre class='rust rust-example-rendered'>
-            [<span class='macro'>init_array</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>accum</span> <span class='number'>3</span>, <span class='ident'>e</span>)]
-            [<span class='ident'>e</span>, <span class='macro'>init_array</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>accum</span> <span class='number'>2</span>, <span class='ident'>e</span>)]
-            [<span class='ident'>e</span>, <span class='ident'>e</span>, <span class='macro'>init_array</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>accum</span> <span class='number'>1</span>, <span class='ident'>e</span>)]
-            [<span class='ident'>e</span>, <span class='ident'>e</span>, <span class='ident'>e</span>]</pre>
+<pre class='rust rust-example-rendered'>
+            [<span class='macro'>init_array</span><span class='macro'>!</span>(@<span class='ident'>accum</span> <span class='number'>3</span>, <span class='ident'>e</span>)]
+            [<span class='ident'>e</span>, <span class='macro'>init_array</span><span class='macro'>!</span>(@<span class='ident'>accum</span> <span class='number'>2</span>, <span class='ident'>e</span>)]
+            [<span class='ident'>e</span>, <span class='ident'>e</span>, <span class='macro'>init_array</span><span class='macro'>!</span>(@<span class='ident'>accum</span> <span class='number'>1</span>, <span class='ident'>e</span>)]
+            [<span class='ident'>e</span>, <span class='ident'>e</span>, <span class='ident'>e</span>]<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%5Binit_array!(%40accum%203%2C%20e)%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%5Be%2C%20init_array!(%40accum%202%2C%20e)%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%5Be%2C%20e%2C%20init_array!(%40accum%201%2C%20e)%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%5Be%2C%20e%2C%20e%5D%0A%7D">Run</a></pre>
 
 <p>However, this would require each intermediate step to expand to an incomplete expression.  Even though the intermediate results will never be used <em>outside</em> of a macro context, it is still forbidden.</p>
 
 <p>Push-down, however, allows us to incrementally build up a sequence of tokens without needing to actually have a complete construct at any point prior to completion.  In the example given at the top, the sequence of macro invocations proceeds as follows:</p>
 
-<span class='rusttest'>fn main() {
-    init_array! { String:: from ( &quot;hi!&quot; ) ; 3 }
-    init_array! { @ accum ( 3 , e . clone (  ) ) -&gt; (  ) }
-    init_array! { @ accum ( 2 , e.clone() ) -&gt; ( e.clone() , ) }
-    init_array! { @ accum ( 1 , e.clone() ) -&gt; ( e.clone() , e.clone() , ) }
-    init_array! { @ accum ( 0 , e.clone() ) -&gt; ( e.clone() , e.clone() , e.clone() , ) }
-    init_array! { @ as_expr [ e.clone() , e.clone() , e.clone() , ] }
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>init_array</span><span class='macro'>!</span> { <span class='ident'>String</span>:: <span class='ident'>from</span> ( <span class='string'>&quot;hi!&quot;</span> ) ; <span class='number'>3</span> }
-<span class='macro'>init_array</span><span class='macro'>!</span> { <span class='kw-2'>@</span> <span class='ident'>accum</span> ( <span class='number'>3</span> , <span class='ident'>e</span> . <span class='ident'>clone</span> (  ) ) <span class='op'>-&gt;</span> (  ) }
-<span class='macro'>init_array</span><span class='macro'>!</span> { <span class='kw-2'>@</span> <span class='ident'>accum</span> ( <span class='number'>2</span> , <span class='ident'>e</span>.<span class='ident'>clone</span>() ) <span class='op'>-&gt;</span> ( <span class='ident'>e</span>.<span class='ident'>clone</span>() , ) }
-<span class='macro'>init_array</span><span class='macro'>!</span> { <span class='kw-2'>@</span> <span class='ident'>accum</span> ( <span class='number'>1</span> , <span class='ident'>e</span>.<span class='ident'>clone</span>() ) <span class='op'>-&gt;</span> ( <span class='ident'>e</span>.<span class='ident'>clone</span>() , <span class='ident'>e</span>.<span class='ident'>clone</span>() , ) }
-<span class='macro'>init_array</span><span class='macro'>!</span> { <span class='kw-2'>@</span> <span class='ident'>accum</span> ( <span class='number'>0</span> , <span class='ident'>e</span>.<span class='ident'>clone</span>() ) <span class='op'>-&gt;</span> ( <span class='ident'>e</span>.<span class='ident'>clone</span>() , <span class='ident'>e</span>.<span class='ident'>clone</span>() , <span class='ident'>e</span>.<span class='ident'>clone</span>() , ) }
-<span class='macro'>init_array</span><span class='macro'>!</span> { <span class='kw-2'>@</span> <span class='ident'>as_expr</span> [ <span class='ident'>e</span>.<span class='ident'>clone</span>() , <span class='ident'>e</span>.<span class='ident'>clone</span>() , <span class='ident'>e</span>.<span class='ident'>clone</span>() , ] }</pre>
+<span class='macro'>init_array</span><span class='macro'>!</span> { @ <span class='ident'>accum</span> ( <span class='number'>3</span> , <span class='ident'>e</span> . <span class='ident'>clone</span> (  ) ) <span class='op'>-&gt;</span> (  ) }
+<span class='macro'>init_array</span><span class='macro'>!</span> { @ <span class='ident'>accum</span> ( <span class='number'>2</span> , <span class='ident'>e</span>.<span class='ident'>clone</span>() ) <span class='op'>-&gt;</span> ( <span class='ident'>e</span>.<span class='ident'>clone</span>() , ) }
+<span class='macro'>init_array</span><span class='macro'>!</span> { @ <span class='ident'>accum</span> ( <span class='number'>1</span> , <span class='ident'>e</span>.<span class='ident'>clone</span>() ) <span class='op'>-&gt;</span> ( <span class='ident'>e</span>.<span class='ident'>clone</span>() , <span class='ident'>e</span>.<span class='ident'>clone</span>() , ) }
+<span class='macro'>init_array</span><span class='macro'>!</span> { @ <span class='ident'>accum</span> ( <span class='number'>0</span> , <span class='ident'>e</span>.<span class='ident'>clone</span>() ) <span class='op'>-&gt;</span> ( <span class='ident'>e</span>.<span class='ident'>clone</span>() , <span class='ident'>e</span>.<span class='ident'>clone</span>() , <span class='ident'>e</span>.<span class='ident'>clone</span>() , ) }
+<span class='macro'>init_array</span><span class='macro'>!</span> { @ <span class='ident'>as_expr</span> [ <span class='ident'>e</span>.<span class='ident'>clone</span>() , <span class='ident'>e</span>.<span class='ident'>clone</span>() , <span class='ident'>e</span>.<span class='ident'>clone</span>() , ] }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Ainit_array!%20%7B%20String%3A%3A%20from%20(%20%22hi!%22%20)%20%3B%203%20%7D%0Ainit_array!%20%7B%20%40%20accum%20(%203%20%2C%20e%20.%20clone%20(%20%20)%20)%20-%3E%20(%20%20)%20%7D%0Ainit_array!%20%7B%20%40%20accum%20(%202%20%2C%20e.clone()%20)%20-%3E%20(%20e.clone()%20%2C%20)%20%7D%0Ainit_array!%20%7B%20%40%20accum%20(%201%20%2C%20e.clone()%20)%20-%3E%20(%20e.clone()%20%2C%20e.clone()%20%2C%20)%20%7D%0Ainit_array!%20%7B%20%40%20accum%20(%200%20%2C%20e.clone()%20)%20-%3E%20(%20e.clone()%20%2C%20e.clone()%20%2C%20e.clone()%20%2C%20)%20%7D%0Ainit_array!%20%7B%20%40%20as_expr%20%5B%20e.clone()%20%2C%20e.clone()%20%2C%20e.clone()%20%2C%20%5D%20%7D%0A%7D">Run</a></pre>
 
 <p>As you can see, each layer adds to the accumulated output until the terminating rule finally emits it as a complete construct.</p>
 
@@ -222,11 +176,7 @@
 
 <p>Push-down accumulation is frequently used as part of <a href="#incremental-tt-munchers">incremental TT munchers</a>, as it allows arbitrarily complex intermediate results to be constructed.</p>
 
-    <script type="text/javascript">
-        window.playgroundUrl = "https://play.rust-lang.org";
-    </script>
     <script src='rustbook.js'></script>
-<script src='playpen.js'></script>
 </div></div>
 
 

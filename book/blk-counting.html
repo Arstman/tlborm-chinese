@@ -28,25 +28,25 @@
                     </button>
                 </div>
 <div id='toc' class='mobile-hidden'>
-<ul class='chapter'>
+<ol class='chapter'>
 <li><a  href='README.html'><b>1.</b> Introduction</a>
 </li>
 <li><a  href='mbe-README.html'><b>2.</b> Macros, A Methodical Introduction</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-README.html'><b>2.1.</b> Syntax Extensions</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-source-analysis.html'><b>2.1.1.</b> Source Analysis</a>
 </li>
 <li><a  href='mbe-syn-macros-in-the-ast.html'><b>2.1.2.</b> Macros in the AST</a>
 </li>
 <li><a  href='mbe-syn-expansion.html'><b>2.1.3.</b> Expansion</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='mbe-macro-rules.html'><b>2.2.</b> macro_rules!</a>
 </li>
 <li><a  href='mbe-min-README.html'><b>2.3.</b> Minutiae</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-min-captures-and-expansion-redux.html'><b>2.3.1.</b> Captures and Expansion Redux</a>
 </li>
 <li><a  href='mbe-min-hygiene.html'><b>2.3.2.</b> Hygiene</a>
@@ -59,14 +59,14 @@
 </li>
 <li><a  href='mbe-min-import-export.html'><b>2.3.6.</b> Import/Export</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='pim-README.html'><b>3.</b> Macros, A Practical Introduction</a>
 </li>
 <li><a  href='pat-README.html'><b>4.</b> Patterns</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
 </li>
 <li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
@@ -85,25 +85,25 @@
 </li>
 <li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
 </li>
 <li><a class='active' href='blk-counting.html'><b>5.2.</b> Counting</a>
 </li>
 <li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </div>
 <div id='page-wrapper'>
 <div id='page'>
@@ -114,51 +114,30 @@
 <h2 id='repetition-with-replacement' class='section-header'><a href='#repetition-with-replacement'>Repetition with replacement</a></h2>
 <p>Counting things in a macro is a surprisingly tricky task.  The simplest way is to use replacement with a repetition match.</p>
 
-<span class='rusttest'>macro_rules! replace_expr {
-    ($_t:tt $sub:expr) =&gt; {$sub};
-}
-
-macro_rules! count_tts {
-    ($($tts:tt)*) =&gt; {0usize $(+ replace_expr!($tts 1usize))*};
-}
-
-fn main() {
-    assert_eq!(count_tts!(0 1 2), 3);
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>replace_expr</span> {
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_t</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>sub</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>sub</span>};
 }
 
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>count_tts</span> {
-    ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tts</span>:<span class='ident'>tt</span>)<span class='op'>*</span>) <span class='op'>=&gt;</span> {<span class='number'>0usize</span> $(<span class='op'>+</span> <span class='macro'>replace_expr</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tts</span> <span class='number'>1usize</span>))<span class='op'>*</span>};
-}</pre>
+    ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tts</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> {<span class='number'>0usize</span> $(<span class='op'>+</span> <span class='macro'>replace_expr</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tts</span> <span class='number'>1usize</span>))<span class='kw-2'>*</span>};
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20replace_expr%20%7B%0A%20%20%20%20(%24_t%3Att%20%24sub%3Aexpr)%20%3D%3E%20%7B%24sub%7D%3B%0A%7D%0A%0Amacro_rules!%20count_tts%20%7B%0A%20%20%20%20(%24(%24tts%3Att)*)%20%3D%3E%20%7B0usize%20%24(%2B%20replace_expr!(%24tts%201usize))*%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20assert_eq!(count_tts!(0%201%202)%2C%203)%3B%0A%7D%0A">Run</a></pre>
 
 <p>This is a fine approach for smallish numbers, but will likely <em>crash the compiler</em> with inputs of around 500 or so tokens.  Consider that the output will look something like this:</p>
 
-<span class='rusttest'>fn main() {
-    0usize + 1usize + /* ~500 `+ 1usize`s */ + 1usize
-}</span><pre class='rust rust-example-rendered'>
-<span class='number'>0usize</span> <span class='op'>+</span> <span class='number'>1usize</span> <span class='op'>+</span> <span class='comment'>/* ~500 `+ 1usize`s */</span> <span class='op'>+</span> <span class='number'>1usize</span></pre>
+<pre class='rust rust-example-rendered'>
+<span class='number'>0usize</span> <span class='op'>+</span> <span class='number'>1usize</span> <span class='op'>+</span> <span class='comment'>/* ~500 `+ 1usize`s */</span> <span class='op'>+</span> <span class='number'>1usize</span><a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0A0usize%20%2B%201usize%20%2B%20%2F*%20~500%20%60%2B%201usize%60s%20*%2F%20%2B%201usize%0A%7D">Run</a></pre>
 
 <p>The compiler must parse this into an AST, which will produce what is effectively a perfectly unbalanced binary tree 500+ levels deep.</p>
 
 <h2 id='recursion' class='section-header'><a href='#recursion'>Recursion</a></h2>
 <p>An older approach is to use recursion.</p>
 
-<span class='rusttest'>macro_rules! count_tts {
-    () =&gt; {0usize};
-    ($_head:tt $($tail:tt)*) =&gt; {1usize + count_tts!($($tail)*)};
-}
-
-fn main() {
-    assert_eq!(count_tts!(0 1 2), 3);
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>count_tts</span> {
     () <span class='op'>=&gt;</span> {<span class='number'>0usize</span>};
-    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_head</span>:<span class='ident'>tt</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>) <span class='op'>=&gt;</span> {<span class='number'>1usize</span> <span class='op'>+</span> <span class='macro'>count_tts</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>)};
-}</pre>
+    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_head</span>:<span class='ident'>tt</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> {<span class='number'>1usize</span> <span class='op'>+</span> <span class='macro'>count_tts</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>)};
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20count_tts%20%7B%0A%20%20%20%20()%20%3D%3E%20%7B0usize%7D%3B%0A%20%20%20%20(%24_head%3Att%20%24(%24tail%3Att)*)%20%3D%3E%20%7B1usize%20%2B%20count_tts!(%24(%24tail)*)%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20assert_eq!(count_tts!(0%201%202)%2C%203)%3B%0A%7D%0A">Run</a></pre>
 
 <blockquote>
 <p><strong>Note</strong>: As of <code>rustc</code> 1.2, the compiler has <em>grevious</em> performance problems when large numbers of integer literals of unknown type must undergo inference.  We are using explicitly <code>usize</code>-typed literals here to avoid that.</p>
@@ -168,69 +147,24 @@ fn main() {
 
 <p>This <em>works</em>, but will trivially exceed the recursion limit.  Unlike the repetition approach, you can extend the input size by matching multiple tokens at once.</p>
 
-<span class='rusttest'>macro_rules! count_tts {
-    ($_a:tt $_b:tt $_c:tt $_d:tt $_e:tt
-     $_f:tt $_g:tt $_h:tt $_i:tt $_j:tt
-     $_k:tt $_l:tt $_m:tt $_n:tt $_o:tt
-     $_p:tt $_q:tt $_r:tt $_s:tt $_t:tt
-     $($tail:tt)*)
-        =&gt; {20usize + count_tts!($($tail)*)};
-    ($_a:tt $_b:tt $_c:tt $_d:tt $_e:tt
-     $_f:tt $_g:tt $_h:tt $_i:tt $_j:tt
-     $($tail:tt)*)
-        =&gt; {10usize + count_tts!($($tail)*)};
-    ($_a:tt $_b:tt $_c:tt $_d:tt $_e:tt
-     $($tail:tt)*)
-        =&gt; {5usize + count_tts!($($tail)*)};
-    ($_a:tt
-     $($tail:tt)*)
-        =&gt; {1usize + count_tts!($($tail)*)};
-    () =&gt; {0usize};
-}
-
-fn main() {
-    assert_eq!(700, count_tts!(
-        ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
-        ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
-        
-        ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
-        ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
-        
-        ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
-        ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
-        
-        ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
-        ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
-        
-        ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
-        ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
-        
-        // Repetition breaks somewhere after this
-        ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
-        ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
-
-        ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
-        ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
-    ));
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>count_tts</span> {
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_a</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_b</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_c</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_d</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_e</span>:<span class='ident'>tt</span>
      <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_f</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_g</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_h</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_i</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_j</span>:<span class='ident'>tt</span>
      <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_k</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_l</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_m</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_n</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_o</span>:<span class='ident'>tt</span>
      <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_p</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_q</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_r</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_s</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_t</span>:<span class='ident'>tt</span>
-     $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>)
-        <span class='op'>=&gt;</span> {<span class='number'>20usize</span> <span class='op'>+</span> <span class='macro'>count_tts</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>)};
+     $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>)
+        <span class='op'>=&gt;</span> {<span class='number'>20usize</span> <span class='op'>+</span> <span class='macro'>count_tts</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>)};
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_a</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_b</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_c</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_d</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_e</span>:<span class='ident'>tt</span>
      <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_f</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_g</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_h</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_i</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_j</span>:<span class='ident'>tt</span>
-     $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>)
-        <span class='op'>=&gt;</span> {<span class='number'>10usize</span> <span class='op'>+</span> <span class='macro'>count_tts</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>)};
+     $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>)
+        <span class='op'>=&gt;</span> {<span class='number'>10usize</span> <span class='op'>+</span> <span class='macro'>count_tts</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>)};
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_a</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_b</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_c</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_d</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_e</span>:<span class='ident'>tt</span>
-     $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>)
-        <span class='op'>=&gt;</span> {<span class='number'>5usize</span> <span class='op'>+</span> <span class='macro'>count_tts</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>)};
+     $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>)
+        <span class='op'>=&gt;</span> {<span class='number'>5usize</span> <span class='op'>+</span> <span class='macro'>count_tts</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>)};
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_a</span>:<span class='ident'>tt</span>
-     $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>)
-        <span class='op'>=&gt;</span> {<span class='number'>1usize</span> <span class='op'>+</span> <span class='macro'>count_tts</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>)};
+     $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>)
+        <span class='op'>=&gt;</span> {<span class='number'>1usize</span> <span class='op'>+</span> <span class='macro'>count_tts</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>)};
     () <span class='op'>=&gt;</span> {<span class='number'>0usize</span>};
 }
 
@@ -258,32 +192,21 @@ fn main() {
         ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
         ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
     ));
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20count_tts%20%7B%0A%20%20%20%20(%24_a%3Att%20%24_b%3Att%20%24_c%3Att%20%24_d%3Att%20%24_e%3Att%0A%20%20%20%20%20%24_f%3Att%20%24_g%3Att%20%24_h%3Att%20%24_i%3Att%20%24_j%3Att%0A%20%20%20%20%20%24_k%3Att%20%24_l%3Att%20%24_m%3Att%20%24_n%3Att%20%24_o%3Att%0A%20%20%20%20%20%24_p%3Att%20%24_q%3Att%20%24_r%3Att%20%24_s%3Att%20%24_t%3Att%0A%20%20%20%20%20%24(%24tail%3Att)*)%0A%20%20%20%20%20%20%20%20%3D%3E%20%7B20usize%20%2B%20count_tts!(%24(%24tail)*)%7D%3B%0A%20%20%20%20(%24_a%3Att%20%24_b%3Att%20%24_c%3Att%20%24_d%3Att%20%24_e%3Att%0A%20%20%20%20%20%24_f%3Att%20%24_g%3Att%20%24_h%3Att%20%24_i%3Att%20%24_j%3Att%0A%20%20%20%20%20%24(%24tail%3Att)*)%0A%20%20%20%20%20%20%20%20%3D%3E%20%7B10usize%20%2B%20count_tts!(%24(%24tail)*)%7D%3B%0A%20%20%20%20(%24_a%3Att%20%24_b%3Att%20%24_c%3Att%20%24_d%3Att%20%24_e%3Att%0A%20%20%20%20%20%24(%24tail%3Att)*)%0A%20%20%20%20%20%20%20%20%3D%3E%20%7B5usize%20%2B%20count_tts!(%24(%24tail)*)%7D%3B%0A%20%20%20%20(%24_a%3Att%0A%20%20%20%20%20%24(%24tail%3Att)*)%0A%20%20%20%20%20%20%20%20%3D%3E%20%7B1usize%20%2B%20count_tts!(%24(%24tail)*)%7D%3B%0A%20%20%20%20()%20%3D%3E%20%7B0usize%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20assert_eq!(700%2C%20count_tts!(%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%2F%2F%20Repetition%20breaks%20somewhere%20after%20this%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20))%3B%0A%7D%0A">Run</a></pre>
 
 <p>This particular formulation will work up to ~1,200 tokens.</p>
 
 <h2 id='slice-length' class='section-header'><a href='#slice-length'>Slice length</a></h2>
 <p>A third approach is to help the compiler construct a shallow AST that won&#39;t lead to a stack overflow.  This can be done by constructing an array literal and calling the <code>len</code> method.</p>
 
-<span class='rusttest'>macro_rules! replace_expr {
-    ($_t:tt $sub:expr) =&gt; {$sub};
-}
-
-macro_rules! count_tts {
-    ($($tts:tt)*) =&gt; {&lt;[()]&gt;::len(&amp;[$(replace_expr!($tts ())),*])};
-}
-
-fn main() {
-    assert_eq!(count_tts!(0 1 2), 3);
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>replace_expr</span> {
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_t</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>sub</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>sub</span>};
 }
 
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>count_tts</span> {
-    ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tts</span>:<span class='ident'>tt</span>)<span class='op'>*</span>) <span class='op'>=&gt;</span> {<span class='op'>&lt;</span>[()]<span class='op'>&gt;</span>::<span class='ident'>len</span>(<span class='kw-2'>&amp;</span>[$(<span class='macro'>replace_expr</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tts</span> ())),<span class='op'>*</span>])};
-}</pre>
+    ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tts</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> {<span class='op'>&lt;</span>[()]<span class='op'>&gt;</span>::<span class='ident'>len</span>(<span class='kw-2'>&amp;</span>[$(<span class='macro'>replace_expr</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tts</span> ())),<span class='kw-2'>*</span>])};
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20replace_expr%20%7B%0A%20%20%20%20(%24_t%3Att%20%24sub%3Aexpr)%20%3D%3E%20%7B%24sub%7D%3B%0A%7D%0A%0Amacro_rules!%20count_tts%20%7B%0A%20%20%20%20(%24(%24tts%3Att)*)%20%3D%3E%20%7B%3C%5B()%5D%3E%3A%3Alen(%26%5B%24(replace_expr!(%24tts%20()))%2C*%5D)%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20assert_eq!(count_tts!(0%201%202)%2C%203)%3B%0A%7D%0A">Run</a></pre>
 
 <p>This has been tested to work up to 10,000 tokens, and can probably go much higher.  The <em>downside</em> is that as of Rust 1.2, this <em>cannot</em> be used to produce a constant expression.  Although the result can be optimised to a simple constant (in debug builds it compiles down to a load from memory), it still cannot be used in constant positions (such as the value of <code>const</code>s, or a fixed array&#39;s size).</p>
 
@@ -292,24 +215,9 @@ fn main() {
 <h2 id='enum-counting' class='section-header'><a href='#enum-counting'>Enum counting</a></h2>
 <p>This approach can be used where you need to count a set of mutually distinct identifiers.  Additionally, the result of this approach is usable as a constant.</p>
 
-<span class='rusttest'>macro_rules! count_idents {
-    ($($idents:ident),* $(,)*) =&gt; {
-        {
-            #[allow(dead_code, non_camel_case_types)]
-            enum Idents { $($idents,)* __CountIdentsLast }
-            const COUNT: u32 = Idents::__CountIdentsLast as u32;
-            COUNT
-        }
-    };
-}
-
-fn main() {
-    const COUNT: u32 = count_idents!(A, B, C);
-    assert_eq!(COUNT, 3);
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>count_idents</span> {
-    ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>idents</span>:<span class='ident'>ident</span>),<span class='op'>*</span> $(,)<span class='op'>*</span>) <span class='op'>=&gt;</span> {
+    ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>idents</span>:<span class='ident'>ident</span>),<span class='op'>*</span> $(,)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> {
         {
             <span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>dead_code</span>, <span class='ident'>non_camel_case_types</span>)]</span>
             <span class='kw'>enum</span> <span class='ident'>Idents</span> { $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>idents</span>,)<span class='op'>*</span> <span class='ident'>__CountIdentsLast</span> }
@@ -317,17 +225,13 @@ fn main() {
             <span class='ident'>COUNT</span>
         }
     };
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20count_idents%20%7B%0A%20%20%20%20(%24(%24idents%3Aident)%2C*%20%24(%2C)*)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%23%5Ballow(dead_code%2C%20non_camel_case_types)%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20enum%20Idents%20%7B%20%24(%24idents%2C)*%20__CountIdentsLast%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20COUNT%3A%20u32%20%3D%20Idents%3A%3A__CountIdentsLast%20as%20u32%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20COUNT%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20const%20COUNT%3A%20u32%20%3D%20count_idents!(A%2C%20B%2C%20C)%3B%0A%20%20%20%20assert_eq!(COUNT%2C%203)%3B%0A%7D%0A">Run</a></pre>
 
 <p>This method does have two drawbacks.  First, as implied above, it can <em>only</em> count valid identifiers (which are also not keywords), and it does not allow those identifiers to repeat.</p>
 
 <p>Secondly, this approach is <em>not</em> hygienic, meaning that if whatever identifier you use in place of <code>__CountIdentsLast</code> is provided as input, the macro will fail due to the duplicate variants in the <code>enum</code>.</p>
 
-    <script type="text/javascript">
-        window.playgroundUrl = "https://play.rust-lang.org";
-    </script>
     <script src='rustbook.js'></script>
-<script src='playpen.js'></script>
 </div></div>
 
 

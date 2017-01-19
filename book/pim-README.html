@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <title>Macros, A Practical Introduction</title>
+    <title>宏，一份实践介绍</title>
 
     <link rel="stylesheet" type="text/css" href="rustbook.css">
 
@@ -28,25 +28,25 @@
                     </button>
                 </div>
 <div id='toc' class='mobile-hidden'>
-<ul class='chapter'>
+<ol class='chapter'>
 <li><a  href='README.html'><b>1.</b> Introduction</a>
 </li>
 <li><a  href='mbe-README.html'><b>2.</b> Macros, A Methodical Introduction</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-README.html'><b>2.1.</b> Syntax Extensions</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-source-analysis.html'><b>2.1.1.</b> Source Analysis</a>
 </li>
 <li><a  href='mbe-syn-macros-in-the-ast.html'><b>2.1.2.</b> Macros in the AST</a>
 </li>
 <li><a  href='mbe-syn-expansion.html'><b>2.1.3.</b> Expansion</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='mbe-macro-rules.html'><b>2.2.</b> macro_rules!</a>
 </li>
 <li><a  href='mbe-min-README.html'><b>2.3.</b> Minutiae</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-min-captures-and-expansion-redux.html'><b>2.3.1.</b> Captures and Expansion Redux</a>
 </li>
 <li><a  href='mbe-min-hygiene.html'><b>2.3.2.</b> Hygiene</a>
@@ -59,14 +59,14 @@
 </li>
 <li><a  href='mbe-min-import-export.html'><b>2.3.6.</b> Import/Export</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </li>
 <li><a class='active' href='pim-README.html'><b>3.</b> Macros, A Practical Introduction</a>
 </li>
 <li><a  href='pat-README.html'><b>4.</b> Patterns</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
 </li>
 <li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
@@ -85,41 +85,41 @@
 </li>
 <li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
 </li>
 <li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
 </li>
 <li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </div>
 <div id='page-wrapper'>
 <div id='page'>
 
 
-    <h1 class="title">Macros, A Practical Introduction</h1>
-    <p>This chapter will introduce the Rust macro-by-example system using a relatively simple, practical example.  It does <em>not</em> attempt to explain all of the intricacies of the system; its goal is to get you comfortable with how and why macros are written.</p>
+    <h1 class="title">宏，一份实践介绍</h1>
+    <p>本章节将通过一个相对简单、可行的例子来介绍Rust的“示例宏”系统。我们将不会试图解释整个宏系统错综复杂的构造；而是试图让读者能够舒适地了解宏的书写方式，以及为何如斯。</p>
 
-<p>There is also the <a href="http://doc.rust-lang.org/book/macros.html">Macros chapter of the Rust Book</a> which is another high-level explanation, and the <a href="mbe-README.html">methodical introduction</a> chapter of this book, which explains the macro system in detail.</p>
+<p>在<a href="http://doc.rust-lang.org/book/macros.html">Rust官方教程中也有一章讲解宏</a>(<a href="https://kaisery.gitbooks.io/rust-book-chinese/content/content/Macros%20%E5%AE%8F.html">中文版</a>)，同样提供了高层面的讲解。同时，本书也有一章<a href="mbe-README.html">更富条理的介绍</a>，旨在详细阐释宏系统。</p>
 
-<h2 id='a-little-context' class='section-header'><a href='#a-little-context'>A Little Context</a></h2>
+<h2 id='一点背景知识' class='section-header'><a href='#一点背景知识'>一点背景知识</a></h2>
 <blockquote>
-<p><strong>Note</strong>: don&#39;t panic!  What follows is the only math will be talked about.  You can quite safely skip this section if you just want to get to the meat of the article.</p>
+<p><strong>注意</strong>：别慌！我们通篇只会涉及到下面这一点点数学。如果想直接看重点，本小节可被安全跳过。</p>
 </blockquote>
 
-<p>If you aren&#39;t familiar, a recurrence relation is a sequence where each value is defined in terms of one or more <em>previous</em> values, with one or more initial values to get the whole thing started.  For example, the <a href="https://en.wikipedia.org/wiki/Fibonacci_number">Fibonacci sequence</a> can be defined by the relation:</p>
+<p>如果你不了解的话，所谓“递推(recurrence)关系”是指这样一个序列，其中的每一个值都由先前的一个或多个值决定，并最终由一个或多个初始值完全决定。举例来说，<a href="https://en.wikipedia.org/wiki/Fibonacci_number">Fibonacci数列</a>可被定义为如下关系：</p>
 
 <!-- MATH START: $F_n = 0, 1, \ldots, F_n-1 + F_n - 2$ -->
 
@@ -129,39 +129,39 @@
         white-space: nowrap;
         font-family: "Cambria Math", "Cambria", serif;
     }
-
+    
     .katex .vlist > span > {
         display: inline-block;
     }
-
+    
     .mathit {
         font-style: italic;
     }
-
+    
     .katex .reset-textstyle.scriptstyle {
         font-size: 0.7em;
     }
-
+    
     .katex .reset-textstyle.textstyle {
         font-size: 1em;
     }
-
+    
     .katex .textstyle > .mord + .mrel {
         margin-left: 0.27778em;
     }
-
+    
     .katex .textstyle > .mrel + .minner, .katex .textstyle > .mrel + .mop, .katex .textstyle > .mrel + .mopen, .katex .textstyle > .mrel + .mord {
         margin-left: 0.27778em;
     }
-
+    
     .katex .textstyle > .mclose + .minner, .katex .textstyle > .minner + .mop, .katex .textstyle > .minner + .mord, .katex .textstyle > .mpunct + .mclose, .katex .textstyle > .mpunct + .minner, .katex .textstyle > .mpunct + .mop, .katex .textstyle > .mpunct + .mopen, .katex .textstyle > .mpunct + .mord, .katex .textstyle > .mpunct + .mpunct, .katex .textstyle > .mpunct + .mrel {
         margin-left: 0.16667em;
     }
-
+    
     .katex .textstyle > .mord + .mbin {
         margin-left: 0.22222em;
     }
-
+    
     .katex .textstyle > .mbin + .minner, .katex .textstyle > .mbin + .mop, .katex .textstyle > .mbin + .mopen, .katex .textstyle > .mbin + .mord {
         margin-left: 0.22222em;
     }
@@ -173,57 +173,49 @@
 
 <!-- MATH END -->
 
-<p>Thus, the first two numbers in the sequence are 0 and 1, with the third being <em>F<sub>0</sub></em> + <em>F<sub>1</sub></em> = 0 + 1 = 1, the fourth <em>F<sub>1</sub></em> + <em>F<sub>2</sub></em> = 1 + 1 = 2, and so on forever.</p>
+<p>即，序列的前两个数分别为0和1，而第3个则为<em>F<sub>0</sub></em> + <em>F<sub>1</sub></em> = 0 + 1 = 1，第4个为<em>F<sub>1</sub></em> + <em>F<sub>2</sub></em> = 1 + 1 = 2，依此类推。</p>
 
-<p>Now, <em>because</em> such a sequence can go on forever, that makes defining a <code>fibonacci</code> function a little tricky, since you obviously don&#39;t want to try returning a complete vector.  What you <em>want</em> is to return something which will lazily compute elements of the sequence as needed.</p>
+<p>由于这列值可以永远持续下去，定义一个<code>fibonacci</code>的求值函数实际上显得有些困难。显然，你不会想要返回一整列值。你所真正需要的，是某种具有怠惰求值性质的东西——只在必要的时候才会计算。</p>
 
-<p>In Rust, that means producing an <code>Iterator</code>.  This is not especially <em>hard</em>, but there is a fair amount of boilerplate involved: you need to define a custom type, work out what state needs to be stored in it, then implement the <code>Iterator</code> trait for it.</p>
+<p>在Rust中这种需求表明，是<code>Iterator</code>上场的时候了。这并不是特别困难，但比较繁琐：你得自定义一个类型，弄明白该在其中存储什么东西，然后为它实现<code>Iterator</code> trait。</p>
 
-<p>However, recurrence relations are simple enough that almost all of these details can be abstracted out with a little macro-based code generation.</p>
+<p>其实，递推关系足够简单；几乎所有的递推关系都可被抽象出来，变成一小段由宏驱动的代码生成机制。</p>
 
-<p>So, with all that having been said, let&#39;s get started.</p>
+<p>好了，说得已经足够多了，让我们开始干活吧。</p>
 
-<h2 id='construction' class='section-header'><a href='#construction'>Construction</a></h2>
-<p>Usually, when working on a new macro, the first thing I do is decide what the macro invocation should look like.  In this specific case, my first attempt looked like this:</p>
+<h2 id='构建过程' class='section-header'><a href='#构建过程'>构建过程</a></h2>
+<p>通常来说，在构建一个新宏时，我所做的第一件事，是决定宏调用的形式。在我们所讨论的情况下，我的初次尝试是这样：</p>
 
-<span class='rusttest'>fn main() {
-    let fib = recurrence![a[n] = 0, 1, ..., a[n-1] + a[n-2]];
-    
-    for e in fib.take(10) { println!(&quot;{}&quot;, e) }
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='ident'>fib</span> <span class='op'>=</span> <span class='macro'>recurrence</span><span class='macro'>!</span>[<span class='ident'>a</span>[<span class='ident'>n</span>] <span class='op'>=</span> <span class='number'>0</span>, <span class='number'>1</span>, ..., <span class='ident'>a</span>[<span class='ident'>n</span><span class='op'>-</span><span class='number'>1</span>] <span class='op'>+</span> <span class='ident'>a</span>[<span class='ident'>n</span><span class='op'>-</span><span class='number'>2</span>]];
 
-<span class='kw'>for</span> <span class='ident'>e</span> <span class='kw'>in</span> <span class='ident'>fib</span>.<span class='ident'>take</span>(<span class='number'>10</span>) { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='ident'>e</span>) }</pre>
+<span class='kw'>for</span> <span class='ident'>e</span> <span class='kw'>in</span> <span class='ident'>fib</span>.<span class='ident'>take</span>(<span class='number'>10</span>) { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='ident'>e</span>) }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Alet%20fib%20%3D%20recurrence!%5Ba%5Bn%5D%20%3D%200%2C%201%2C%20...%2C%20a%5Bn-1%5D%20%2B%20a%5Bn-2%5D%5D%3B%0A%0Afor%20e%20in%20fib.take(10)%20%7B%20println!(%22%7B%7D%22%2C%20e)%20%7D%0A%7D">Run</a></pre>
 
-<p>From that, we can take a stab at how the macro should be defined, even if we aren&#39;t sure of the actual expansion.  This is useful because if you can&#39;t figure out how to parse the input syntax, then <em>maybe</em> you need to change it.</p>
+<p>以此为基点，我们可以向宏的定义方式迈出第一步——虽然此时我们尚不了解宏的展开部分究竟是什么样子。这一步骤的用处在于，如果在此处你无法明确如何将输入语法转义，那就可能意味着，整个宏的构思需要改变。</p>
 
-<span class='rusttest'>macro_rules! recurrence {
-    ( a[n] = $($inits:expr),+ , ... , $recur:expr ) =&gt; { /* ... */ };
-}
-fn main() {}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>recurrence</span> {
     ( <span class='ident'>a</span>[<span class='ident'>n</span>] <span class='op'>=</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inits</span>:<span class='ident'>expr</span>),<span class='op'>+</span> , ... , <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>recur</span>:<span class='ident'>expr</span> ) <span class='op'>=&gt;</span> { <span class='comment'>/* ... */</span> };
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20recurrence%20%7B%0A%20%20%20%20(%20a%5Bn%5D%20%3D%20%24(%24inits%3Aexpr)%2C%2B%20%2C%20...%20%2C%20%24recur%3Aexpr%20)%20%3D%3E%20%7B%20%2F*%20...%20*%2F%20%7D%3B%0A%7D%0Afn%20main()%20%7B%7D%0A">Run</a></pre>
 
-<p>Assuming you aren&#39;t familiar with the syntax, allow me to elucidate.  This is defining a macro, using the <code>macro_rules!</code> system, called <code>recurrence!</code>.  This macro has a single parsing rule.  That rule says the input to the macro must match:</p>
-
-<ul>
-<li>the literal token sequence <code>a</code> <code>[</code> <code>n</code> <code>]</code> <code>=</code>,</li>
-<li>a repeating (the <code>$( ... )</code>) sequence, using <code>,</code> as a separator, and one or more (<code>+</code>) repeats of:
+<p>假设你并不熟悉相应的语法，由我来进行解释。上述代码块使用<code>macro_rules!</code>系统定义了一个宏，称为<code>recurrence!</code>。此宏仅包含一条转义规则，它规定此宏必须依次匹配下列项目：</p>
 
 <ul>
-<li>a valid <em>expression</em> captured into the variable <code>inits</code> (<code>$inits:expr</code>)</li>
+<li>一段字面标记序列，<code>a</code> <code>[</code> <code>n</code> <code>]</code> <code>=</code>；</li>
+<li>一段重复 (<code>$( ... )</code>)序列，由<code>,</code>分隔，允许重复一或多次(<code>+</code>)；重复的内容允许：
+
+<ul>
+<li>一个有效的表达式，它将被捕获至变量<code>inits</code> (<code>$inits:expr</code>)</li>
 </ul></li>
-<li>the literal token sequence <code>,</code> <code>...</code> <code>,</code>,</li>
-<li>a valid <em>expression</em> captured into the variable <code>recur</code> (<code>$recur:expr</code>).</li>
+<li>又一段字面标记序列， <code>...</code> <code>,</code>；</li>
+<li>一个有效的表达式，将被捕获至变量<code>recur</code> (<code>$recur:expr</code>)。</li>
 </ul>
 
-<p>Finally, the rule says that <em>if</em> the input matches this rule, then the macro invocation should be replaced by the token sequence <code>/* ... */</code>.</p>
+<p>最后，规则声明，如果输入与此规则成功匹配，则该宏调用将被标记序列<code>/* ... */</code>替换。</p>
 
-<p>It&#39;s worth noting that <code>inits</code>, as implied by the name, actually contains <em>all</em> the expressions that match in this position, not just the first or last.  What&#39;s more, it captures them <em>as a sequence</em> as opposed to, say, irreversibly pasting them all together.  Also note that you can do &quot;zero or more&quot; with a repetition by using <code>*</code> instead of <code>+</code>.  There is no support for &quot;zero or one&quot; or more specific numbers of repetitions.</p>
+<p>值得注意的是，<code>inits</code>，如它命名采用的复数形式所暗示的，实际上包含所有匹配进此重复的表达式，而非仅是第一或最后一个。不仅如此，它将它们捕获成一个序列，而不是——举个例子——把它们不可逆地粘贴在一起。还注意到，可以用<code>*</code>替换<code>+</code>来表示允许“0或多个”重复。并不支持“0或1个”或任何其它更加具体的重复形式。</p>
 
-<p>As an exercise, let&#39;s take the proposed input and feed it through the rule, to see how it is processed.  The &quot;Position&quot; column will show which part of the syntax pattern needs to be matched against next, denoted by a &quot;⌂&quot;.  Note that in some cases, there might be more than one possible &quot;next&quot; element to match against.  &quot;Input&quot; will contain all of the tokens that have <em>not</em> been consumed yet.  <code>inits</code> and <code>recur</code> will contain the contents of those bindings.</p>
+<p>作为练习，我们将采用上面提及的输入，并研究它被处理的过程。“Position”列将揭示下一个需要被匹配的句法模式，由“⌂”表示。注意在某些情况下，可能存在多个可用的“下一个”元素。“Input”将包括所有尚未被消耗的标记。<code>inits</code>和<code>recur</code>将分别包含其对应绑定的内容。</p>
 
 <style type="text/css">
     /* Customisations. */
@@ -231,28 +223,28 @@ fn main() {}
     .small-code code {
         font-size: 60%;
     }
-
+    
     table pre.rust {
         margin: 0;
         border: 0;
     }
-
+    
     table.parse-table code {
         white-space: pre-wrap;
         background-color: transparent;
         border: none;
     }
-
+    
     table.parse-table tbody > tr > td:nth-child(1) > code:nth-of-type(2) {
         color: red;
         margin-top: -0.7em;
         margin-bottom: -0.6em;
     }
-
+    
     table.parse-table tbody > tr > td:nth-child(1) > code {
         display: block;
     }
-
+    
     table.parse-table tbody > tr > td:nth-child(2) > code {
         display: block;
     }
@@ -327,7 +319,7 @@ fn main() {}
         <tr>
             <td colspan="4" style="font-size:.7em;">
 
-<em>Note</em>: there are two ⌂ here, because the next input token might match <em>either</em> the comma separator <em>between</em>em> elements in the repetition, <em>or</em> the comma <em>after</em> the repetition.  The macro system will keep track of both possibilities, until it is able to decide which one to follow.
+<em>注意</em>：此处有两个 ⌂，因为下一个输入标记既可以匹配重复元素间的分隔符逗号，也可以匹配标志重复结束的逗号。宏系统将同时追踪这两种可能，直到决定具体选择为止。
 
             </td>
         </tr>
@@ -348,7 +340,7 @@ fn main() {}
         <tr>
             <td colspan="4" style="font-size:.7em;">
 
-<em>Note</em>: the third, crossed-out marker indicates that the macro system has, as a consequence of the last token consumed, eliminated one of the previous possible branches.
+<em>注意</em>：排在第三个的叉号表示，由于上一个标记被消耗掉，宏系统排除了一项先前存在的可能分支。
 
             </td>
         </tr>
@@ -383,7 +375,7 @@ fn main() {}
         <tr>
             <td colspan="4" style="font-size:.7em;">
 
-<em>Note</em>: this particular step should make it clear that a binding like <tt>$recur:expr</tt> will consume an <em>entire expression</em>, using the compiler's knowledge of what constitutes a valid expression.  As will be noted later, you can do this for other language constructs, too.
+<em>注意</em>：这一步表明，类似 <tt>$recur:expr</tt>的绑定将消耗<em>一整个表达式</em>。此处什么组成一个有效的表达式由编译器决定。稍后我们会谈到，其它语言构造也能够有类似的行为。
 
             </td>
         </tr>
@@ -392,40 +384,24 @@ fn main() {}
 
 <p></p>
 
-<p>The key take-away from this is that the macro system will <em>try</em> to incrementally match the tokens provided as input to the macro against the provided rules.  We&#39;ll come back to the &quot;try&quot; part.</p>
+<p>此处的关键点在于，宏系统是依次尝试将每条规则与所输入的标记进行匹配的。我们稍后还将谈回到这一“尝试”。</p>
 
-<p>Now, let&#39;s begin writing the final, fully expanded form.  For this expansion, I was looking for something like:</p>
+<p>现在，我们准备写出宏完全展开后的最终版本。对此，我们期望的结果类似：</p>
 
-<span class='rusttest'>fn main() {
-    let fib = {
-        struct Recurrence {
-            mem: [u64; 2],
-            pos: usize,
-        }
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='ident'>fib</span> <span class='op'>=</span> {
     <span class='kw'>struct</span> <span class='ident'>Recurrence</span> {
         <span class='ident'>mem</span>: [<span class='ident'>u64</span>; <span class='number'>2</span>],
         <span class='ident'>pos</span>: <span class='ident'>usize</span>,
-    }</pre>
+    }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Alet%20fib%20%3D%20%7B%0A%20%20%20%20struct%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20mem%3A%20%5Bu64%3B%202%5D%2C%0A%20%20%20%20%20%20%20%20pos%3A%20usize%2C%0A%20%20%20%20%7D%0A%7D">Run</a></pre>
 
-<p>This will be the actual iterator type.  <code>mem</code> will be the memo buffer to hold the last few values so the recurrence can be computed.  <code>pos</code> is to keep track of the value of <code>n</code>.</p>
+<p>这就是我们实际会采用的迭代器类型。其中，<code>mem</code>将负责存储最近算得的两个<code>fib</code>值，保证递推计算能够顺利进行；<code>pos</code>则负责记录当前的<code>n</code>值。</p>
 
 <blockquote>
-<p><strong>Aside</strong>: I&#39;ve chosen <code>u64</code> as a &quot;sufficiently large&quot; type for the elements of this sequence.  Don&#39;t worry about how this will work out for <em>other</em> sequences; we&#39;ll come to it.</p>
+<p><strong>附注</strong>：此处选用<code>u64</code>是因为，对此数列来说，它已经“足够大”了。先不必担心其它数列是否适用，我们会提到的。</p>
 </blockquote>
 
-<span class='rusttest'>fn main() {
-        impl Iterator for Recurrence {
-            type Item = u64;
-    
-            #[inline]
-            fn next(&amp;mut self) -&gt; Option&lt;u64&gt; {
-                if self.pos &lt; 2 {
-                    let next_val = self.mem[self.pos];
-                    self.pos += 1;
-                    Some(next_val)
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
     <span class='kw'>impl</span> <span class='ident'>Iterator</span> <span class='kw'>for</span> <span class='ident'>Recurrence</span> {
         <span class='kw'>type</span> <span class='ident'>Item</span> <span class='op'>=</span> <span class='ident'>u64</span>;
 
@@ -434,24 +410,11 @@ fn main() {}
             <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>pos</span> <span class='op'>&lt;</span> <span class='number'>2</span> {
                 <span class='kw'>let</span> <span class='ident'>next_val</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>mem</span>[<span class='self'>self</span>.<span class='ident'>pos</span>];
                 <span class='self'>self</span>.<span class='ident'>pos</span> <span class='op'>+=</span> <span class='number'>1</span>;
-                <span class='prelude-val'>Some</span>(<span class='ident'>next_val</span>)</pre>
+                <span class='prelude-val'>Some</span>(<span class='ident'>next_val</span>)<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0A%20%20%20%20impl%20Iterator%20for%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20type%20Item%20%3D%20u64%3B%0A%0A%20%20%20%20%20%20%20%20%23%5Binline%5D%0A%20%20%20%20%20%20%20%20fn%20next(%26mut%20self)%20-%3E%20Option%3Cu64%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%20self.pos%20%3C%202%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20self.mem%5Bself.pos%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%7D">Run</a></pre>
 
 <p>We need a branch to yield the initial values of the sequence; nothing tricky.</p>
 
-<span class='rusttest'>fn main() {
-                } else {
-                    let a = /* something */;
-                    let n = self.pos;
-                    let next_val = (a[n-1] + a[n-2]);
-    
-                    self.mem.TODO_shuffle_down_and_append(next_val);
-    
-                    self.pos += 1;
-                    Some(next_val)
-                }
-            }
-        }
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
             } <span class='kw'>else</span> {
                 <span class='kw'>let</span> <span class='ident'>a</span> <span class='op'>=</span> <span class='comment'>/* something */</span>;
                 <span class='kw'>let</span> <span class='ident'>n</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>pos</span>;
@@ -463,58 +426,20 @@ fn main() {}
                 <span class='prelude-val'>Some</span>(<span class='ident'>next_val</span>)
             }
         }
-    }</pre>
+    }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20a%20%3D%20%2F*%20something%20*%2F%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20n%20%3D%20self.pos%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20(a%5Bn-1%5D%20%2B%20a%5Bn-2%5D)%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.mem.TODO_shuffle_down_and_append(next_val)%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%7D">Run</a></pre>
 
 <p>This is a bit harder; we&#39;ll come back and look at <em>how</em> exactly to define <code>a</code>.  Also, <code>TODO_shuffle_down_and_append</code> is another placeholder; I want something that places <code>next_val</code> on the end of the array, shuffling the rest down by one space, dropping the 0th element.</p>
 
-<span class='rusttest'>fn main() {
-        Recurrence { mem: [0, 1], pos: 0 }
-    };
-    
-    for e in fib.take(10) { println!(&quot;{}&quot;, e) }
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 
     <span class='ident'>Recurrence</span> { <span class='ident'>mem</span>: [<span class='number'>0</span>, <span class='number'>1</span>], <span class='ident'>pos</span>: <span class='number'>0</span> }
 };
 
-<span class='kw'>for</span> <span class='ident'>e</span> <span class='kw'>in</span> <span class='ident'>fib</span>.<span class='ident'>take</span>(<span class='number'>10</span>) { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='ident'>e</span>) }</pre>
+<span class='kw'>for</span> <span class='ident'>e</span> <span class='kw'>in</span> <span class='ident'>fib</span>.<span class='ident'>take</span>(<span class='number'>10</span>) { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='ident'>e</span>) }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0A%20%20%20%20Recurrence%20%7B%20mem%3A%20%5B0%2C%201%5D%2C%20pos%3A%200%20%7D%0A%7D%3B%0A%0Afor%20e%20in%20fib.take(10)%20%7B%20println!(%22%7B%7D%22%2C%20e)%20%7D%0A%7D">Run</a></pre>
 
 <p>Lastly, return an instance of our new structure, which can then be iterated over.  To summarise, the complete expansion is:</p>
 
-<span class='rusttest'>fn main() {
-    let fib = {
-        struct Recurrence {
-            mem: [u64; 2],
-            pos: usize,
-        }
-    
-        impl Iterator for Recurrence {
-            type Item = u64;
-    
-            #[inline]
-            fn next(&amp;mut self) -&gt; Option&lt;u64&gt; {
-                if self.pos &lt; 2 {
-                    let next_val = self.mem[self.pos];
-                    self.pos += 1;
-                    Some(next_val)
-                } else {
-                    let a = /* something */;
-                    let n = self.pos;
-                    let next_val = (a[n-1] + a[n-2]);
-    
-                    self.mem.TODO_shuffle_down_and_append(next_val.clone());
-    
-                    self.pos += 1;
-                    Some(next_val)
-                }
-            }
-        }
-    
-        Recurrence { mem: [0, 1], pos: 0 }
-    };
-    
-    for e in fib.take(10) { println!(&quot;{}&quot;, e) }
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='ident'>fib</span> <span class='op'>=</span> {
     <span class='kw'>struct</span> <span class='ident'>Recurrence</span> {
         <span class='ident'>mem</span>: [<span class='ident'>u64</span>; <span class='number'>2</span>],
@@ -546,7 +471,7 @@ fn main() {}
     <span class='ident'>Recurrence</span> { <span class='ident'>mem</span>: [<span class='number'>0</span>, <span class='number'>1</span>], <span class='ident'>pos</span>: <span class='number'>0</span> }
 };
 
-<span class='kw'>for</span> <span class='ident'>e</span> <span class='kw'>in</span> <span class='ident'>fib</span>.<span class='ident'>take</span>(<span class='number'>10</span>) { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='ident'>e</span>) }</pre>
+<span class='kw'>for</span> <span class='ident'>e</span> <span class='kw'>in</span> <span class='ident'>fib</span>.<span class='ident'>take</span>(<span class='number'>10</span>) { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='ident'>e</span>) }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Alet%20fib%20%3D%20%7B%0A%20%20%20%20struct%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20mem%3A%20%5Bu64%3B%202%5D%2C%0A%20%20%20%20%20%20%20%20pos%3A%20usize%2C%0A%20%20%20%20%7D%0A%0A%20%20%20%20impl%20Iterator%20for%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20type%20Item%20%3D%20u64%3B%0A%0A%20%20%20%20%20%20%20%20%23%5Binline%5D%0A%20%20%20%20%20%20%20%20fn%20next(%26mut%20self)%20-%3E%20Option%3Cu64%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20if%20self.pos%20%3C%202%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20self.mem%5Bself.pos%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20a%20%3D%20%2F*%20something%20*%2F%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20n%20%3D%20self.pos%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20(a%5Bn-1%5D%20%2B%20a%5Bn-2%5D)%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.mem.TODO_shuffle_down_and_append(next_val.clone())%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%0A%20%20%20%20Recurrence%20%7B%20mem%3A%20%5B0%2C%201%5D%2C%20pos%3A%200%20%7D%0A%7D%3B%0A%0Afor%20e%20in%20fib.take(10)%20%7B%20println!(%22%7B%7D%22%2C%20e)%20%7D%0A%7D">Run</a></pre>
 
 <blockquote>
 <p><strong>Aside</strong>: Yes, this <em>does</em> mean we&#39;re defining a different <code>Recurrence</code> struct and its implementation for each macro invocation.  Most of this will optimise away in the final binary, with some judicious use of <code>#[inline]</code> attributes.</p>
@@ -554,17 +479,7 @@ fn main() {}
 
 <p>It&#39;s also useful to check your expansion as you&#39;re writing it.  If you see anything in the expansion that needs to vary with the invocation, but <em>isn&#39;t</em> in the actual macro syntax, you should work out where to introduce it.  In this case, we&#39;ve added <code>u64</code>, but that&#39;s not neccesarily what the user wants, nor is it in the macro syntax.  So let&#39;s fix that.</p>
 
-<span class='rusttest'>macro_rules! recurrence {
-    ( a[n]: $sty:ty = $($inits:expr),+ , ... , $recur:expr ) =&gt; { /* ... */ };
-}
-
-/*
-let fib = recurrence![a[n]: u64 = 0, 1, ..., a[n-1] + a[n-2]];
-
-for e in fib.take(10) { println!(&quot;{}&quot;, e) }
-*/
-fn main() {}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>recurrence</span> {
     ( <span class='ident'>a</span>[<span class='ident'>n</span>]: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>sty</span>:<span class='ident'>ty</span> <span class='op'>=</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inits</span>:<span class='ident'>expr</span>),<span class='op'>+</span> , ... , <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>recur</span>:<span class='ident'>expr</span> ) <span class='op'>=&gt;</span> { <span class='comment'>/* ... */</span> };
 }
@@ -573,7 +488,7 @@ fn main() {}
 let fib = recurrence![a[n]: u64 = 0, 1, ..., a[n-1] + a[n-2]];
 
 for e in fib.take(10) { println!(&quot;{}&quot;, e) }
-*/</span></pre>
+*/</span><a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20recurrence%20%7B%0A%20%20%20%20(%20a%5Bn%5D%3A%20%24sty%3Aty%20%3D%20%24(%24inits%3Aexpr)%2C%2B%20%2C%20...%20%2C%20%24recur%3Aexpr%20)%20%3D%3E%20%7B%20%2F*%20...%20*%2F%20%7D%3B%0A%7D%0A%0A%2F*%0Alet%20fib%20%3D%20recurrence!%5Ba%5Bn%5D%3A%20u64%20%3D%200%2C%201%2C%20...%2C%20a%5Bn-1%5D%20%2B%20a%5Bn-2%5D%5D%3B%0A%0Afor%20e%20in%20fib.take(10)%20%7B%20println!(%22%7B%7D%22%2C%20e)%20%7D%0A*%2F%0Afn%20main()%20%7B%7D%0A">Run</a></pre>
 
 <p>Here, I&#39;ve added a new capture: <code>sty</code> which should be a type.</p>
 
@@ -590,28 +505,7 @@ for e in fib.take(10) { println!(&quot;{}&quot;, e) }
 
 <p>We can do this pretty easily with a wrapper type:</p>
 
-<span class='rusttest'>fn main() {
-    struct IndexOffset&lt;&#39;a&gt; {
-        slice: &amp;&#39;a [u64; 2],
-        offset: usize,
-    }
-    
-    impl&lt;&#39;a&gt; Index&lt;usize&gt; for IndexOffset&lt;&#39;a&gt; {
-        type Output = u64;
-    
-        #[inline(always)]
-        fn index&lt;&#39;b&gt;(&amp;&#39;b self, index: usize) -&gt; &amp;&#39;b u64 {
-            use std::num::Wrapping;
-    
-            let index = Wrapping(index);
-            let offset = Wrapping(self.offset);
-            let window = Wrapping(2);
-    
-            let real_index = index - offset + window;
-            &amp;self.slice[real_index.0]
-        }
-    }
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='kw'>struct</span> <span class='ident'>IndexOffset</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> {
     <span class='ident'>slice</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> [<span class='ident'>u64</span>; <span class='number'>2</span>],
     <span class='ident'>offset</span>: <span class='ident'>usize</span>,
@@ -631,7 +525,7 @@ for e in fib.take(10) { println!(&quot;{}&quot;, e) }
         <span class='kw'>let</span> <span class='ident'>real_index</span> <span class='op'>=</span> <span class='ident'>index</span> <span class='op'>-</span> <span class='ident'>offset</span> <span class='op'>+</span> <span class='ident'>window</span>;
         <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>slice</span>[<span class='ident'>real_index</span>.<span class='number'>0</span>]
     }
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Astruct%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20slice%3A%20%26'a%20%5Bu64%3B%202%5D%2C%0A%20%20%20%20offset%3A%20usize%2C%0A%7D%0A%0Aimpl%3C'a%3E%20Index%3Cusize%3E%20for%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20type%20Output%20%3D%20u64%3B%0A%0A%20%20%20%20%23%5Binline(always)%5D%0A%20%20%20%20fn%20index%3C'b%3E(%26'b%20self%2C%20index%3A%20usize)%20-%3E%20%26'b%20u64%20%7B%0A%20%20%20%20%20%20%20%20use%20std%3A%3Anum%3A%3AWrapping%3B%0A%0A%20%20%20%20%20%20%20%20let%20index%20%3D%20Wrapping(index)%3B%0A%20%20%20%20%20%20%20%20let%20offset%20%3D%20Wrapping(self.offset)%3B%0A%20%20%20%20%20%20%20%20let%20window%20%3D%20Wrapping(2)%3B%0A%0A%20%20%20%20%20%20%20%20let%20real_index%20%3D%20index%20-%20offset%20%2B%20window%3B%0A%20%20%20%20%20%20%20%20%26self.slice%5Breal_index.0%5D%0A%20%20%20%20%7D%0A%7D%0A%7D">Run</a></pre>
 
 <blockquote>
 <p><strong>Aside</strong>: since lifetimes come up <em>a lot</em> with people new to Rust, a quick explanation: <code>&#39;a</code> and <code>&#39;b</code> are lifetime parameters that are used to track where a reference (<em>i.e.</em> a borrowed pointer to some data) is valid.  In this case, <code>IndexOffset</code> borrows a reference to our iterator&#39;s data, so it needs to keep track of how long it&#39;s allowed to hold that reference for, using <code>&#39;a</code>.</p>
@@ -641,23 +535,12 @@ for e in fib.take(10) { println!(&quot;{}&quot;, e) }
 
 <p>This changes the definition of <code>a</code> to:</p>
 
-<span class='rusttest'>fn main() {
-    let a = IndexOffset { slice: &amp;self.mem, offset: n };
-}</span><pre class='rust rust-example-rendered'>
-<span class='kw'>let</span> <span class='ident'>a</span> <span class='op'>=</span> <span class='ident'>IndexOffset</span> { <span class='ident'>slice</span>: <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>mem</span>, <span class='ident'>offset</span>: <span class='ident'>n</span> };</pre>
+<pre class='rust rust-example-rendered'>
+<span class='kw'>let</span> <span class='ident'>a</span> <span class='op'>=</span> <span class='ident'>IndexOffset</span> { <span class='ident'>slice</span>: <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>mem</span>, <span class='ident'>offset</span>: <span class='ident'>n</span> };<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Alet%20a%20%3D%20IndexOffset%20%7B%20slice%3A%20%26self.mem%2C%20offset%3A%20n%20%7D%3B%0A%7D">Run</a></pre>
 
 <p>The only remaining question is what to do about <code>TODO_shuffle_down_and_append</code>.  I wasn&#39;t able to find a method in the standard library with exactly the semantics I wanted, but it isn&#39;t hard to do by hand.</p>
 
-<span class='rusttest'>fn main() {
-    {
-        use std::mem::swap;
-    
-        let mut swap_tmp = next_val;
-        for i in (0..2).rev() {
-            swap(&amp;mut swap_tmp, &amp;mut self.mem[i]);
-        }
-    }
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 {
     <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>mem</span>::<span class='ident'>swap</span>;
 
@@ -665,7 +548,7 @@ for e in fib.take(10) { println!(&quot;{}&quot;, e) }
     <span class='kw'>for</span> <span class='ident'>i</span> <span class='kw'>in</span> (<span class='number'>0</span>..<span class='number'>2</span>).<span class='ident'>rev</span>() {
         <span class='ident'>swap</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>swap_tmp</span>, <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>mem</span>[<span class='ident'>i</span>]);
     }
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0A%7B%0A%20%20%20%20use%20std%3A%3Amem%3A%3Aswap%3B%0A%0A%20%20%20%20let%20mut%20swap_tmp%20%3D%20next_val%3B%0A%20%20%20%20for%20i%20in%20(0..2).rev()%20%7B%0A%20%20%20%20%20%20%20%20swap(%26mut%20swap_tmp%2C%20%26mut%20self.mem%5Bi%5D)%3B%0A%20%20%20%20%7D%0A%7D%0A%7D">Run</a></pre>
 
 <p>This swaps the new value into the end of the array, swapping the other elements down one space.</p>
 
@@ -675,82 +558,7 @@ for e in fib.take(10) { println!(&quot;{}&quot;, e) }
 
 <p>The working code thus far now looks like this:</p>
 
-<span class='rusttest'>macro_rules! recurrence {
-    ( a[n]: $sty:ty = $($inits:expr),+ , ... , $recur:expr ) =&gt; { /* ... */ };
-}
-
-fn main() {
-    /*
-    let fib = recurrence![a[n]: u64 = 0, 1, ..., a[n-1] + a[n-2]];
-
-    for e in fib.take(10) { println!(&quot;{}&quot;, e) }
-    */
-    let fib = {
-        use std::ops::Index;
-
-        struct Recurrence {
-            mem: [u64; 2],
-            pos: usize,
-        }
-
-        struct IndexOffset&lt;&#39;a&gt; {
-            slice: &amp;&#39;a [u64; 2],
-            offset: usize,
-        }
-
-        impl&lt;&#39;a&gt; Index&lt;usize&gt; for IndexOffset&lt;&#39;a&gt; {
-            type Output = u64;
-
-            #[inline(always)]
-            fn index&lt;&#39;b&gt;(&amp;&#39;b self, index: usize) -&gt; &amp;&#39;b u64 {
-                use std::num::Wrapping;
-
-                let index = Wrapping(index);
-                let offset = Wrapping(self.offset);
-                let window = Wrapping(2);
-
-                let real_index = index - offset + window;
-                &amp;self.slice[real_index.0]
-            }
-        }
-
-        impl Iterator for Recurrence {
-            type Item = u64;
-
-            #[inline]
-            fn next(&amp;mut self) -&gt; Option&lt;u64&gt; {
-                if self.pos &lt; 2 {
-                    let next_val = self.mem[self.pos];
-                    self.pos += 1;
-                    Some(next_val)
-                } else {
-                    let next_val = {
-                        let n = self.pos;
-                        let a = IndexOffset { slice: &amp;self.mem, offset: n };
-                        (a[n-1] + a[n-2])
-                    };
-
-                    {
-                        use std::mem::swap;
-
-                        let mut swap_tmp = next_val;
-                        for i in (0..2).rev() {
-                            swap(&amp;mut swap_tmp, &amp;mut self.mem[i]);
-                        }
-                    }
-
-                    self.pos += 1;
-                    Some(next_val)
-                }
-            }
-        }
-
-        Recurrence { mem: [0, 1], pos: 0 }
-    };
-
-    for e in fib.take(10) { println!(&quot;{}&quot;, e) }
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>recurrence</span> {
     ( <span class='ident'>a</span>[<span class='ident'>n</span>]: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>sty</span>:<span class='ident'>ty</span> <span class='op'>=</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inits</span>:<span class='ident'>expr</span>),<span class='op'>+</span> , ... , <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>recur</span>:<span class='ident'>expr</span> ) <span class='op'>=&gt;</span> { <span class='comment'>/* ... */</span> };
 }
@@ -825,7 +633,7 @@ fn main() {
     };
 
     <span class='kw'>for</span> <span class='ident'>e</span> <span class='kw'>in</span> <span class='ident'>fib</span>.<span class='ident'>take</span>(<span class='number'>10</span>) { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='ident'>e</span>) }
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20recurrence%20%7B%0A%20%20%20%20(%20a%5Bn%5D%3A%20%24sty%3Aty%20%3D%20%24(%24inits%3Aexpr)%2C%2B%20%2C%20...%20%2C%20%24recur%3Aexpr%20)%20%3D%3E%20%7B%20%2F*%20...%20*%2F%20%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F*%0A%20%20%20%20let%20fib%20%3D%20recurrence!%5Ba%5Bn%5D%3A%20u64%20%3D%200%2C%201%2C%20...%2C%20a%5Bn-1%5D%20%2B%20a%5Bn-2%5D%5D%3B%0A%0A%20%20%20%20for%20e%20in%20fib.take(10)%20%7B%20println!(%22%7B%7D%22%2C%20e)%20%7D%0A%20%20%20%20*%2F%0A%20%20%20%20let%20fib%20%3D%20%7B%0A%20%20%20%20%20%20%20%20use%20std%3A%3Aops%3A%3AIndex%3B%0A%0A%20%20%20%20%20%20%20%20struct%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20mem%3A%20%5Bu64%3B%202%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20pos%3A%20usize%2C%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20struct%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20slice%3A%20%26'a%20%5Bu64%3B%202%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20offset%3A%20usize%2C%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20impl%3C'a%3E%20Index%3Cusize%3E%20for%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20type%20Output%20%3D%20u64%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%23%5Binline(always)%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20fn%20index%3C'b%3E(%26'b%20self%2C%20index%3A%20usize)%20-%3E%20%26'b%20u64%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Anum%3A%3AWrapping%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20index%20%3D%20Wrapping(index)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20offset%20%3D%20Wrapping(self.offset)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20window%20%3D%20Wrapping(2)%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20real_index%20%3D%20index%20-%20offset%20%2B%20window%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%26self.slice%5Breal_index.0%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20impl%20Iterator%20for%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20type%20Item%20%3D%20u64%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%23%5Binline%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20fn%20next(%26mut%20self)%20-%3E%20Option%3Cu64%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20self.pos%20%3C%202%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20self.mem%5Bself.pos%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20n%20%3D%20self.pos%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20a%20%3D%20IndexOffset%20%7B%20slice%3A%20%26self.mem%2C%20offset%3A%20n%20%7D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20(a%5Bn-1%5D%20%2B%20a%5Bn-2%5D)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Amem%3A%3Aswap%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20mut%20swap_tmp%20%3D%20next_val%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20for%20i%20in%20(0..2).rev()%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20swap(%26mut%20swap_tmp%2C%20%26mut%20self.mem%5Bi%5D)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20Recurrence%20%7B%20mem%3A%20%5B0%2C%201%5D%2C%20pos%3A%200%20%7D%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20for%20e%20in%20fib.take(10)%20%7B%20println!(%22%7B%7D%22%2C%20e)%20%7D%0A%7D%0A">Run</a></pre>
 
 <p>Note that I&#39;ve changed the order of the declarations of <code>n</code> and <code>a</code>, as well as wrapped them (along with the recurrence expression) in a block.  The reason for the first should be obvious (<code>n</code> needs to be defined first so I can use it for <code>a</code>).  The reason for the second is that the borrowed reference <code>&amp;self.mem</code> will prevent the swaps later on from happening (you cannot mutate something that is aliased elsewhere).  The block ensures that the <code>&amp;self.mem</code> borrow expires before then.</p>
 
@@ -846,85 +654,7 @@ fn main() {
 
 <p>Success!  Now, let&#39;s copy &amp; paste this into the macro expansion, and replace the expanded code with an invocation.  This gives us:</p>
 
-<span class='rusttest'>macro_rules! recurrence {
-    ( a[n]: $sty:ty = $($inits:expr),+ , ... , $recur:expr ) =&gt; {
-        {
-            /*
-                What follows here is *literally* the code from before,
-                cut and pasted into a new position.  No other changes
-                have been made.
-            */
-
-            use std::ops::Index;
-
-            struct Recurrence {
-                mem: [u64; 2],
-                pos: usize,
-            }
-
-            struct IndexOffset&lt;&#39;a&gt; {
-                slice: &amp;&#39;a [u64; 2],
-                offset: usize,
-            }
-
-            impl&lt;&#39;a&gt; Index&lt;usize&gt; for IndexOffset&lt;&#39;a&gt; {
-                type Output = u64;
-
-                #[inline(always)]
-                fn index&lt;&#39;b&gt;(&amp;&#39;b self, index: usize) -&gt; &amp;&#39;b u64 {
-                    use std::num::Wrapping;
-
-                    let index = Wrapping(index);
-                    let offset = Wrapping(self.offset);
-                    let window = Wrapping(2);
-
-                    let real_index = index - offset + window;
-                    &amp;self.slice[real_index.0]
-                }
-            }
-
-            impl Iterator for Recurrence {
-                type Item = u64;
-
-                #[inline]
-                fn next(&amp;mut self) -&gt; Option&lt;u64&gt; {
-                    if self.pos &lt; 2 {
-                        let next_val = self.mem[self.pos];
-                        self.pos += 1;
-                        Some(next_val)
-                    } else {
-                        let next_val = {
-                            let n = self.pos;
-                            let a = IndexOffset { slice: &amp;self.mem, offset: n };
-                            (a[n-1] + a[n-2])
-                        };
-
-                        {
-                            use std::mem::swap;
-
-                            let mut swap_tmp = next_val;
-                            for i in (0..2).rev() {
-                                swap(&amp;mut swap_tmp, &amp;mut self.mem[i]);
-                            }
-                        }
-
-                        self.pos += 1;
-                        Some(next_val)
-                    }
-                }
-            }
-
-            Recurrence { mem: [0, 1], pos: 0 }
-        }
-    };
-}
-
-fn main() {
-    let fib = recurrence![a[n]: u64 = 0, 1, ..., a[n-1] + a[n-2]];
-
-    for e in fib.take(10) { println!(&quot;{}&quot;, e) }
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>recurrence</span> {
     ( <span class='ident'>a</span>[<span class='ident'>n</span>]: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>sty</span>:<span class='ident'>ty</span> <span class='op'>=</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inits</span>:<span class='ident'>expr</span>),<span class='op'>+</span> , ... , <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>recur</span>:<span class='ident'>expr</span> ) <span class='op'>=&gt;</span> {
         {
@@ -1002,7 +732,7 @@ fn main() {
     <span class='kw'>let</span> <span class='ident'>fib</span> <span class='op'>=</span> <span class='macro'>recurrence</span><span class='macro'>!</span>[<span class='ident'>a</span>[<span class='ident'>n</span>]: <span class='ident'>u64</span> <span class='op'>=</span> <span class='number'>0</span>, <span class='number'>1</span>, ..., <span class='ident'>a</span>[<span class='ident'>n</span><span class='op'>-</span><span class='number'>1</span>] <span class='op'>+</span> <span class='ident'>a</span>[<span class='ident'>n</span><span class='op'>-</span><span class='number'>2</span>]];
 
     <span class='kw'>for</span> <span class='ident'>e</span> <span class='kw'>in</span> <span class='ident'>fib</span>.<span class='ident'>take</span>(<span class='number'>10</span>) { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='ident'>e</span>) }
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20recurrence%20%7B%0A%20%20%20%20(%20a%5Bn%5D%3A%20%24sty%3Aty%20%3D%20%24(%24inits%3Aexpr)%2C%2B%20%2C%20...%20%2C%20%24recur%3Aexpr%20)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%2F*%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20What%20follows%20here%20is%20*literally*%20the%20code%20from%20before%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20cut%20and%20pasted%20into%20a%20new%20position.%20%20No%20other%20changes%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20have%20been%20made.%0A%20%20%20%20%20%20%20%20%20%20%20%20*%2F%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Aops%3A%3AIndex%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20struct%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20mem%3A%20%5Bu64%3B%202%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20pos%3A%20usize%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20struct%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20slice%3A%20%26'a%20%5Bu64%3B%202%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20offset%3A%20usize%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20impl%3C'a%3E%20Index%3Cusize%3E%20for%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20type%20Output%20%3D%20u64%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%5Binline(always)%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20fn%20index%3C'b%3E(%26'b%20self%2C%20index%3A%20usize)%20-%3E%20%26'b%20u64%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Anum%3A%3AWrapping%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20index%20%3D%20Wrapping(index)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20offset%20%3D%20Wrapping(self.offset)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20window%20%3D%20Wrapping(2)%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20real_index%20%3D%20index%20-%20offset%20%2B%20window%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%26self.slice%5Breal_index.0%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20impl%20Iterator%20for%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20type%20Item%20%3D%20u64%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%5Binline%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20fn%20next(%26mut%20self)%20-%3E%20Option%3Cu64%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20self.pos%20%3C%202%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20self.mem%5Bself.pos%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20n%20%3D%20self.pos%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20a%20%3D%20IndexOffset%20%7B%20slice%3A%20%26self.mem%2C%20offset%3A%20n%20%7D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20(a%5Bn-1%5D%20%2B%20a%5Bn-2%5D)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Amem%3A%3Aswap%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20mut%20swap_tmp%20%3D%20next_val%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20for%20i%20in%20(0..2).rev()%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20swap(%26mut%20swap_tmp%2C%20%26mut%20self.mem%5Bi%5D)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20Recurrence%20%7B%20mem%3A%20%5B0%2C%201%5D%2C%20pos%3A%200%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20fib%20%3D%20recurrence!%5Ba%5Bn%5D%3A%20u64%20%3D%200%2C%201%2C%20...%2C%20a%5Bn-1%5D%20%2B%20a%5Bn-2%5D%5D%3B%0A%0A%20%20%20%20for%20e%20in%20fib.take(10)%20%7B%20println!(%22%7B%7D%22%2C%20e)%20%7D%0A%7D%0A">Run</a></pre>
 
 <p>Obviously, we aren&#39;t <em>using</em> the captures yet, but we can change that fairly easily.  However, if we try to compile this, <code>rustc</code> aborts, telling us:</p>
 
@@ -1025,22 +755,7 @@ recurrence.rs:69     let fib = recurrence![a[n]: u64 = 0, 1, ..., a[n-1] + a[n-2
 
 <p>Thankfully, the fix is relatively simple: we remove the comma from the syntax.  To keep things balanced, we&#39;ll remove <em>both</em> commas around <code>...</code>:</p>
 
-<span class='rusttest'>macro_rules! recurrence {
-    ( a[n]: $sty:ty = $($inits:expr),+ ... $recur:expr ) =&gt; {
-//                                     ^~~ changed
-        /* ... */
-        // Cheat :D
-        (vec![0u64, 1, 2, 3, 5, 8, 13, 21, 34]).into_iter()
-    };
-}
-
-fn main() {
-    let fib = recurrence![a[n]: u64 = 0, 1 ... a[n-1] + a[n-2]];
-//                                         ^~~ changed
-
-    for e in fib.take(10) { println!(&quot;{}&quot;, e) }
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>recurrence</span> {
     ( <span class='ident'>a</span>[<span class='ident'>n</span>]: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>sty</span>:<span class='ident'>ty</span> <span class='op'>=</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inits</span>:<span class='ident'>expr</span>),<span class='op'>+</span> ... <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>recur</span>:<span class='ident'>expr</span> ) <span class='op'>=&gt;</span> {
 <span class='comment'>//                                     ^~~ changed</span>
@@ -1053,93 +768,14 @@ fn main() {
 <span class='comment'>//                                         ^~~ changed</span>
 
     <span class='kw'>for</span> <span class='ident'>e</span> <span class='kw'>in</span> <span class='ident'>fib</span>.<span class='ident'>take</span>(<span class='number'>10</span>) { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='ident'>e</span>) }
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20recurrence%20%7B%0A%20%20%20%20(%20a%5Bn%5D%3A%20%24sty%3Aty%20%3D%20%24(%24inits%3Aexpr)%2C%2B%20...%20%24recur%3Aexpr%20)%20%3D%3E%20%7B%0A%2F%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5E~~%20changed%0A%20%20%20%20%20%20%20%20%2F*%20...%20*%2F%0A%20%20%20%20%20%20%20%20%2F%2F%20Cheat%20%3AD%0A%20%20%20%20%20%20%20%20(vec!%5B0u64%2C%201%2C%202%2C%203%2C%205%2C%208%2C%2013%2C%2021%2C%2034%5D).into_iter()%0A%20%20%20%20%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20fib%20%3D%20recurrence!%5Ba%5Bn%5D%3A%20u64%20%3D%200%2C%201%20...%20a%5Bn-1%5D%20%2B%20a%5Bn-2%5D%5D%3B%0A%2F%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5E~~%20changed%0A%0A%20%20%20%20for%20e%20in%20fib.take(10)%20%7B%20println!(%22%7B%7D%22%2C%20e)%20%7D%0A%7D%0A">Run</a></pre>
 
 <p>Success!  We can now start replacing things in the <em>expansion</em> with things we&#39;ve <em>captured</em>.</p>
 
 <h3 id='substitution' class='section-header'><a href='#substitution'>Substitution</a></h3>
 <p>Substituting something you&#39;ve captured in a macro is quite simple; you can insert the contents of a capture <code>$sty:ty</code> by using <code>$sty</code>.  So, let&#39;s go through and fix the <code>u64</code>s:</p>
 
-<span class='rusttest'>macro_rules! recurrence {
-    ( a[n]: $sty:ty = $($inits:expr),+ ... $recur:expr ) =&gt; {
-        {
-            use std::ops::Index;
-
-            struct Recurrence {
-                mem: [$sty; 2],
-//                    ^~~~ changed
-                pos: usize,
-            }
-
-            struct IndexOffset&lt;&#39;a&gt; {
-                slice: &amp;&#39;a [$sty; 2],
-//                          ^~~~ changed
-                offset: usize,
-            }
-
-            impl&lt;&#39;a&gt; Index&lt;usize&gt; for IndexOffset&lt;&#39;a&gt; {
-                type Output = $sty;
-//                            ^~~~ changed
-
-                #[inline(always)]
-                fn index&lt;&#39;b&gt;(&amp;&#39;b self, index: usize) -&gt; &amp;&#39;b $sty {
-//                                                          ^~~~ changed
-                    use std::num::Wrapping;
-
-                    let index = Wrapping(index);
-                    let offset = Wrapping(self.offset);
-                    let window = Wrapping(2);
-
-                    let real_index = index - offset + window;
-                    &amp;self.slice[real_index.0]
-                }
-            }
-
-            impl Iterator for Recurrence {
-                type Item = $sty;
-//                          ^~~~ changed
-
-                #[inline]
-                fn next(&amp;mut self) -&gt; Option&lt;$sty&gt; {
-//                                           ^~~~ changed
-                    /* ... */
-                    if self.pos &lt; 2 {
-                        let next_val = self.mem[self.pos];
-                        self.pos += 1;
-                        Some(next_val)
-                    } else {
-                        let next_val = {
-                            let n = self.pos;
-                            let a = IndexOffset { slice: &amp;self.mem, offset: n };
-                            (a[n-1] + a[n-2])
-                        };
-
-                        {
-                            use std::mem::swap;
-
-                            let mut swap_tmp = next_val;
-                            for i in (0..2).rev() {
-                                swap(&amp;mut swap_tmp, &amp;mut self.mem[i]);
-                            }
-                        }
-
-                        self.pos += 1;
-                        Some(next_val)
-                    }
-                }
-            }
-
-            Recurrence { mem: [1, 1], pos: 0 }
-        }
-    };
-}
-
-fn main() {
-    let fib = recurrence![a[n]: u64 = 0, 1 ... a[n-1] + a[n-2]];
-
-    for e in fib.take(10) { println!(&quot;{}&quot;, e) }
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>recurrence</span> {
     ( <span class='ident'>a</span>[<span class='ident'>n</span>]: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>sty</span>:<span class='ident'>ty</span> <span class='op'>=</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inits</span>:<span class='ident'>expr</span>),<span class='op'>+</span> ... <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>recur</span>:<span class='ident'>expr</span> ) <span class='op'>=&gt;</span> {
         {
@@ -1195,46 +831,30 @@ fn main() {
     <span class='kw'>let</span> <span class='ident'>fib</span> <span class='op'>=</span> <span class='macro'>recurrence</span><span class='macro'>!</span>[<span class='ident'>a</span>[<span class='ident'>n</span>]: <span class='ident'>u64</span> <span class='op'>=</span> <span class='number'>0</span>, <span class='number'>1</span> ... <span class='ident'>a</span>[<span class='ident'>n</span><span class='op'>-</span><span class='number'>1</span>] <span class='op'>+</span> <span class='ident'>a</span>[<span class='ident'>n</span><span class='op'>-</span><span class='number'>2</span>]];
 
     <span class='kw'>for</span> <span class='ident'>e</span> <span class='kw'>in</span> <span class='ident'>fib</span>.<span class='ident'>take</span>(<span class='number'>10</span>) { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='ident'>e</span>) }
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20recurrence%20%7B%0A%20%20%20%20(%20a%5Bn%5D%3A%20%24sty%3Aty%20%3D%20%24(%24inits%3Aexpr)%2C%2B%20...%20%24recur%3Aexpr%20)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Aops%3A%3AIndex%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20struct%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20mem%3A%20%5B%24sty%3B%202%5D%2C%0A%2F%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5E~~~%20changed%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20pos%3A%20usize%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20struct%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20slice%3A%20%26'a%20%5B%24sty%3B%202%5D%2C%0A%2F%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5E~~~%20changed%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20offset%3A%20usize%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20impl%3C'a%3E%20Index%3Cusize%3E%20for%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20type%20Output%20%3D%20%24sty%3B%0A%2F%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5E~~~%20changed%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%5Binline(always)%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20fn%20index%3C'b%3E(%26'b%20self%2C%20index%3A%20usize)%20-%3E%20%26'b%20%24sty%20%7B%0A%2F%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5E~~~%20changed%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Anum%3A%3AWrapping%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20index%20%3D%20Wrapping(index)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20offset%20%3D%20Wrapping(self.offset)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20window%20%3D%20Wrapping(2)%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20real_index%20%3D%20index%20-%20offset%20%2B%20window%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%26self.slice%5Breal_index.0%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20impl%20Iterator%20for%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20type%20Item%20%3D%20%24sty%3B%0A%2F%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5E~~~%20changed%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%5Binline%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20fn%20next(%26mut%20self)%20-%3E%20Option%3C%24sty%3E%20%7B%0A%2F%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5E~~~%20changed%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%2F*%20...%20*%2F%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20self.pos%20%3C%202%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20self.mem%5Bself.pos%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20n%20%3D%20self.pos%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20a%20%3D%20IndexOffset%20%7B%20slice%3A%20%26self.mem%2C%20offset%3A%20n%20%7D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20(a%5Bn-1%5D%20%2B%20a%5Bn-2%5D)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Amem%3A%3Aswap%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20mut%20swap_tmp%20%3D%20next_val%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20for%20i%20in%20(0..2).rev()%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20swap(%26mut%20swap_tmp%2C%20%26mut%20self.mem%5Bi%5D)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20Recurrence%20%7B%20mem%3A%20%5B1%2C%201%5D%2C%20pos%3A%200%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20fib%20%3D%20recurrence!%5Ba%5Bn%5D%3A%20u64%20%3D%200%2C%201%20...%20a%5Bn-1%5D%20%2B%20a%5Bn-2%5D%5D%3B%0A%0A%20%20%20%20for%20e%20in%20fib.take(10)%20%7B%20println!(%22%7B%7D%22%2C%20e)%20%7D%0A%7D%0A">Run</a></pre>
 
 <p>Let&#39;s tackle a harder one: how to turn <code>inits</code> into both the array literal <code>[0, 1]</code> <em>and</em> the array type, <code>[$sty; 2]</code>.  The first one we can do like so:</p>
 
-<span class='rusttest'>fn main() {
-                Recurrence { mem: [$($inits),+], pos: 0 }
-    //                             ^~~~~~~~~~~ changed
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
             <span class='ident'>Recurrence</span> { <span class='ident'>mem</span>: [$(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inits</span>),<span class='op'>+</span>], <span class='ident'>pos</span>: <span class='number'>0</span> }
-<span class='comment'>//                             ^~~~~~~~~~~ changed</span></pre>
+<span class='comment'>//                             ^~~~~~~~~~~ changed</span><a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20Recurrence%20%7B%20mem%3A%20%5B%24(%24inits)%2C%2B%5D%2C%20pos%3A%200%20%7D%0A%2F%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5E~~~~~~~~~~%20changed%0A%7D">Run</a></pre>
 
 <p>This effectively does the opposite of the capture: repeat <code>inits</code> one or more times, separating each with a comma.  This expands to the expected sequence of tokens: <code>0, 1</code>.</p>
 
 <p>Somehow turning <code>inits</code> into a literal <code>2</code> is a little trickier.  It turns out that there&#39;s no direct way to do this, but we <em>can</em> do it by using a second macro.  Let&#39;s take this one step at a time.</p>
 
-<span class='rusttest'>macro_rules! count_exprs {
-    /* ??? */
-    () =&gt; {}
-}
-fn main() {}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>count_exprs</span> {
     <span class='comment'>/* ??? */</span>
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20count_exprs%20%7B%0A%20%20%20%20%2F*%20%3F%3F%3F%20*%2F%0A%20%20%20%20()%20%3D%3E%20%7B%7D%0A%7D%0Afn%20main()%20%7B%7D%0A">Run</a></pre>
 
 <p>The obvious case is: given zero expressions, you would expect <code>count_exprs</code> to expand to a literal <code>0</code>.</p>
 
-<span class='rusttest'>macro_rules! count_exprs {
-    () =&gt; (0);
-//  ^~~~~~~~~~ added
-}
-fn main() {
-    const _0: usize = count_exprs!();
-    assert_eq!(_0, 0);
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>count_exprs</span> {
     () <span class='op'>=&gt;</span> (<span class='number'>0</span>);
 <span class='comment'>//  ^~~~~~~~~~ added</span>
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20count_exprs%20%7B%0A%20%20%20%20()%20%3D%3E%20(0)%3B%0A%2F%2F%20%20%5E~~~~~~~~~%20added%0A%7D%0Afn%20main()%20%7B%0A%20%20%20%20const%20_0%3A%20usize%20%3D%20count_exprs!()%3B%0A%20%20%20%20assert_eq!(_0%2C%200)%3B%0A%7D%0A">Run</a></pre>
 
 <blockquote>
 <p><strong>Aside</strong>: You may have noticed I used parentheses here instead of curly braces for the expansion.  <code>macro_rules</code> really doesn&#39;t care <em>what</em> you use, so long as it&#39;s one of the &quot;matcher&quot; pairs: <code>( )</code>, <code>{ }</code> or <code>[ ]</code>.  In fact, you can switch out the matchers on the macro itself (<em>i.e.</em> the matchers right after the macro name), the matchers around the syntax rule, and the matchers around the corresponding expansion.</p>
@@ -1244,99 +864,43 @@ fn main() {
 
 <p>What if you have <em>one</em> expression?  That should be a literal <code>1</code>.</p>
 
-<span class='rusttest'>macro_rules! count_exprs {
-    () =&gt; (0);
-    ($e:expr) =&gt; (1);
-//  ^~~~~~~~~~~~~~~~~ added
-}
-fn main() {
-    const _0: usize = count_exprs!();
-    const _1: usize = count_exprs!(x);
-    assert_eq!(_0, 0);
-    assert_eq!(_1, 1);
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>count_exprs</span> {
     () <span class='op'>=&gt;</span> (<span class='number'>0</span>);
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> (<span class='number'>1</span>);
 <span class='comment'>//  ^~~~~~~~~~~~~~~~~ added</span>
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20count_exprs%20%7B%0A%20%20%20%20()%20%3D%3E%20(0)%3B%0A%20%20%20%20(%24e%3Aexpr)%20%3D%3E%20(1)%3B%0A%2F%2F%20%20%5E~~~~~~~~~~~~~~~~%20added%0A%7D%0Afn%20main()%20%7B%0A%20%20%20%20const%20_0%3A%20usize%20%3D%20count_exprs!()%3B%0A%20%20%20%20const%20_1%3A%20usize%20%3D%20count_exprs!(x)%3B%0A%20%20%20%20assert_eq!(_0%2C%200)%3B%0A%20%20%20%20assert_eq!(_1%2C%201)%3B%0A%7D%0A">Run</a></pre>
 
 <p>Two?</p>
 
-<span class='rusttest'>macro_rules! count_exprs {
-    () =&gt; (0);
-    ($e:expr) =&gt; (1);
-    ($e0:expr, $e1:expr) =&gt; (2);
-//  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~ added
-}
-fn main() {
-    const _0: usize = count_exprs!();
-    const _1: usize = count_exprs!(x);
-    const _2: usize = count_exprs!(x, y);
-    assert_eq!(_0, 0);
-    assert_eq!(_1, 1);
-    assert_eq!(_2, 2);
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>count_exprs</span> {
     () <span class='op'>=&gt;</span> (<span class='number'>0</span>);
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> (<span class='number'>1</span>);
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e0</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e1</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> (<span class='number'>2</span>);
 <span class='comment'>//  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~ added</span>
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20count_exprs%20%7B%0A%20%20%20%20()%20%3D%3E%20(0)%3B%0A%20%20%20%20(%24e%3Aexpr)%20%3D%3E%20(1)%3B%0A%20%20%20%20(%24e0%3Aexpr%2C%20%24e1%3Aexpr)%20%3D%3E%20(2)%3B%0A%2F%2F%20%20%5E~~~~~~~~~~~~~~~~~~~~~~~~~~~%20added%0A%7D%0Afn%20main()%20%7B%0A%20%20%20%20const%20_0%3A%20usize%20%3D%20count_exprs!()%3B%0A%20%20%20%20const%20_1%3A%20usize%20%3D%20count_exprs!(x)%3B%0A%20%20%20%20const%20_2%3A%20usize%20%3D%20count_exprs!(x%2C%20y)%3B%0A%20%20%20%20assert_eq!(_0%2C%200)%3B%0A%20%20%20%20assert_eq!(_1%2C%201)%3B%0A%20%20%20%20assert_eq!(_2%2C%202)%3B%0A%7D%0A">Run</a></pre>
 
 <p>We can &quot;simplify&quot; this a little by re-expressing the case of two expressions recursively.</p>
 
-<span class='rusttest'>macro_rules! count_exprs {
-    () =&gt; (0);
-    ($e:expr) =&gt; (1);
-    ($e0:expr, $e1:expr) =&gt; (1 + count_exprs!($e1));
-//                           ^~~~~~~~~~~~~~~~~~~~~ changed
-}
-fn main() {
-    const _0: usize = count_exprs!();
-    const _1: usize = count_exprs!(x);
-    const _2: usize = count_exprs!(x, y);
-    assert_eq!(_0, 0);
-    assert_eq!(_1, 1);
-    assert_eq!(_2, 2);
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>count_exprs</span> {
     () <span class='op'>=&gt;</span> (<span class='number'>0</span>);
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> (<span class='number'>1</span>);
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e0</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e1</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> (<span class='number'>1</span> <span class='op'>+</span> <span class='macro'>count_exprs</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e1</span>));
 <span class='comment'>//                           ^~~~~~~~~~~~~~~~~~~~~ changed</span>
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20count_exprs%20%7B%0A%20%20%20%20()%20%3D%3E%20(0)%3B%0A%20%20%20%20(%24e%3Aexpr)%20%3D%3E%20(1)%3B%0A%20%20%20%20(%24e0%3Aexpr%2C%20%24e1%3Aexpr)%20%3D%3E%20(1%20%2B%20count_exprs!(%24e1))%3B%0A%2F%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5E~~~~~~~~~~~~~~~~~~~~%20changed%0A%7D%0Afn%20main()%20%7B%0A%20%20%20%20const%20_0%3A%20usize%20%3D%20count_exprs!()%3B%0A%20%20%20%20const%20_1%3A%20usize%20%3D%20count_exprs!(x)%3B%0A%20%20%20%20const%20_2%3A%20usize%20%3D%20count_exprs!(x%2C%20y)%3B%0A%20%20%20%20assert_eq!(_0%2C%200)%3B%0A%20%20%20%20assert_eq!(_1%2C%201)%3B%0A%20%20%20%20assert_eq!(_2%2C%202)%3B%0A%7D%0A">Run</a></pre>
 
 <p>This is fine since Rust can fold <code>1 + 1</code> into a constant value.  What if we have three expressions?</p>
 
-<span class='rusttest'>macro_rules! count_exprs {
-    () =&gt; (0);
-    ($e:expr) =&gt; (1);
-    ($e0:expr, $e1:expr) =&gt; (1 + count_exprs!($e1));
-    ($e0:expr, $e1:expr, $e2:expr) =&gt; (1 + count_exprs!($e1, $e2));
-//  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ added
-}
-fn main() {
-    const _0: usize = count_exprs!();
-    const _1: usize = count_exprs!(x);
-    const _2: usize = count_exprs!(x, y);
-    const _3: usize = count_exprs!(x, y, z);
-    assert_eq!(_0, 0);
-    assert_eq!(_1, 1);
-    assert_eq!(_2, 2);
-    assert_eq!(_3, 3);
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>count_exprs</span> {
     () <span class='op'>=&gt;</span> (<span class='number'>0</span>);
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> (<span class='number'>1</span>);
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e0</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e1</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> (<span class='number'>1</span> <span class='op'>+</span> <span class='macro'>count_exprs</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e1</span>));
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e0</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e1</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e2</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> (<span class='number'>1</span> <span class='op'>+</span> <span class='macro'>count_exprs</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e1</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e2</span>));
 <span class='comment'>//  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ added</span>
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20count_exprs%20%7B%0A%20%20%20%20()%20%3D%3E%20(0)%3B%0A%20%20%20%20(%24e%3Aexpr)%20%3D%3E%20(1)%3B%0A%20%20%20%20(%24e0%3Aexpr%2C%20%24e1%3Aexpr)%20%3D%3E%20(1%20%2B%20count_exprs!(%24e1))%3B%0A%20%20%20%20(%24e0%3Aexpr%2C%20%24e1%3Aexpr%2C%20%24e2%3Aexpr)%20%3D%3E%20(1%20%2B%20count_exprs!(%24e1%2C%20%24e2))%3B%0A%2F%2F%20%20%5E~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%20added%0A%7D%0Afn%20main()%20%7B%0A%20%20%20%20const%20_0%3A%20usize%20%3D%20count_exprs!()%3B%0A%20%20%20%20const%20_1%3A%20usize%20%3D%20count_exprs!(x)%3B%0A%20%20%20%20const%20_2%3A%20usize%20%3D%20count_exprs!(x%2C%20y)%3B%0A%20%20%20%20const%20_3%3A%20usize%20%3D%20count_exprs!(x%2C%20y%2C%20z)%3B%0A%20%20%20%20assert_eq!(_0%2C%200)%3B%0A%20%20%20%20assert_eq!(_1%2C%201)%3B%0A%20%20%20%20assert_eq!(_2%2C%202)%3B%0A%20%20%20%20assert_eq!(_3%2C%203)%3B%0A%7D%0A">Run</a></pre>
 
 <blockquote>
 <p><strong>Aside</strong>: You might be wondering if we could reverse the order of these rules.  In this particular case, <em>yes</em>, but the macro system can sometimes be picky about what it is and is not willing to recover from.  If you ever find yourself with a multi-rule macro that you <em>swear</em> should work, but gives you errors about unexpected tokens, try changing the order of the rules.</p>
@@ -1344,29 +908,13 @@ fn main() {
 
 <p>Hopefully, you can see the pattern here.  We can always reduce the list of expressions by matching one expression, followed by zero or more expressions, expanding that into 1 + a count.</p>
 
-<span class='rusttest'>macro_rules! count_exprs {
-    () =&gt; (0);
-    ($head:expr) =&gt; (1);
-    ($head:expr, $($tail:expr),*) =&gt; (1 + count_exprs!($($tail),*));
-//  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ changed
-}
-fn main() {
-    const _0: usize = count_exprs!();
-    const _1: usize = count_exprs!(x);
-    const _2: usize = count_exprs!(x, y);
-    const _3: usize = count_exprs!(x, y, z);
-    assert_eq!(_0, 0);
-    assert_eq!(_1, 1);
-    assert_eq!(_2, 2);
-    assert_eq!(_3, 3);
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>count_exprs</span> {
     () <span class='op'>=&gt;</span> (<span class='number'>0</span>);
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>head</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> (<span class='number'>1</span>);
-    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>head</span>:<span class='ident'>expr</span>, $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>expr</span>),<span class='op'>*</span>) <span class='op'>=&gt;</span> (<span class='number'>1</span> <span class='op'>+</span> <span class='macro'>count_exprs</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>),<span class='op'>*</span>));
+    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>head</span>:<span class='ident'>expr</span>, $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>expr</span>),<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> (<span class='number'>1</span> <span class='op'>+</span> <span class='macro'>count_exprs</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>),<span class='kw-2'>*</span>));
 <span class='comment'>//  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ changed</span>
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20count_exprs%20%7B%0A%20%20%20%20()%20%3D%3E%20(0)%3B%0A%20%20%20%20(%24head%3Aexpr)%20%3D%3E%20(1)%3B%0A%20%20%20%20(%24head%3Aexpr%2C%20%24(%24tail%3Aexpr)%2C*)%20%3D%3E%20(1%20%2B%20count_exprs!(%24(%24tail)%2C*))%3B%0A%2F%2F%20%20%5E~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%20changed%0A%7D%0Afn%20main()%20%7B%0A%20%20%20%20const%20_0%3A%20usize%20%3D%20count_exprs!()%3B%0A%20%20%20%20const%20_1%3A%20usize%20%3D%20count_exprs!(x)%3B%0A%20%20%20%20const%20_2%3A%20usize%20%3D%20count_exprs!(x%2C%20y)%3B%0A%20%20%20%20const%20_3%3A%20usize%20%3D%20count_exprs!(x%2C%20y%2C%20z)%3B%0A%20%20%20%20assert_eq!(_0%2C%200)%3B%0A%20%20%20%20assert_eq!(_1%2C%201)%3B%0A%20%20%20%20assert_eq!(_2%2C%202)%3B%0A%20%20%20%20assert_eq!(_3%2C%203)%3B%0A%7D%0A">Run</a></pre>
 
 <blockquote>
 <p><strong><abbr title="Just for this example">JFTE</abbr></strong>: this is not the <em>only</em>, or even the <em>best</em> way of counting things.  You may wish to peruse the <a href="blk-counting.html">Counting</a> section later.</p>
@@ -1374,100 +922,12 @@ fn main() {
 
 <p>With this, we can now modify <code>recurrence</code> to determine the necessary size of <code>mem</code>.</p>
 
-<span class='rusttest'>// added:
-macro_rules! count_exprs {
-    () =&gt; (0);
-    ($head:expr) =&gt; (1);
-    ($head:expr, $($tail:expr),*) =&gt; (1 + count_exprs!($($tail),*));
-}
-
-macro_rules! recurrence {
-    ( a[n]: $sty:ty = $($inits:expr),+ ... $recur:expr ) =&gt; {
-        {
-            use std::ops::Index;
-
-            const MEM_SIZE: usize = count_exprs!($($inits),+);
-//          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ added
-
-            struct Recurrence {
-                mem: [$sty; MEM_SIZE],
-//                          ^~~~~~~~ changed
-                pos: usize,
-            }
-
-            struct IndexOffset&lt;&#39;a&gt; {
-                slice: &amp;&#39;a [$sty; MEM_SIZE],
-//                                ^~~~~~~~ changed
-                offset: usize,
-            }
-
-            impl&lt;&#39;a&gt; Index&lt;usize&gt; for IndexOffset&lt;&#39;a&gt; {
-                type Output = $sty;
-
-                #[inline(always)]
-                fn index&lt;&#39;b&gt;(&amp;&#39;b self, index: usize) -&gt; &amp;&#39;b $sty {
-                    use std::num::Wrapping;
-
-                    let index = Wrapping(index);
-                    let offset = Wrapping(self.offset);
-                    let window = Wrapping(MEM_SIZE);
-//                                        ^~~~~~~~ changed
-
-                    let real_index = index - offset + window;
-                    &amp;self.slice[real_index.0]
-                }
-            }
-
-            impl Iterator for Recurrence {
-                type Item = $sty;
-
-                #[inline]
-                fn next(&amp;mut self) -&gt; Option&lt;$sty&gt; {
-                    if self.pos &lt; MEM_SIZE {
-//                                ^~~~~~~~ changed
-                        let next_val = self.mem[self.pos];
-                        self.pos += 1;
-                        Some(next_val)
-                    } else {
-                        let next_val = {
-                            let n = self.pos;
-                            let a = IndexOffset { slice: &amp;self.mem, offset: n };
-                            (a[n-1] + a[n-2])
-                        };
-
-                        {
-                            use std::mem::swap;
-
-                            let mut swap_tmp = next_val;
-                            for i in (0..MEM_SIZE).rev() {
-//                                       ^~~~~~~~ changed
-                                swap(&amp;mut swap_tmp, &amp;mut self.mem[i]);
-                            }
-                        }
-
-                        self.pos += 1;
-                        Some(next_val)
-                    }
-                }
-            }
-
-            Recurrence { mem: [$($inits),+], pos: 0 }
-        }
-    };
-}
-/* ... */
-
-fn main() {
-    let fib = recurrence![a[n]: u64 = 0, 1 ... a[n-1] + a[n-2]];
-
-    for e in fib.take(10) { println!(&quot;{}&quot;, e) }
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='comment'>// added:</span>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>count_exprs</span> {
     () <span class='op'>=&gt;</span> (<span class='number'>0</span>);
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>head</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> (<span class='number'>1</span>);
-    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>head</span>:<span class='ident'>expr</span>, $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>expr</span>),<span class='op'>*</span>) <span class='op'>=&gt;</span> (<span class='number'>1</span> <span class='op'>+</span> <span class='macro'>count_exprs</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>),<span class='op'>*</span>));
+    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>head</span>:<span class='ident'>expr</span>, $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>expr</span>),<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> (<span class='number'>1</span> <span class='op'>+</span> <span class='macro'>count_exprs</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>),<span class='kw-2'>*</span>));
 }
 
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>recurrence</span> {
@@ -1544,70 +1004,11 @@ fn main() {
         }
     };
 }
-<span class='comment'>/* ... */</span></pre>
+<span class='comment'>/* ... */</span><a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=%2F%2F%20added%3A%0Amacro_rules!%20count_exprs%20%7B%0A%20%20%20%20()%20%3D%3E%20(0)%3B%0A%20%20%20%20(%24head%3Aexpr)%20%3D%3E%20(1)%3B%0A%20%20%20%20(%24head%3Aexpr%2C%20%24(%24tail%3Aexpr)%2C*)%20%3D%3E%20(1%20%2B%20count_exprs!(%24(%24tail)%2C*))%3B%0A%7D%0A%0Amacro_rules!%20recurrence%20%7B%0A%20%20%20%20(%20a%5Bn%5D%3A%20%24sty%3Aty%20%3D%20%24(%24inits%3Aexpr)%2C%2B%20...%20%24recur%3Aexpr%20)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Aops%3A%3AIndex%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20MEM_SIZE%3A%20usize%20%3D%20count_exprs!(%24(%24inits)%2C%2B)%3B%0A%2F%2F%20%20%20%20%20%20%20%20%20%20%5E~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%20added%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20struct%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20mem%3A%20%5B%24sty%3B%20MEM_SIZE%5D%2C%0A%2F%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5E~~~~~~~%20changed%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20pos%3A%20usize%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20struct%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20slice%3A%20%26'a%20%5B%24sty%3B%20MEM_SIZE%5D%2C%0A%2F%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5E~~~~~~~%20changed%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20offset%3A%20usize%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20impl%3C'a%3E%20Index%3Cusize%3E%20for%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20type%20Output%20%3D%20%24sty%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%5Binline(always)%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20fn%20index%3C'b%3E(%26'b%20self%2C%20index%3A%20usize)%20-%3E%20%26'b%20%24sty%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Anum%3A%3AWrapping%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20index%20%3D%20Wrapping(index)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20offset%20%3D%20Wrapping(self.offset)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20window%20%3D%20Wrapping(MEM_SIZE)%3B%0A%2F%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5E~~~~~~~%20changed%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20real_index%20%3D%20index%20-%20offset%20%2B%20window%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%26self.slice%5Breal_index.0%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20impl%20Iterator%20for%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20type%20Item%20%3D%20%24sty%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%5Binline%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20fn%20next(%26mut%20self)%20-%3E%20Option%3C%24sty%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20self.pos%20%3C%20MEM_SIZE%20%7B%0A%2F%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5E~~~~~~~%20changed%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20self.mem%5Bself.pos%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20n%20%3D%20self.pos%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20a%20%3D%20IndexOffset%20%7B%20slice%3A%20%26self.mem%2C%20offset%3A%20n%20%7D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20(a%5Bn-1%5D%20%2B%20a%5Bn-2%5D)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Amem%3A%3Aswap%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20mut%20swap_tmp%20%3D%20next_val%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20for%20i%20in%20(0..MEM_SIZE).rev()%20%7B%0A%2F%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5E~~~~~~~%20changed%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20swap(%26mut%20swap_tmp%2C%20%26mut%20self.mem%5Bi%5D)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20Recurrence%20%7B%20mem%3A%20%5B%24(%24inits)%2C%2B%5D%2C%20pos%3A%200%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%7D%0A%2F*%20...%20*%2F%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20fib%20%3D%20recurrence!%5Ba%5Bn%5D%3A%20u64%20%3D%200%2C%201%20...%20a%5Bn-1%5D%20%2B%20a%5Bn-2%5D%5D%3B%0A%0A%20%20%20%20for%20e%20in%20fib.take(10)%20%7B%20println!(%22%7B%7D%22%2C%20e)%20%7D%0A%7D%0A">Run</a></pre>
 
 <p>With that done, we can now substitute the last thing: the <code>recur</code> expression.</p>
 
-<span class='rusttest'>macro_rules! count_exprs {
-    () =&gt; (0);
-    ($head:expr $(, $tail:expr)*) =&gt; (1 + count_exprs!($($tail),*));
-}
-macro_rules! recurrence {
-    ( a[n]: $sty:ty = $($inits:expr),+ ... $recur:expr ) =&gt; {
-        {
-            const MEMORY: uint = count_exprs!($($inits),+);
-            struct Recurrence {
-                mem: [$sty; MEMORY],
-                pos: uint,
-            }
-            struct IndexOffset&lt;&#39;a&gt; {
-                slice: &amp;&#39;a [$sty; MEMORY],
-                offset: uint,
-            }
-            impl&lt;&#39;a&gt; Index&lt;uint, $sty&gt; for IndexOffset&lt;&#39;a&gt; {
-                #[inline(always)]
-                fn index&lt;&#39;b&gt;(&amp;&#39;b self, index: &amp;uint) -&gt; &amp;&#39;b $sty {
-                    let real_index = *index - self.offset + MEMORY;
-                    &amp;self.slice[real_index]
-                }
-            }
-            impl Iterator&lt;u64&gt; for Recurrence {
-/* ... */
-                #[inline]
-                fn next(&amp;mut self) -&gt; Option&lt;u64&gt; {
-                    if self.pos &lt; MEMORY {
-                        let next_val = self.mem[self.pos];
-                        self.pos += 1;
-                        Some(next_val)
-                    } else {
-                        let next_val = {
-                            let n = self.pos;
-                            let a = IndexOffset { slice: &amp;self.mem, offset: n };
-                            $recur
-//                          ^~~~~~ changed
-                        };
-                        {
-                            use std::mem::swap;
-                            let mut swap_tmp = next_val;
-                            for i in range(0, MEMORY).rev() {
-                                swap(&amp;mut swap_tmp, &amp;mut self.mem[i]);
-                            }
-                        }
-                        self.pos += 1;
-                        Some(next_val)
-                    }
-                }
-/* ... */
-            }
-            Recurrence { mem: [$($inits),+], pos: 0 }
-        }
-    };
-}
-fn main() {
-    let fib = recurrence![a[n]: u64 = 1, 1 ... a[n-1] + a[n-2]];
-    for e in fib.take(10) { println!(&quot;{}&quot;, e) }
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='comment'>/* ... */</span>
                 <span class='attribute'>#[<span class='ident'>inline</span>]</span>
                 <span class='kw'>fn</span> <span class='ident'>next</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>u64</span><span class='op'>&gt;</span> {
@@ -1633,7 +1034,7 @@ fn main() {
                         <span class='prelude-val'>Some</span>(<span class='ident'>next_val</span>)
                     }
                 }
-<span class='comment'>/* ... */</span></pre>
+<span class='comment'>/* ... */</span><a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20count_exprs%20%7B%0A%20%20%20%20()%20%3D%3E%20(0)%3B%0A%20%20%20%20(%24head%3Aexpr%20%24(%2C%20%24tail%3Aexpr)*)%20%3D%3E%20(1%20%2B%20count_exprs!(%24(%24tail)%2C*))%3B%0A%7D%0Amacro_rules!%20recurrence%20%7B%0A%20%20%20%20(%20a%5Bn%5D%3A%20%24sty%3Aty%20%3D%20%24(%24inits%3Aexpr)%2C%2B%20...%20%24recur%3Aexpr%20)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20MEMORY%3A%20uint%20%3D%20count_exprs!(%24(%24inits)%2C%2B)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20struct%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20mem%3A%20%5B%24sty%3B%20MEMORY%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20pos%3A%20uint%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20struct%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20slice%3A%20%26'a%20%5B%24sty%3B%20MEMORY%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20offset%3A%20uint%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20impl%3C'a%3E%20Index%3Cuint%2C%20%24sty%3E%20for%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%5Binline(always)%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20fn%20index%3C'b%3E(%26'b%20self%2C%20index%3A%20%26uint)%20-%3E%20%26'b%20%24sty%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20real_index%20%3D%20*index%20-%20self.offset%20%2B%20MEMORY%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%26self.slice%5Breal_index%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20impl%20Iterator%3Cu64%3E%20for%20Recurrence%20%7B%0A%2F*%20...%20*%2F%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%5Binline%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20fn%20next(%26mut%20self)%20-%3E%20Option%3Cu64%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20self.pos%20%3C%20MEMORY%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20self.mem%5Bself.pos%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20n%20%3D%20self.pos%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20a%20%3D%20IndexOffset%20%7B%20slice%3A%20%26self.mem%2C%20offset%3A%20n%20%7D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%24recur%0A%2F%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5E~~~~~%20changed%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Amem%3A%3Aswap%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20mut%20swap_tmp%20%3D%20next_val%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20for%20i%20in%20range(0%2C%20MEMORY).rev()%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20swap(%26mut%20swap_tmp%2C%20%26mut%20self.mem%5Bi%5D)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%2F*%20...%20*%2F%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20Recurrence%20%7B%20mem%3A%20%5B%24(%24inits)%2C%2B%5D%2C%20pos%3A%200%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%7D%0Afn%20main()%20%7B%0A%20%20%20%20let%20fib%20%3D%20recurrence!%5Ba%5Bn%5D%3A%20u64%20%3D%201%2C%201%20...%20a%5Bn-1%5D%20%2B%20a%5Bn-2%5D%5D%3B%0A%20%20%20%20for%20e%20in%20fib.take(10)%20%7B%20println!(%22%7B%7D%22%2C%20e)%20%7D%0A%7D%0A">Run</a></pre>
 
 <p>And, when we compile our finished macro...</p>
 
@@ -1666,103 +1067,11 @@ recurrence.rs:77:15: 77:64 note: expansion site
 
 <p>The <code>--pretty expanded</code> argument tells <code>rustc</code> to perform macro expansion, then turn the resulting AST back into source code.  Because this option isn&#39;t considered stable yet, we also need <code>-Z unstable-options</code>.  The output (after cleaning up some formatting) is shown below; in particular, note the place in the code where <code>$recur</code> was substituted:</p>
 
-<span class='rusttest'>#![feature(no_std)]
-#![no_std]
-#[prelude_import]
-use std::prelude::v1::*;
-#[macro_use]
-extern crate std as std;
-fn main() {
-    let fib = {
-        use std::ops::Index;
-        const MEM_SIZE: usize = 1 + 1;
-        struct Recurrence {
-            mem: [u64; MEM_SIZE],
-            pos: usize,
-        }
-        struct IndexOffset&lt;&#39;a&gt; {
-            slice: &amp;&#39;a [u64; MEM_SIZE],
-            offset: usize,
-        }
-        impl &lt;&#39;a&gt; Index&lt;usize&gt; for IndexOffset&lt;&#39;a&gt; {
-            type Output = u64;
-            #[inline(always)]
-            fn index&lt;&#39;b&gt;(&amp;&#39;b self, index: usize) -&gt; &amp;&#39;b u64 {
-                use std::num::Wrapping;
-                let index = Wrapping(index);
-                let offset = Wrapping(self.offset);
-                let window = Wrapping(MEM_SIZE);
-                let real_index = index - offset + window;
-                &amp;self.slice[real_index.0]
-            }
-        }
-        impl Iterator for Recurrence {
-            type Item = u64;
-            #[inline]
-            fn next(&amp;mut self) -&gt; Option&lt;u64&gt; {
-                if self.pos &lt; MEM_SIZE {
-                    let next_val = self.mem[self.pos];
-                    self.pos += 1;
-                    Some(next_val)
-                } else {
-                    let next_val = {
-                        let n = self.pos;
-                        let a = IndexOffset{slice: &amp;self.mem, offset: n,};
-                        a[n - 1] + a[n - 2]
-                    };
-                    {
-                        use std::mem::swap;
-                        let mut swap_tmp = next_val;
-                        {
-                            let result =
-                                match ::std::iter::IntoIterator::into_iter((0..MEM_SIZE).rev()) {
-                                    mut iter =&gt; loop {
-                                        match ::std::iter::Iterator::next(&amp;mut iter) {
-                                            ::std::option::Option::Some(i) =&gt; {
-                                                swap(&amp;mut swap_tmp, &amp;mut self.mem[i]);
-                                            }
-                                            ::std::option::Option::None =&gt; break,
-                                        }
-                                    },
-                                };
-                            result
-                        }
-                    }
-                    self.pos += 1;
-                    Some(next_val)
-                }
-            }
-        }
-        Recurrence{mem: [0, 1], pos: 0,}
-    };
-    {
-        let result =
-            match ::std::iter::IntoIterator::into_iter(fib.take(10)) {
-                mut iter =&gt; loop {
-                    match ::std::iter::Iterator::next(&amp;mut iter) {
-                        ::std::option::Option::Some(e) =&gt; {
-                            ::std::io::_print(::std::fmt::Arguments::new_v1(
-                                {
-                                    static __STATIC_FMTSTR: &amp;&#39;static [&amp;&#39;static str] = &amp;[&quot;&quot;, &quot;\n&quot;];
-                                    __STATIC_FMTSTR
-                                },
-                                &amp;match (&amp;e,) {
-                                    (__arg0,) =&gt; [::std::fmt::ArgumentV1::new(__arg0, ::std::fmt::Display::fmt)],
-                                }
-                            ))
-                        }
-                        ::std::option::Option::None =&gt; break,
-                    }
-                },
-            };
-        result
-    }
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>feature</span>(<span class='ident'>no_std</span>)]</span>
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>no_std</span>]</span>
 <span class='attribute'>#[<span class='ident'>prelude_import</span>]</span>
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>prelude</span>::<span class='ident'>v1</span>::<span class='op'>*</span>;
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>prelude</span>::<span class='ident'>v1</span>::<span class='kw-2'>*</span>;
 <span class='attribute'>#[<span class='ident'>macro_use</span>]</span>
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>std</span> <span class='kw'>as</span> <span class='ident'>std</span>;
 <span class='kw'>fn</span> <span class='ident'>main</span>() {
@@ -1850,7 +1159,7 @@ fn main() {
             };
         <span class='ident'>result</span>
     }
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=%23!%5Bfeature(no_std)%5D%0A%23!%5Bno_std%5D%0A%23%5Bprelude_import%5D%0Ause%20std%3A%3Aprelude%3A%3Av1%3A%3A*%3B%0A%23%5Bmacro_use%5D%0Aextern%20crate%20std%20as%20std%3B%0Afn%20main()%20%7B%0A%20%20%20%20let%20fib%20%3D%20%7B%0A%20%20%20%20%20%20%20%20use%20std%3A%3Aops%3A%3AIndex%3B%0A%20%20%20%20%20%20%20%20const%20MEM_SIZE%3A%20usize%20%3D%201%20%2B%201%3B%0A%20%20%20%20%20%20%20%20struct%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20mem%3A%20%5Bu64%3B%20MEM_SIZE%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20pos%3A%20usize%2C%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20struct%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20slice%3A%20%26'a%20%5Bu64%3B%20MEM_SIZE%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20offset%3A%20usize%2C%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20impl%20%3C'a%3E%20Index%3Cusize%3E%20for%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20type%20Output%20%3D%20u64%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%23%5Binline(always)%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20fn%20index%3C'b%3E(%26'b%20self%2C%20index%3A%20usize)%20-%3E%20%26'b%20u64%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Anum%3A%3AWrapping%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20index%20%3D%20Wrapping(index)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20offset%20%3D%20Wrapping(self.offset)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20window%20%3D%20Wrapping(MEM_SIZE)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20real_index%20%3D%20index%20-%20offset%20%2B%20window%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%26self.slice%5Breal_index.0%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20impl%20Iterator%20for%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20type%20Item%20%3D%20u64%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%23%5Binline%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20fn%20next(%26mut%20self)%20-%3E%20Option%3Cu64%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20self.pos%20%3C%20MEM_SIZE%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20self.mem%5Bself.pos%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20n%20%3D%20self.pos%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20a%20%3D%20IndexOffset%7Bslice%3A%20%26self.mem%2C%20offset%3A%20n%2C%7D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20a%5Bn%20-%201%5D%20%2B%20a%5Bn%20-%202%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Amem%3A%3Aswap%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20mut%20swap_tmp%20%3D%20next_val%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20result%20%3D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20match%20%3A%3Astd%3A%3Aiter%3A%3AIntoIterator%3A%3Ainto_iter((0..MEM_SIZE).rev())%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20mut%20iter%20%3D%3E%20loop%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20match%20%3A%3Astd%3A%3Aiter%3A%3AIterator%3A%3Anext(%26mut%20iter)%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3A%3Astd%3A%3Aoption%3A%3AOption%3A%3ASome(i)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20swap(%26mut%20swap_tmp%2C%20%26mut%20self.mem%5Bi%5D)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3A%3Astd%3A%3Aoption%3A%3AOption%3A%3ANone%20%3D%3E%20break%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20result%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20Recurrence%7Bmem%3A%20%5B0%2C%201%5D%2C%20pos%3A%200%2C%7D%0A%20%20%20%20%7D%3B%0A%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20let%20result%20%3D%0A%20%20%20%20%20%20%20%20%20%20%20%20match%20%3A%3Astd%3A%3Aiter%3A%3AIntoIterator%3A%3Ainto_iter(fib.take(10))%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20mut%20iter%20%3D%3E%20loop%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20match%20%3A%3Astd%3A%3Aiter%3A%3AIterator%3A%3Anext(%26mut%20iter)%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3A%3Astd%3A%3Aoption%3A%3AOption%3A%3ASome(e)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3A%3Astd%3A%3Aio%3A%3A_print(%3A%3Astd%3A%3Afmt%3A%3AArguments%3A%3Anew_v1(%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20static%20__STATIC_FMTSTR%3A%20%26'static%20%5B%26'static%20str%5D%20%3D%20%26%5B%22%22%2C%20%22%5Cn%22%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20__STATIC_FMTSTR%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%26match%20(%26e%2C)%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20(__arg0%2C)%20%3D%3E%20%5B%3A%3Astd%3A%3Afmt%3A%3AArgumentV1%3A%3Anew(__arg0%2C%20%3A%3Astd%3A%3Afmt%3A%3ADisplay%3A%3Afmt)%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20))%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3A%3Astd%3A%3Aoption%3A%3AOption%3A%3ANone%20%3D%3E%20break%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%3B%0A%20%20%20%20%20%20%20%20result%0A%20%20%20%20%7D%0A%7D%0A&amp;version=nightly">Run</a></pre>
 
 <p>But that looks fine!  If we add a few missing <code>#![feature(...)]</code> attributes and feed it to a nightly build of <code>rustc</code>, it even compiles!  ... <em>what?!</em></p>
 
@@ -1861,20 +1170,7 @@ fn main() {
 <h3 id='being-hygienic' class='section-header'><a href='#being-hygienic'>Being Hygienic</a></h3>
 <p>The issue here is that identifiers in Rust macros are <em>hygienic</em>.  That is, identifiers from two different contexts <em>cannot</em> collide.  To show the difference, let&#39;s take a simpler example.</p>
 
-<span class='rusttest'>/*
-macro_rules! using_a {
-    ($e:expr) =&gt; {
-        {
-            let a = 42i;
-            $e
-        }
-    }
-}
-
-let four = using_a!(a / 10);
-*/
-fn main() {}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>using_a</span> {
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {
         {
@@ -1884,7 +1180,7 @@ fn main() {}
     }
 }
 
-<span class='kw'>let</span> <span class='ident'>four</span> <span class='op'>=</span> <span class='macro'>using_a</span><span class='macro'>!</span>(<span class='ident'>a</span> <span class='op'>/</span> <span class='number'>10</span>);</pre>
+<span class='kw'>let</span> <span class='ident'>four</span> <span class='op'>=</span> <span class='macro'>using_a</span><span class='macro'>!</span>(<span class='ident'>a</span> <span class='op'>/</span> <span class='number'>10</span>);<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=%2F*%0Amacro_rules!%20using_a%20%7B%0A%20%20%20%20(%24e%3Aexpr)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20let%20a%20%3D%2042i%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%24e%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%7D%0A%0Alet%20four%20%3D%20using_a!(a%20%2F%2010)%3B%0A*%2F%0Afn%20main()%20%7B%7D%0A">Run</a></pre>
 
 <p>This macro simply takes an expression, then wraps it in a block with a variable <code>a</code> defined.  We then use this as a round-about way of computing <code>4</code>.  There are actually <em>two</em> syntax contexts involved in this example, but they&#39;re invisible.  So, to help with this, let&#39;s give each context a different colour.  Let&#39;s start with the unexpanded code, where there is only a single context:</p>
 
@@ -1908,94 +1204,11 @@ fn main() {}
 
 <p>Now, the contexts match, and the code will compile.  We can make this adjustment to our <code>recurrence!</code> macro by explicitly capturing <code>a</code> and <code>n</code>.  After making the necessary changes, we have:</p>
 
-<span class='rusttest'>macro_rules! count_exprs {
-    () =&gt; (0);
-    ($head:expr) =&gt; (1);
-    ($head:expr, $($tail:expr),*) =&gt; (1 + count_exprs!($($tail),*));
-}
-
-macro_rules! recurrence {
-    ( $seq:ident [ $ind:ident ]: $sty:ty = $($inits:expr),+ ... $recur:expr ) =&gt; {
-//    ^~~~~~~~~~   ^~~~~~~~~~ changed
-        {
-            use std::ops::Index;
-
-            const MEM_SIZE: usize = count_exprs!($($inits),+);
-
-            struct Recurrence {
-                mem: [$sty; MEM_SIZE],
-                pos: usize,
-            }
-
-            struct IndexOffset&lt;&#39;a&gt; {
-                slice: &amp;&#39;a [$sty; MEM_SIZE],
-                offset: usize,
-            }
-
-            impl&lt;&#39;a&gt; Index&lt;usize&gt; for IndexOffset&lt;&#39;a&gt; {
-                type Output = $sty;
-
-                #[inline(always)]
-                fn index&lt;&#39;b&gt;(&amp;&#39;b self, index: usize) -&gt; &amp;&#39;b $sty {
-                    use std::num::Wrapping;
-
-                    let index = Wrapping(index);
-                    let offset = Wrapping(self.offset);
-                    let window = Wrapping(MEM_SIZE);
-
-                    let real_index = index - offset + window;
-                    &amp;self.slice[real_index.0]
-                }
-            }
-
-            impl Iterator for Recurrence {
-                type Item = $sty;
-
-                #[inline]
-                fn next(&amp;mut self) -&gt; Option&lt;$sty&gt; {
-                    if self.pos &lt; MEM_SIZE {
-                        let next_val = self.mem[self.pos];
-                        self.pos += 1;
-                        Some(next_val)
-                    } else {
-                        let next_val = {
-                            let $ind = self.pos;
-//                              ^~~~ changed
-                            let $seq = IndexOffset { slice: &amp;self.mem, offset: $ind };
-//                              ^~~~ changed
-                            $recur
-                        };
-
-                        {
-                            use std::mem::swap;
-
-                            let mut swap_tmp = next_val;
-                            for i in (0..MEM_SIZE).rev() {
-                                swap(&amp;mut swap_tmp, &amp;mut self.mem[i]);
-                            }
-                        }
-
-                        self.pos += 1;
-                        Some(next_val)
-                    }
-                }
-            }
-
-            Recurrence { mem: [$($inits),+], pos: 0 }
-        }
-    };
-}
-
-fn main() {
-    let fib = recurrence![a[n]: u64 = 0, 1 ... a[n-1] + a[n-2]];
-
-    for e in fib.take(10) { println!(&quot;{}&quot;, e) }
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>count_exprs</span> {
     () <span class='op'>=&gt;</span> (<span class='number'>0</span>);
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>head</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> (<span class='number'>1</span>);
-    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>head</span>:<span class='ident'>expr</span>, $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>expr</span>),<span class='op'>*</span>) <span class='op'>=&gt;</span> (<span class='number'>1</span> <span class='op'>+</span> <span class='macro'>count_exprs</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>),<span class='op'>*</span>));
+    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>head</span>:<span class='ident'>expr</span>, $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>expr</span>),<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> (<span class='number'>1</span> <span class='op'>+</span> <span class='macro'>count_exprs</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>),<span class='kw-2'>*</span>));
 }
 
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>recurrence</span> {
@@ -2074,94 +1287,14 @@ fn main() {
     <span class='kw'>let</span> <span class='ident'>fib</span> <span class='op'>=</span> <span class='macro'>recurrence</span><span class='macro'>!</span>[<span class='ident'>a</span>[<span class='ident'>n</span>]: <span class='ident'>u64</span> <span class='op'>=</span> <span class='number'>0</span>, <span class='number'>1</span> ... <span class='ident'>a</span>[<span class='ident'>n</span><span class='op'>-</span><span class='number'>1</span>] <span class='op'>+</span> <span class='ident'>a</span>[<span class='ident'>n</span><span class='op'>-</span><span class='number'>2</span>]];
 
     <span class='kw'>for</span> <span class='ident'>e</span> <span class='kw'>in</span> <span class='ident'>fib</span>.<span class='ident'>take</span>(<span class='number'>10</span>) { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='ident'>e</span>) }
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20count_exprs%20%7B%0A%20%20%20%20()%20%3D%3E%20(0)%3B%0A%20%20%20%20(%24head%3Aexpr)%20%3D%3E%20(1)%3B%0A%20%20%20%20(%24head%3Aexpr%2C%20%24(%24tail%3Aexpr)%2C*)%20%3D%3E%20(1%20%2B%20count_exprs!(%24(%24tail)%2C*))%3B%0A%7D%0A%0Amacro_rules!%20recurrence%20%7B%0A%20%20%20%20(%20%24seq%3Aident%20%5B%20%24ind%3Aident%20%5D%3A%20%24sty%3Aty%20%3D%20%24(%24inits%3Aexpr)%2C%2B%20...%20%24recur%3Aexpr%20)%20%3D%3E%20%7B%0A%2F%2F%20%20%20%20%5E~~~~~~~~~%20%20%20%5E~~~~~~~~~%20changed%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Aops%3A%3AIndex%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20MEM_SIZE%3A%20usize%20%3D%20count_exprs!(%24(%24inits)%2C%2B)%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20struct%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20mem%3A%20%5B%24sty%3B%20MEM_SIZE%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20pos%3A%20usize%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20struct%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20slice%3A%20%26'a%20%5B%24sty%3B%20MEM_SIZE%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20offset%3A%20usize%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20impl%3C'a%3E%20Index%3Cusize%3E%20for%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20type%20Output%20%3D%20%24sty%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%5Binline(always)%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20fn%20index%3C'b%3E(%26'b%20self%2C%20index%3A%20usize)%20-%3E%20%26'b%20%24sty%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Anum%3A%3AWrapping%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20index%20%3D%20Wrapping(index)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20offset%20%3D%20Wrapping(self.offset)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20window%20%3D%20Wrapping(MEM_SIZE)%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20real_index%20%3D%20index%20-%20offset%20%2B%20window%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%26self.slice%5Breal_index.0%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20impl%20Iterator%20for%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20type%20Item%20%3D%20%24sty%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%5Binline%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20fn%20next(%26mut%20self)%20-%3E%20Option%3C%24sty%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20self.pos%20%3C%20MEM_SIZE%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20self.mem%5Bself.pos%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20%24ind%20%3D%20self.pos%3B%0A%2F%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5E~~~%20changed%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20%24seq%20%3D%20IndexOffset%20%7B%20slice%3A%20%26self.mem%2C%20offset%3A%20%24ind%20%7D%3B%0A%2F%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5E~~~%20changed%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%24recur%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Amem%3A%3Aswap%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20mut%20swap_tmp%20%3D%20next_val%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20for%20i%20in%20(0..MEM_SIZE).rev()%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20swap(%26mut%20swap_tmp%2C%20%26mut%20self.mem%5Bi%5D)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20Recurrence%20%7B%20mem%3A%20%5B%24(%24inits)%2C%2B%5D%2C%20pos%3A%200%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20fib%20%3D%20recurrence!%5Ba%5Bn%5D%3A%20u64%20%3D%200%2C%201%20...%20a%5Bn-1%5D%20%2B%20a%5Bn-2%5D%5D%3B%0A%0A%20%20%20%20for%20e%20in%20fib.take(10)%20%7B%20println!(%22%7B%7D%22%2C%20e)%20%7D%0A%7D%0A">Run</a></pre>
 
 <p>And it compiles!  Now, let&#39;s try with a different sequence.</p>
 
-<span class='rusttest'>macro_rules! count_exprs {
-    () =&gt; (0);
-    ($head:expr) =&gt; (1);
-    ($head:expr, $($tail:expr),*) =&gt; (1 + count_exprs!($($tail),*));
-}
-
-macro_rules! recurrence {
-    ( $seq:ident [ $ind:ident ]: $sty:ty = $($inits:expr),+ ... $recur:expr ) =&gt; {
-        {
-            use std::ops::Index;
-
-            const MEM_SIZE: usize = count_exprs!($($inits),+);
-
-            struct Recurrence {
-                mem: [$sty; MEM_SIZE],
-                pos: usize,
-            }
-
-            struct IndexOffset&lt;&#39;a&gt; {
-                slice: &amp;&#39;a [$sty; MEM_SIZE],
-                offset: usize,
-            }
-
-            impl&lt;&#39;a&gt; Index&lt;usize&gt; for IndexOffset&lt;&#39;a&gt; {
-                type Output = $sty;
-
-                #[inline(always)]
-                fn index&lt;&#39;b&gt;(&amp;&#39;b self, index: usize) -&gt; &amp;&#39;b $sty {
-                    use std::num::Wrapping;
-
-                    let index = Wrapping(index);
-                    let offset = Wrapping(self.offset);
-                    let window = Wrapping(MEM_SIZE);
-
-                    let real_index = index - offset + window;
-                    &amp;self.slice[real_index.0]
-                }
-            }
-
-            impl Iterator for Recurrence {
-                type Item = $sty;
-
-                #[inline]
-                fn next(&amp;mut self) -&gt; Option&lt;$sty&gt; {
-                    if self.pos &lt; MEM_SIZE {
-                        let next_val = self.mem[self.pos];
-                        self.pos += 1;
-                        Some(next_val)
-                    } else {
-                        let next_val = {
-                            let $ind = self.pos;
-                            let $seq = IndexOffset { slice: &amp;self.mem, offset: $ind };
-                            $recur
-                        };
-
-                        {
-                            use std::mem::swap;
-
-                            let mut swap_tmp = next_val;
-                            for i in (0..MEM_SIZE).rev() {
-                                swap(&amp;mut swap_tmp, &amp;mut self.mem[i]);
-                            }
-                        }
-
-                        self.pos += 1;
-                        Some(next_val)
-                    }
-                }
-            }
-
-            Recurrence { mem: [$($inits),+], pos: 0 }
-        }
-    };
-}
-
-fn main() {
-for e in recurrence!(f[i]: f64 = 1.0 ... f[i-1] * i as f64).take(10) {
-    println!(&quot;{}&quot;, e)
-}
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='kw'>for</span> <span class='ident'>e</span> <span class='kw'>in</span> <span class='macro'>recurrence</span><span class='macro'>!</span>(<span class='ident'>f</span>[<span class='ident'>i</span>]: <span class='ident'>f64</span> <span class='op'>=</span> <span class='number'>1.0</span> ... <span class='ident'>f</span>[<span class='ident'>i</span><span class='op'>-</span><span class='number'>1</span>] <span class='op'>*</span> <span class='ident'>i</span> <span class='kw'>as</span> <span class='ident'>f64</span>).<span class='ident'>take</span>(<span class='number'>10</span>) {
     <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='ident'>e</span>)
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20count_exprs%20%7B%0A%20%20%20%20()%20%3D%3E%20(0)%3B%0A%20%20%20%20(%24head%3Aexpr)%20%3D%3E%20(1)%3B%0A%20%20%20%20(%24head%3Aexpr%2C%20%24(%24tail%3Aexpr)%2C*)%20%3D%3E%20(1%20%2B%20count_exprs!(%24(%24tail)%2C*))%3B%0A%7D%0A%0Amacro_rules!%20recurrence%20%7B%0A%20%20%20%20(%20%24seq%3Aident%20%5B%20%24ind%3Aident%20%5D%3A%20%24sty%3Aty%20%3D%20%24(%24inits%3Aexpr)%2C%2B%20...%20%24recur%3Aexpr%20)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Aops%3A%3AIndex%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20MEM_SIZE%3A%20usize%20%3D%20count_exprs!(%24(%24inits)%2C%2B)%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20struct%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20mem%3A%20%5B%24sty%3B%20MEM_SIZE%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20pos%3A%20usize%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20struct%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20slice%3A%20%26'a%20%5B%24sty%3B%20MEM_SIZE%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20offset%3A%20usize%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20impl%3C'a%3E%20Index%3Cusize%3E%20for%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20type%20Output%20%3D%20%24sty%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%5Binline(always)%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20fn%20index%3C'b%3E(%26'b%20self%2C%20index%3A%20usize)%20-%3E%20%26'b%20%24sty%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Anum%3A%3AWrapping%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20index%20%3D%20Wrapping(index)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20offset%20%3D%20Wrapping(self.offset)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20window%20%3D%20Wrapping(MEM_SIZE)%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20real_index%20%3D%20index%20-%20offset%20%2B%20window%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%26self.slice%5Breal_index.0%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20impl%20Iterator%20for%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20type%20Item%20%3D%20%24sty%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%5Binline%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20fn%20next(%26mut%20self)%20-%3E%20Option%3C%24sty%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20self.pos%20%3C%20MEM_SIZE%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20self.mem%5Bself.pos%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20%24ind%20%3D%20self.pos%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20%24seq%20%3D%20IndexOffset%20%7B%20slice%3A%20%26self.mem%2C%20offset%3A%20%24ind%20%7D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%24recur%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Amem%3A%3Aswap%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20mut%20swap_tmp%20%3D%20next_val%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20for%20i%20in%20(0..MEM_SIZE).rev()%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20swap(%26mut%20swap_tmp%2C%20%26mut%20self.mem%5Bi%5D)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20Recurrence%20%7B%20mem%3A%20%5B%24(%24inits)%2C%2B%5D%2C%20pos%3A%200%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0Afor%20e%20in%20recurrence!(f%5Bi%5D%3A%20f64%20%3D%201.0%20...%20f%5Bi-1%5D%20*%20i%20as%20f64).take(10)%20%7B%0A%20%20%20%20println!(%22%7B%7D%22%2C%20e)%0A%7D%0A%7D%0A">Run</a></pre>
 
 <p>Which gives us:</p>
 
@@ -2179,11 +1312,7 @@ for e in recurrence!(f[i]: f64 = 1.0 ... f[i-1] * i as f64).take(10) {
 
 <p>Success!</p>
 
-    <script type="text/javascript">
-        window.playgroundUrl = "https://play.rust-lang.org";
-    </script>
     <script src='rustbook.js'></script>
-<script src='playpen.js'></script>
 </div></div>
 
 

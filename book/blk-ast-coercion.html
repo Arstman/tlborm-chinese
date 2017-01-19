@@ -28,25 +28,25 @@
                     </button>
                 </div>
 <div id='toc' class='mobile-hidden'>
-<ul class='chapter'>
+<ol class='chapter'>
 <li><a  href='README.html'><b>1.</b> Introduction</a>
 </li>
 <li><a  href='mbe-README.html'><b>2.</b> Macros, A Methodical Introduction</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-README.html'><b>2.1.</b> Syntax Extensions</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-source-analysis.html'><b>2.1.1.</b> Source Analysis</a>
 </li>
 <li><a  href='mbe-syn-macros-in-the-ast.html'><b>2.1.2.</b> Macros in the AST</a>
 </li>
 <li><a  href='mbe-syn-expansion.html'><b>2.1.3.</b> Expansion</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='mbe-macro-rules.html'><b>2.2.</b> macro_rules!</a>
 </li>
 <li><a  href='mbe-min-README.html'><b>2.3.</b> Minutiae</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-min-captures-and-expansion-redux.html'><b>2.3.1.</b> Captures and Expansion Redux</a>
 </li>
 <li><a  href='mbe-min-hygiene.html'><b>2.3.2.</b> Hygiene</a>
@@ -59,14 +59,14 @@
 </li>
 <li><a  href='mbe-min-import-export.html'><b>2.3.6.</b> Import/Export</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='pim-README.html'><b>3.</b> Macros, A Practical Introduction</a>
 </li>
 <li><a  href='pat-README.html'><b>4.</b> Patterns</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
 </li>
 <li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
@@ -85,25 +85,25 @@
 </li>
 <li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
-<ul class='section'>
+<ol class='section'>
 <li><a class='active' href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
 </li>
 <li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
 </li>
 <li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </div>
 <div id='page-wrapper'>
 <div id='page'>
@@ -112,23 +112,11 @@
     <h1 class="title">AST Coercion</h1>
     <p>The Rust parser is not very robust in the face of <code>tt</code> substitutions.  Problems can arise when the parser is expecting a particular grammar construct and <em>instead</em> finds a lump of substituted <code>tt</code> tokens.  Rather than attempt to parse them, it will often just <em>give up</em>.  In these cases, it is necessary to employ an AST coercion.</p>
 
-<span class='rusttest'>#![allow(dead_code)]
-
-macro_rules! as_expr { ($e:expr) =&gt; {$e} }
-macro_rules! as_item { ($i:item) =&gt; {$i} }
-macro_rules! as_pat  { ($p:pat) =&gt;  {$p} }
-macro_rules! as_stmt { ($s:stmt) =&gt; {$s} }
-
-as_item!{struct Dummy;}
-
-fn main() {
-    as_stmt!(let as_pat!(_) = as_expr!(42));
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>as_expr</span> { (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>} }
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>as_item</span> { (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>:<span class='ident'>item</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>} }
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>as_pat</span>  { (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>p</span>:<span class='ident'>pat</span>) <span class='op'>=&gt;</span>  {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>p</span>} }
-<span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>as_stmt</span> { (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>s</span>:<span class='ident'>stmt</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>s</span>} }</pre>
+<span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>as_stmt</span> { (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>s</span>:<span class='ident'>stmt</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>s</span>} }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=%23!%5Ballow(dead_code)%5D%0A%0Amacro_rules!%20as_expr%20%7B%20(%24e%3Aexpr)%20%3D%3E%20%7B%24e%7D%20%7D%0Amacro_rules!%20as_item%20%7B%20(%24i%3Aitem)%20%3D%3E%20%7B%24i%7D%20%7D%0Amacro_rules!%20as_pat%20%20%7B%20(%24p%3Apat)%20%3D%3E%20%20%7B%24p%7D%20%7D%0Amacro_rules!%20as_stmt%20%7B%20(%24s%3Astmt)%20%3D%3E%20%7B%24s%7D%20%7D%0A%0Aas_item!%7Bstruct%20Dummy%3B%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20as_stmt!(let%20as_pat!(_)%20%3D%20as_expr!(42))%3B%0A%7D%0A">Run</a></pre>
 
 <p>These coercions are often used with <a href="pat-push-down-accumulation.html">push-down accumulation</a> macros in order to get the parser to treat the final <code>tt</code> sequence as a particular kind of grammar construct.</p>
 
@@ -145,11 +133,7 @@ fn main() {
 </ol>
 </div>
 
-    <script type="text/javascript">
-        window.playgroundUrl = "https://play.rust-lang.org";
-    </script>
     <script src='rustbook.js'></script>
-<script src='playpen.js'></script>
 </div></div>
 
 

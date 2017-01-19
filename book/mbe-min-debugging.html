@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <title>Debugging</title>
+    <title>调试</title>
 
     <link rel="stylesheet" type="text/css" href="rustbook.css">
 
@@ -28,25 +28,25 @@
                     </button>
                 </div>
 <div id='toc' class='mobile-hidden'>
-<ul class='chapter'>
+<ol class='chapter'>
 <li><a  href='README.html'><b>1.</b> Introduction</a>
 </li>
 <li><a  href='mbe-README.html'><b>2.</b> Macros, A Methodical Introduction</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-README.html'><b>2.1.</b> Syntax Extensions</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-source-analysis.html'><b>2.1.1.</b> Source Analysis</a>
 </li>
 <li><a  href='mbe-syn-macros-in-the-ast.html'><b>2.1.2.</b> Macros in the AST</a>
 </li>
 <li><a  href='mbe-syn-expansion.html'><b>2.1.3.</b> Expansion</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='mbe-macro-rules.html'><b>2.2.</b> macro_rules!</a>
 </li>
 <li><a  href='mbe-min-README.html'><b>2.3.</b> Minutiae</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-min-captures-and-expansion-redux.html'><b>2.3.1.</b> Captures and Expansion Redux</a>
 </li>
 <li><a  href='mbe-min-hygiene.html'><b>2.3.2.</b> Hygiene</a>
@@ -59,14 +59,14 @@
 </li>
 <li><a  href='mbe-min-import-export.html'><b>2.3.6.</b> Import/Export</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='pim-README.html'><b>3.</b> Macros, A Practical Introduction</a>
 </li>
 <li><a  href='pat-README.html'><b>4.</b> Patterns</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
 </li>
 <li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
@@ -85,63 +85,48 @@
 </li>
 <li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
 </li>
 <li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
 </li>
 <li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </div>
 <div id='page-wrapper'>
 <div id='page'>
 
 
-    <h1 class="title">Debugging</h1>
-    <p><code>rustc</code> provides a number of tools to debug macros.  One of the most useful is <code>trace_macros!</code>, which is a directive to the compiler instructing it to dump every macro invocation prior to expansion.  For example, given the following:</p>
+    <h1 class="title">调试</h1>
+    <p><code>rustc</code>提供了一些工具用来调试宏。其中，最有用的之一是<code>trace_macros!</code>。它会指示编译器，在每一个宏调用被展开之前将其转印出来。例如，给定下列代码：</p>
 
-<span class='rusttest'>// Note: make sure to use a nightly channel compiler.
-#![feature(trace_macros)]
-
-macro_rules! each_tt {
-    () =&gt; {};
-    ($_tt:tt $($rest:tt)*) =&gt; {each_tt!($($rest)*);};
-}
-
-each_tt!(foo bar baz quux);
-trace_macros!(true);
-each_tt!(spim wak plee whum);
-trace_macros!(false);
-each_tt!(trom qlip winp xod);
-
-fn main() {}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>feature</span>(<span class='ident'>trace_macros</span>)]</span>
 
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>each_tt</span> {
     () <span class='op'>=&gt;</span> {};
-    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_tt</span>:<span class='ident'>tt</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>rest</span>:<span class='ident'>tt</span>)<span class='op'>*</span>) <span class='op'>=&gt;</span> {<span class='macro'>each_tt</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>rest</span>)<span class='op'>*</span>);};
+    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_tt</span>:<span class='ident'>tt</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>rest</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> {<span class='macro'>each_tt</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>rest</span>)<span class='kw-2'>*</span>);};
 }
 
 <span class='macro'>each_tt</span><span class='macro'>!</span>(<span class='ident'>foo</span> <span class='ident'>bar</span> <span class='ident'>baz</span> <span class='ident'>quux</span>);
-<span class='macro'>trace_macros</span><span class='macro'>!</span>(<span class='boolval'>true</span>);
+<span class='macro'>trace_macros</span><span class='macro'>!</span>(<span class='bool-val'>true</span>);
 <span class='macro'>each_tt</span><span class='macro'>!</span>(<span class='ident'>spim</span> <span class='ident'>wak</span> <span class='ident'>plee</span> <span class='ident'>whum</span>);
-<span class='macro'>trace_macros</span><span class='macro'>!</span>(<span class='boolval'>false</span>);
-<span class='macro'>each_tt</span><span class='macro'>!</span>(<span class='ident'>trom</span> <span class='ident'>qlip</span> <span class='ident'>winp</span> <span class='ident'>xod</span>);</pre>
+<span class='macro'>trace_macros</span><span class='macro'>!</span>(<span class='bool-val'>false</span>);
+<span class='macro'>each_tt</span><span class='macro'>!</span>(<span class='ident'>trom</span> <span class='ident'>qlip</span> <span class='ident'>winp</span> <span class='ident'>xod</span>);<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=%2F%2F%20Note%3A%20make%20sure%20to%20use%20a%20nightly%20channel%20compiler.%0A%23!%5Bfeature(trace_macros)%5D%0A%0Amacro_rules!%20each_tt%20%7B%0A%20%20%20%20()%20%3D%3E%20%7B%7D%3B%0A%20%20%20%20(%24_tt%3Att%20%24(%24rest%3Att)*)%20%3D%3E%20%7Beach_tt!(%24(%24rest)*)%3B%7D%3B%0A%7D%0A%0Aeach_tt!(foo%20bar%20baz%20quux)%3B%0Atrace_macros!(true)%3B%0Aeach_tt!(spim%20wak%20plee%20whum)%3B%0Atrace_macros!(false)%3B%0Aeach_tt!(trom%20qlip%20winp%20xod)%3B%0A%0Afn%20main()%20%7B%7D%0A&amp;version=nightly">Run</a></pre>
 
-<p>The output is:</p>
+<p>编译输出将包含：</p>
 
 <pre><code class="language-text">each_tt! { spim wak plee whum }
 each_tt! { wak plee whum }
@@ -150,59 +135,32 @@ each_tt! { whum }
 each_tt! {  }
 </code></pre>
 
-<p>This is <em>particularly</em> invaluable when debugging deeply recursive macros.  You can also enable this from the command-line by adding <code>-Z trace-macros</code> to the compiler command line.</p>
+<p>它在调试递归很深的宏时尤其有用。同时，它可以在命令提示符中被打开，在编译指令中附加<code>-Z trace-macros</code>即可。</p>
 
-<p>Secondly, there is <code>log_syntax!</code> which causes the compiler to output all tokens passed to it.  For example, this makes the compiler sing a song:</p>
+<p>第二个有用的宏是<code>log_syntax!</code>。它将使得编译器输出所有经过编译器处理的标记。举个例子，下述代码可以让编译器唱一首歌：</p>
 
-<span class='rusttest'>// Note: make sure to use a nightly channel compiler.
-#![feature(log_syntax)]
-
-macro_rules! sing {
-    () =&gt; {};
-    ($tt:tt $($rest:tt)*) =&gt; {log_syntax!($tt); sing!($($rest)*);};
-}
-
-sing! {
-    ^ &lt; @ &lt; . @ *
-    &#39;\x08&#39; &#39;{&#39; &#39;&quot;&#39; _ # &#39; &#39;
-    - @ &#39;$&#39; &amp;&amp; / _ %
-    ! ( &#39;\t&#39; @ | = &gt;
-    ; &#39;\x08&#39; &#39;\&#39;&#39; + &#39;$&#39; ? &#39;\x7f&#39;
-    , # &#39;&quot;&#39; ~ | ) &#39;\x07&#39;
-}
-
-fn main() {}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>feature</span>(<span class='ident'>log_syntax</span>)]</span>
 
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>sing</span> {
     () <span class='op'>=&gt;</span> {};
-    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tt</span>:<span class='ident'>tt</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>rest</span>:<span class='ident'>tt</span>)<span class='op'>*</span>) <span class='op'>=&gt;</span> {<span class='macro'>log_syntax</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tt</span>); <span class='macro'>sing</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>rest</span>)<span class='op'>*</span>);};
+    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tt</span>:<span class='ident'>tt</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>rest</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> {<span class='macro'>log_syntax</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tt</span>); <span class='macro'>sing</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>rest</span>)<span class='kw-2'>*</span>);};
 }
 
 <span class='macro'>sing</span><span class='macro'>!</span> {
-    <span class='op'>^</span> <span class='op'>&lt;</span> <span class='kw-2'>@</span> <span class='op'>&lt;</span> . <span class='kw-2'>@</span> <span class='op'>*</span>
+    <span class='op'>^</span> <span class='op'>&lt;</span> @ <span class='op'>&lt;</span> . @ <span class='op'>*</span>
     <span class='string'>&#39;\x08&#39;</span> <span class='string'>&#39;{&#39;</span> <span class='string'>&#39;&quot;&#39;</span> _ <span class='attribute'># <span class='string'>&#39; &#39;</span>
-    <span class='op'>-</span> <span class='kw-2'>@</span> <span class='string'>&#39;$&#39;</span> <span class='op'>&amp;&amp;</span> <span class='op'>/</span> _ <span class='op'>%</span>
-    <span class='op'>!</span> ( <span class='string'>&#39;\t&#39;</span> <span class='kw-2'>@</span> <span class='op'>|</span> <span class='op'>=</span> <span class='op'>&gt;</span>
-    ; <span class='string'>&#39;\x08&#39;</span> <span class='string'>&#39;\&#39;&#39;</span> <span class='op'>+</span> <span class='string'>&#39;$&#39;</span> ? <span class='string'>&#39;\x7f&#39;</span>
-    , <span class='attribute'># <span class='string'>&#39;&quot;&#39;</span> <span class='kw-2'>~</span> <span class='op'>|</span> ) <span class='string'>&#39;\x07&#39;</span>
-}</pre>
+    <span class='op'>-</span> @ <span class='string'>&#39;$&#39;</span> <span class='op'>&amp;&amp;</span> <span class='op'>/</span> _ <span class='op'>%</span>
+    <span class='op'>!</span> ( <span class='string'>&#39;\t&#39;</span> @ <span class='op'>|</span> <span class='op'>=</span> <span class='op'>&gt;</span>
+    ; <span class='string'>&#39;\x08&#39;</span> <span class='string'>&#39;\&#39;&#39;</span> <span class='op'>+</span> <span class='string'>&#39;$&#39;</span> <span class='question-mark'>?</span> <span class='string'>&#39;\x7f&#39;</span>
+    , <span class='attribute'># <span class='string'>&#39;&quot;&#39;</span> ~ <span class='op'>|</span> ) <span class='string'>&#39;\x07&#39;</span>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=%2F%2F%20Note%3A%20make%20sure%20to%20use%20a%20nightly%20channel%20compiler.%0A%23!%5Bfeature(log_syntax)%5D%0A%0Amacro_rules!%20sing%20%7B%0A%20%20%20%20()%20%3D%3E%20%7B%7D%3B%0A%20%20%20%20(%24tt%3Att%20%24(%24rest%3Att)*)%20%3D%3E%20%7Blog_syntax!(%24tt)%3B%20sing!(%24(%24rest)*)%3B%7D%3B%0A%7D%0A%0Asing!%20%7B%0A%20%20%20%20%5E%20%3C%20%40%20%3C%20.%20%40%20*%0A%20%20%20%20'%5Cx08'%20'%7B'%20'%22'%20_%20%23%20'%20'%0A%20%20%20%20-%20%40%20'%24'%20%26%26%20%2F%20_%20%25%0A%20%20%20%20!%20(%20'%5Ct'%20%40%20%7C%20%3D%20%3E%0A%20%20%20%20%3B%20'%5Cx08'%20'%5C''%20%2B%20'%24'%20%3F%20'%5Cx7f'%0A%20%20%20%20%2C%20%23%20'%22'%20~%20%7C%20)%20'%5Cx07'%0A%7D%0A%0Afn%20main()%20%7B%7D%0A&amp;version=nightly">Run</a></pre>
 
-<p>This can be used to do slightly more targeted debugging than <code>trace_macros!</code>.</p>
+<p>比起<code>trace_macros!</code>来说，它能够做一些更有针对性的调试。</p>
 
-<p>Sometimes, it is what the macro <em>expands to</em> that proves problematic.  For this, the <code>--pretty</code> argument to the compiler can be used.  Given the following code:</p>
+<p>有时问题出在宏展开后的结果里。对于这种情况，可用编译命令<code>--pretty</code>来勘察。给出下列代码：</p>
 
-<span class='rusttest'>// Shorthand for initialising a `String`.
-macro_rules! S {
-    ($e:expr) =&gt; {String::from($e)};
-}
-
-fn main() {
-    let world = S!(&quot;World&quot;);
-    println!(&quot;Hello, {}!&quot;, world);
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='comment'>// Shorthand for initialising a `String`.</span>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>S</span> {
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {<span class='ident'>String</span>::<span class='ident'>from</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>)};
@@ -211,42 +169,20 @@ fn main() {
 <span class='kw'>fn</span> <span class='ident'>main</span>() {
     <span class='kw'>let</span> <span class='ident'>world</span> <span class='op'>=</span> <span class='macro'>S</span><span class='macro'>!</span>(<span class='string'>&quot;World&quot;</span>);
     <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;Hello, {}!&quot;</span>, <span class='ident'>world</span>);
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=%2F%2F%20Shorthand%20for%20initialising%20a%20%60String%60.%0Amacro_rules!%20S%20%7B%0A%20%20%20%20(%24e%3Aexpr)%20%3D%3E%20%7BString%3A%3Afrom(%24e)%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20world%20%3D%20S!(%22World%22)%3B%0A%20%20%20%20println!(%22Hello%2C%20%7B%7D!%22%2C%20world)%3B%0A%7D%0A">Run</a></pre>
 
-<p>compiled with the following command:</p>
+<p>并用如下编译命令进行编译，</p>
 
 <pre><code class="language-shell">rustc -Z unstable-options --pretty expanded hello.rs
 </code></pre>
 
-<p>produces the following output (modified for formatting):</p>
+<p>将输出如下内容(略经修改以符合排版)：</p>
 
-<span class='rusttest'>#![feature(no_std, prelude_import)]
-#![no_std]
-#[prelude_import]
-use std::prelude::v1::*;
-#[macro_use]
-extern crate std as std;
-// Shorthand for initialising a `String`.
-fn main() {
-    let world = String::from(&quot;World&quot;);
-    ::std::io::_print(::std::fmt::Arguments::new_v1(
-        {
-            static __STATIC_FMTSTR: &amp;&#39;static [&amp;&#39;static str]
-                = &amp;[&quot;Hello, &quot;, &quot;!\n&quot;];
-            __STATIC_FMTSTR
-        },
-        &amp;match (&amp;world,) {
-             (__arg0,) =&gt; [
-                ::std::fmt::ArgumentV1::new(__arg0, ::std::fmt::Display::fmt)
-            ],
-        }
-    ));
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>feature</span>(<span class='ident'>no_std</span>, <span class='ident'>prelude_import</span>)]</span>
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>no_std</span>]</span>
 <span class='attribute'>#[<span class='ident'>prelude_import</span>]</span>
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>prelude</span>::<span class='ident'>v1</span>::<span class='op'>*</span>;
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>prelude</span>::<span class='ident'>v1</span>::<span class='kw-2'>*</span>;
 <span class='attribute'>#[<span class='ident'>macro_use</span>]</span>
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>std</span> <span class='kw'>as</span> <span class='ident'>std</span>;
 <span class='comment'>// Shorthand for initialising a `String`.</span>
@@ -264,15 +200,11 @@ fn main() {
             ],
         }
     ));
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=%23!%5Bfeature(no_std%2C%20prelude_import)%5D%0A%23!%5Bno_std%5D%0A%23%5Bprelude_import%5D%0Ause%20std%3A%3Aprelude%3A%3Av1%3A%3A*%3B%0A%23%5Bmacro_use%5D%0Aextern%20crate%20std%20as%20std%3B%0A%2F%2F%20Shorthand%20for%20initialising%20a%20%60String%60.%0Afn%20main()%20%7B%0A%20%20%20%20let%20world%20%3D%20String%3A%3Afrom(%22World%22)%3B%0A%20%20%20%20%3A%3Astd%3A%3Aio%3A%3A_print(%3A%3Astd%3A%3Afmt%3A%3AArguments%3A%3Anew_v1(%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20static%20__STATIC_FMTSTR%3A%20%26'static%20%5B%26'static%20str%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3D%20%26%5B%22Hello%2C%20%22%2C%20%22!%5Cn%22%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20__STATIC_FMTSTR%0A%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%26match%20(%26world%2C)%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20(__arg0%2C)%20%3D%3E%20%5B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3A%3Astd%3A%3Afmt%3A%3AArgumentV1%3A%3Anew(__arg0%2C%20%3A%3Astd%3A%3Afmt%3A%3ADisplay%3A%3Afmt)%0A%20%20%20%20%20%20%20%20%20%20%20%20%5D%2C%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20))%3B%0A%7D%0A&amp;version=nightly">Run</a></pre>
 
-<p>Other options to <code>--pretty</code> can be listed using <code>rustc -Z unstable-options --help -v</code>; a full list is not provided since, as implied by the name, any such list would be subject to change at any time.</p>
+<p><code>--pretty</code>还有其它一些可用选项，可通过<code>rustc -Z unstable-options --help -v</code>来列出。此处并不提供该选项表；因为，正如指令本身所暗示的，表中的一切内容在任何时间点都有可能发生改变。</p>
 
-    <script type="text/javascript">
-        window.playgroundUrl = "https://play.rust-lang.org";
-    </script>
     <script src='rustbook.js'></script>
-<script src='playpen.js'></script>
 </div></div>
 
 

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <title>Expansion</title>
+    <title>展开</title>
 
     <link rel="stylesheet" type="text/css" href="rustbook.css">
 
@@ -28,25 +28,25 @@
                     </button>
                 </div>
 <div id='toc' class='mobile-hidden'>
-<ul class='chapter'>
+<ol class='chapter'>
 <li><a  href='README.html'><b>1.</b> Introduction</a>
 </li>
 <li><a  href='mbe-README.html'><b>2.</b> Macros, A Methodical Introduction</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-README.html'><b>2.1.</b> Syntax Extensions</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-source-analysis.html'><b>2.1.1.</b> Source Analysis</a>
 </li>
 <li><a  href='mbe-syn-macros-in-the-ast.html'><b>2.1.2.</b> Macros in the AST</a>
 </li>
 <li><a class='active' href='mbe-syn-expansion.html'><b>2.1.3.</b> Expansion</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='mbe-macro-rules.html'><b>2.2.</b> macro_rules!</a>
 </li>
 <li><a  href='mbe-min-README.html'><b>2.3.</b> Minutiae</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-min-captures-and-expansion-redux.html'><b>2.3.1.</b> Captures and Expansion Redux</a>
 </li>
 <li><a  href='mbe-min-hygiene.html'><b>2.3.2.</b> Hygiene</a>
@@ -59,14 +59,14 @@
 </li>
 <li><a  href='mbe-min-import-export.html'><b>2.3.6.</b> Import/Export</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='pim-README.html'><b>3.</b> Macros, A Practical Introduction</a>
 </li>
 <li><a  href='pat-README.html'><b>4.</b> Patterns</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
 </li>
 <li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
@@ -85,59 +85,57 @@
 </li>
 <li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
 </li>
 <li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
 </li>
 <li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </div>
 <div id='page-wrapper'>
 <div id='page'>
 
 
-    <h1 class="title">Expansion</h1>
-    <p>Expansion is a relatively simple affair.  At some point <em>after</em> the construction of the AST, but before the compiler begins constructing its semantic understanding of the program, it will expand all macros.</p>
+    <h1 class="title">展开</h1>
+    <p>展开相对简单。编译器在生成AST之后，对程序进行语义理解之前的某个时间点，将会对所有宏进行展开。</p>
 
-<p>This involves traversing the AST, locating macro invocations and replacing them with their expansion.  In the case of non-macro syntax extensions, <em>how</em> this happens is up to the particular syntax extension.  That said, syntax extensions go through <em>exactly</em> the same process that macros do once their expansion is complete.</p>
+<p>这一过程包括，遍历AST，定位所有宏调用，并将它们用其展开进行替换。在非宏的语法扩展情境中，此过程具体如何发生根据具体情境各有不同。但所有语法扩展在展开完成之后所经历的历程都与宏所经历的相同。</p>
 
-<p>Once the compiler has run a syntax extension, it expects the result to be parseable as one of a limited set of syntax elements, based on context.  For example, if you invoke a macro at module scope, the compiler will parse the result into an AST node that represents an item.  If you invoke a macro in expression position, the compiler will parse the result into an expression AST node.</p>
+<p>每当编译器遇见一个语法扩展，都会根据上下文决定一个语法元素集。该语法扩展的展开结果应能被顺利转义成集合中的某个元素。举例来说，如果在模组作用域内调用了宏，那么编译器就会尝试将该宏的展开结果转义成一个表示某项条目(item)的AST节点。如果在需要表达式的位置调用了宏，那么编译器就会尝试将该宏的展开结果转义成一个表示表达式的AST节点。</p>
 
-<p>In fact, it can turn a syntax extension result into any of the following:</p>
+<p>事实上，语义扩展能够被转换成以下任意一种：</p>
 
 <ul>
-<li>an expression,</li>
-<li>a pattern,</li>
-<li>zero or more items,</li>
-<li>zero or more <code>impl</code> items, or</li>
-<li>zero or more statements.</li>
+<li>一个表达式，</li>
+<li>一个模式，</li>
+<li>0或多个条目，</li>
+<li>0或多个<code>impl</code>条目，</li>
+<li>0或多个语句。</li>
 </ul>
 
-<p>In other words, <em>where</em> you can invoke a macro determines what its result will be interpreted as.</p>
+<p>换句话讲，宏调用所在的位置，决定了该宏展开之后的结果被解读的方式。</p>
 
-<p>The compiler will take this AST node and completely replace the macro&#39;s invocation node with the output node.  <em>This is a structural operation</em>, not a textural one!</p>
+<p>编译器将把AST中表示宏调用的节点用其宏展开的输出节点完全替换。这一替换是结构性(structural)的，而非织构性(textural)的。</p>
 
-<p>For example, consider the following:</p>
+<p>举例来说：</p>
 
-<span class='rusttest'>fn main() {
-    let eight = 2 * four!();
-}</span><pre class='rust rust-example-rendered'>
-<span class='kw'>let</span> <span class='ident'>eight</span> <span class='op'>=</span> <span class='number'>2</span> <span class='op'>*</span> <span class='macro'>four</span><span class='macro'>!</span>();</pre>
+<pre class='rust rust-example-rendered'>
+<span class='kw'>let</span> <span class='ident'>eight</span> <span class='op'>=</span> <span class='number'>2</span> <span class='op'>*</span> <span class='macro'>four</span><span class='macro'>!</span>();<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Alet%20eight%20%3D%202%20*%20four!()%3B%0A%7D">Run</a></pre>
 
-<p>We can visualise this partial AST as follows:</p>
+<p>我们可将这部分AST表示为：</p>
 
 <pre><code class="language-text">┌─────────────┐
 │ Let         │
@@ -152,7 +150,7 @@
                                 └────────────┘
 </code></pre>
 
-<p>From context, <code>four!()</code> <em>must</em> expand to an expression (the initialiser can <em>only</em> be an expression).  Thus, whatever the actual expansion is, it will be interpreted as a complete expression.  In this case, we will assume <code>four!</code> is defined such that it expands to the expression <code>1 + 3</code>.  As a result, expanding this invocation will result in the AST changing to:</p>
+<p>根据上下文，<code>four!()</code><strong>必须</strong>展开成一个表达式 (初始化语句只可能是表达式)。因此，无论实际展开结果如何，它都将被解读成一个完整的表达式。此处我们假设，<code>four!</code>的定义保证它被展开为表达式 <code>1 + 3</code>。故而，展开这一宏调用将使整个AST变为</p>
 
 <pre><code class="language-text">┌─────────────┐
 │ Let         │
@@ -170,54 +168,42 @@
                    └────────┘                 └────────┘
 </code></pre>
 
-<p>This can be written out like so:</p>
+<p>这又能被重写成</p>
 
-<span class='rusttest'>fn main() {
-    let eight = 2 * (1 + 3);
-}</span><pre class='rust rust-example-rendered'>
-<span class='kw'>let</span> <span class='ident'>eight</span> <span class='op'>=</span> <span class='number'>2</span> <span class='op'>*</span> (<span class='number'>1</span> <span class='op'>+</span> <span class='number'>3</span>);</pre>
+<pre class='rust rust-example-rendered'>
+<span class='kw'>let</span> <span class='ident'>eight</span> <span class='op'>=</span> <span class='number'>2</span> <span class='op'>*</span> (<span class='number'>1</span> <span class='op'>+</span> <span class='number'>3</span>);<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Alet%20eight%20%3D%202%20*%20(1%20%2B%203)%3B%0A%7D">Run</a></pre>
 
-<p>Note that we added parens <em>despite</em> them not being in the expansion.  Remember that the compiler always treats the expansion of a macro as a complete AST node, <strong>not</strong> as a mere sequence of tokens.  To put it another way, even if you don&#39;t explicitly wrap a complex expression in parentheses, there is no way for the compiler to &quot;misinterpret&quot; the result, or change the order of evaluation.</p>
+<p>注意到虽然表达式本身不包含括号，我们仍加上了它们。这是因为，编译器总是将宏展开结果作为完整的AST节点对待，而**不是**仅仅作为一列标记。换句话说，即便不显式地把复杂的表达式用括号包起来，编译器也不可能“错意”宏替换的结果，或者改变求值顺序。</p>
 
-<p>It is important to understand that macro expansions are treated as AST nodes, as this design has two further implications:</p>
+<p>理解这一点——宏展开被当作AST节点看待——非常重要，它表明：</p>
 
 <ul>
-<li>In addition to there being a limited number of invocation <em>positions</em>, macros can <em>only</em> expand to the kind of AST node the parser <em>expects</em> at that position.</li>
-<li>As a consequence of the above, macros <em>absolutely cannot</em> expand to incomplete or syntactically invalid constructs.</li>
+<li>宏调用不仅可用的位置有限，其展开结果也只可能跟语法分析器在该位置所预期的AST节点种类相符合。</li>
+<li>因此，宏**必定无法**展开成不完整或不合语法的架构。</li>
 </ul>
 
-<p>There is one further thing to note about expansion: what happens when a syntax extension expands to something that contains <em>another</em> syntax extension invocation.  For example, consider an alternative definition of <code>four!</code>; what happens if it expands to <code>1 + three!()</code>?</p>
+<p>有关展开还有一条值得注意：如果某个语法扩展的展开结果包含了另一次语法扩展调用，那会怎么样？例如，上述<code>four!</code>如果被展开成了<code>1 + three!()</code>，会发生什么?</p>
 
-<span class='rusttest'>fn main() {
-    let x = four!();
-}</span><pre class='rust rust-example-rendered'>
-<span class='kw'>let</span> <span class='ident'>x</span> <span class='op'>=</span> <span class='macro'>four</span><span class='macro'>!</span>();</pre>
+<pre class='rust rust-example-rendered'>
+<span class='kw'>let</span> <span class='ident'>x</span> <span class='op'>=</span> <span class='macro'>four</span><span class='macro'>!</span>();<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Alet%20x%20%3D%20four!()%3B%0A%7D">Run</a></pre>
 
-<p>Expands to:</p>
+<p>展开成：</p>
 
-<span class='rusttest'>fn main() {
-    let x = 1 + three!();
-}</span><pre class='rust rust-example-rendered'>
-<span class='kw'>let</span> <span class='ident'>x</span> <span class='op'>=</span> <span class='number'>1</span> <span class='op'>+</span> <span class='macro'>three</span><span class='macro'>!</span>();</pre>
+<pre class='rust rust-example-rendered'>
+<span class='kw'>let</span> <span class='ident'>x</span> <span class='op'>=</span> <span class='number'>1</span> <span class='op'>+</span> <span class='macro'>three</span><span class='macro'>!</span>();<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Alet%20x%20%3D%201%20%2B%20three!()%3B%0A%7D">Run</a></pre>
 
-<p>This is resolved by the compiler checking the result of expansions for additional macro invocations, and expanding them.  Thus, a second expansion step turns the above into:</p>
+<p>编译器将会检查扩展结果中是否包含更多的宏调用；如果有，它们将被进一步展开。因此，上述AST节点将被再次展开成：</p>
 
-<span class='rusttest'>fn main() {
-    let x = 1 + 3;
-}</span><pre class='rust rust-example-rendered'>
-<span class='kw'>let</span> <span class='ident'>x</span> <span class='op'>=</span> <span class='number'>1</span> <span class='op'>+</span> <span class='number'>3</span>;</pre>
+<pre class='rust rust-example-rendered'>
+<span class='kw'>let</span> <span class='ident'>x</span> <span class='op'>=</span> <span class='number'>1</span> <span class='op'>+</span> <span class='number'>3</span>;<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Alet%20x%20%3D%201%20%2B%203%3B%0A%7D">Run</a></pre>
 
-<p>The takeaway here is that expansion happens in &quot;passes&quot;; as many as is needed to completely expand all invocations.</p>
+<p>此处我们了解到，展开是按“趟”发生的；要多少趟才能完全展开所有调用，那就会展开多少趟。</p>
 
-<p>Well, not <em>quite</em>.  In fact, the compiler imposes an upper limit on the number of such recursive passes it is willing to run before giving up.  This is known as the macro recursion limit and defaults to 32.  If the 32nd expansion contains a macro invocation, the compiler will abort with an error indicating that the recursion limit was exceeded.</p>
+<p>嗯，也不全是如此。事实上，编译器为此设置了一个上限。它被称作宏递归上限，默认值为32.如果第32次展开结果仍然包含宏调用，编译器将会终止并返回一个递归上限溢出的错误信息。</p>
 
-<p>This limit can be raised using the <code>#![recursion_limit=&quot;…&quot;]</code> attribute, though it <em>must</em> be done crate-wide.  Generally, it is recommended to try and keep macros below this limit wherever possible.</p>
+<p>此上限可通过属性 <code>#![recursion_limit=&quot;…&quot;]</code>被改写，但这种改写必须是crate级别的。 一般来讲，可能的话最好还是尽量让宏展开递归次数保持在默认值以下。</p>
 
-    <script type="text/javascript">
-        window.playgroundUrl = "https://play.rust-lang.org";
-    </script>
     <script src='rustbook.js'></script>
-<script src='playpen.js'></script>
 </div></div>
 
 

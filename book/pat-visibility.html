@@ -28,25 +28,25 @@
                     </button>
                 </div>
 <div id='toc' class='mobile-hidden'>
-<ul class='chapter'>
+<ol class='chapter'>
 <li><a  href='README.html'><b>1.</b> Introduction</a>
 </li>
 <li><a  href='mbe-README.html'><b>2.</b> Macros, A Methodical Introduction</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-README.html'><b>2.1.</b> Syntax Extensions</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-source-analysis.html'><b>2.1.1.</b> Source Analysis</a>
 </li>
 <li><a  href='mbe-syn-macros-in-the-ast.html'><b>2.1.2.</b> Macros in the AST</a>
 </li>
 <li><a  href='mbe-syn-expansion.html'><b>2.1.3.</b> Expansion</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='mbe-macro-rules.html'><b>2.2.</b> macro_rules!</a>
 </li>
 <li><a  href='mbe-min-README.html'><b>2.3.</b> Minutiae</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-min-captures-and-expansion-redux.html'><b>2.3.1.</b> Captures and Expansion Redux</a>
 </li>
 <li><a  href='mbe-min-hygiene.html'><b>2.3.2.</b> Hygiene</a>
@@ -59,14 +59,14 @@
 </li>
 <li><a  href='mbe-min-import-export.html'><b>2.3.6.</b> Import/Export</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='pim-README.html'><b>3.</b> Macros, A Practical Introduction</a>
 </li>
 <li><a  href='pat-README.html'><b>4.</b> Patterns</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
 </li>
 <li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
@@ -85,25 +85,25 @@
 </li>
 <li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
 </li>
 <li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
 </li>
 <li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </div>
 <div id='page-wrapper'>
 <div id='page'>
@@ -115,57 +115,25 @@
 <h2 id='matching-and-ignoring' class='section-header'><a href='#matching-and-ignoring'>Matching and Ignoring</a></h2>
 <p>Depending on context, this can be done using a repetition:</p>
 
-<span class='rusttest'>macro_rules! struct_name {
-    ($(pub)* struct $name:ident $($rest:tt)*) =&gt; { stringify!($name) };
-}
-
-fn main() {
-    assert_eq!(struct_name!(pub struct Jim;), &quot;Jim&quot;);
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>struct_name</span> {
-    ($(<span class='kw'>pub</span>)<span class='op'>*</span> <span class='kw'>struct</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>:<span class='ident'>ident</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>rest</span>:<span class='ident'>tt</span>)<span class='op'>*</span>) <span class='op'>=&gt;</span> { <span class='macro'>stringify</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>) };
-}</pre>
+    ($(<span class='kw'>pub</span>)<span class='op'>*</span> <span class='kw'>struct</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>:<span class='ident'>ident</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>rest</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> { <span class='macro'>stringify</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>) };
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20struct_name%20%7B%0A%20%20%20%20(%24(pub)*%20struct%20%24name%3Aident%20%24(%24rest%3Att)*)%20%3D%3E%20%7B%20stringify!(%24name)%20%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20assert_eq!(struct_name!(pub%20struct%20Jim%3B)%2C%20%22Jim%22)%3B%0A%7D%0A">Run</a></pre>
 
 <p>The above example will match <code>struct</code> items that are private or public.  Or <code>pub pub</code> (very public), or even <code>pub pub pub pub</code> (really very quite public).  The best defense against this is to simply hope that people using the macro are not excessively silly.</p>
 
 <h2 id='matching-and-substituting' class='section-header'><a href='#matching-and-substituting'>Matching and Substituting</a></h2>
 <p>Because you cannot bind a repetition in and of itself to a variable, there is no way to store the contents of <code>$(pub)*</code> such that it can be substituted.  As a result, multiple rules are needed.</p>
 
-<span class='rusttest'>macro_rules! newtype_new {
-    (struct $name:ident($t:ty);) =&gt; { newtype_new! { () struct $name($t); } };
-    (pub struct $name:ident($t:ty);) =&gt; { newtype_new! { (pub) struct $name($t); } };
-    
-    (($($vis:tt)*) struct $name:ident($t:ty);) =&gt; {
-        as_item! {
-            impl $name {
-                $($vis)* fn new(value: $t) -&gt; Self {
-                    $name(value)
-                }
-            }
-        }
-    };
-}
-
-macro_rules! as_item { ($i:item) =&gt; {$i} }
-
-#[derive(Debug, Eq, PartialEq)]
-struct Dummy(i32);
-
-newtype_new! { struct Dummy(i32); }
-
-fn main() {
-    assert_eq!(Dummy::new(42), Dummy(42));
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>newtype_new</span> {
     (<span class='kw'>struct</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>:<span class='ident'>ident</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span>:<span class='ident'>ty</span>);) <span class='op'>=&gt;</span> { <span class='macro'>newtype_new</span><span class='macro'>!</span> { () <span class='kw'>struct</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span>); } };
     (<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>:<span class='ident'>ident</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span>:<span class='ident'>ty</span>);) <span class='op'>=&gt;</span> { <span class='macro'>newtype_new</span><span class='macro'>!</span> { (<span class='kw'>pub</span>) <span class='kw'>struct</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span>); } };
     
-    (($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>vis</span>:<span class='ident'>tt</span>)<span class='op'>*</span>) <span class='kw'>struct</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>:<span class='ident'>ident</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span>:<span class='ident'>ty</span>);) <span class='op'>=&gt;</span> {
+    (($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>vis</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='kw'>struct</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>:<span class='ident'>ident</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span>:<span class='ident'>ty</span>);) <span class='op'>=&gt;</span> {
         <span class='macro'>as_item</span><span class='macro'>!</span> {
             <span class='kw'>impl</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span> {
-                $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>vis</span>)<span class='op'>*</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>value</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> {
+                $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>vis</span>)<span class='op'>*</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>value</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>t</span>) <span class='op'>-&gt;</span> <span class='self'>Self</span> {
                     <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>(<span class='ident'>value</span>)
                 }
             }
@@ -173,7 +141,7 @@ fn main() {
     };
 }
 
-<span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>as_item</span> { (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>:<span class='ident'>item</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>} }</pre>
+<span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>as_item</span> { (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>:<span class='ident'>item</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>} }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20newtype_new%20%7B%0A%20%20%20%20(struct%20%24name%3Aident(%24t%3Aty)%3B)%20%3D%3E%20%7B%20newtype_new!%20%7B%20()%20struct%20%24name(%24t)%3B%20%7D%20%7D%3B%0A%20%20%20%20(pub%20struct%20%24name%3Aident(%24t%3Aty)%3B)%20%3D%3E%20%7B%20newtype_new!%20%7B%20(pub)%20struct%20%24name(%24t)%3B%20%7D%20%7D%3B%0A%20%20%20%20%0A%20%20%20%20((%24(%24vis%3Att)*)%20struct%20%24name%3Aident(%24t%3Aty)%3B)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20as_item!%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20impl%20%24name%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%24(%24vis)*%20fn%20new(value%3A%20%24t)%20-%3E%20Self%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%24name(value)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%7D%0A%0Amacro_rules!%20as_item%20%7B%20(%24i%3Aitem)%20%3D%3E%20%7B%24i%7D%20%7D%0A%0A%23%5Bderive(Debug%2C%20Eq%2C%20PartialEq)%5D%0Astruct%20Dummy(i32)%3B%0A%0Anewtype_new!%20%7B%20struct%20Dummy(i32)%3B%20%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20assert_eq!(Dummy%3A%3Anew(42)%2C%20Dummy(42))%3B%0A%7D%0A">Run</a></pre>
 
 <blockquote>
 <p><strong>See also</strong>: <a href="blk-ast-coercion.html">AST Coercion</a>.</p>
@@ -181,11 +149,7 @@ fn main() {
 
 <p>In this case, we are using the ability to match an arbitrary sequence of tokens inside a group to match either <code>()</code> or <code>(pub)</code>, then substitute the contents into the output.  Because the parser will not expect a <code>tt</code> repetition expansion in this position, we need to use <a href="blk-ast-coercion.html">AST coercion</a> to get the expansion to parse correctly.</p>
 
-    <script type="text/javascript">
-        window.playgroundUrl = "https://play.rust-lang.org";
-    </script>
     <script src='rustbook.js'></script>
-<script src='playpen.js'></script>
 </div></div>
 
 

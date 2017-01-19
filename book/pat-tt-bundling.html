@@ -28,25 +28,25 @@
                     </button>
                 </div>
 <div id='toc' class='mobile-hidden'>
-<ul class='chapter'>
+<ol class='chapter'>
 <li><a  href='README.html'><b>1.</b> Introduction</a>
 </li>
 <li><a  href='mbe-README.html'><b>2.</b> Macros, A Methodical Introduction</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-README.html'><b>2.1.</b> Syntax Extensions</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-source-analysis.html'><b>2.1.1.</b> Source Analysis</a>
 </li>
 <li><a  href='mbe-syn-macros-in-the-ast.html'><b>2.1.2.</b> Macros in the AST</a>
 </li>
 <li><a  href='mbe-syn-expansion.html'><b>2.1.3.</b> Expansion</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='mbe-macro-rules.html'><b>2.2.</b> macro_rules!</a>
 </li>
 <li><a  href='mbe-min-README.html'><b>2.3.</b> Minutiae</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-min-captures-and-expansion-redux.html'><b>2.3.1.</b> Captures and Expansion Redux</a>
 </li>
 <li><a  href='mbe-min-hygiene.html'><b>2.3.2.</b> Hygiene</a>
@@ -59,14 +59,14 @@
 </li>
 <li><a  href='mbe-min-import-export.html'><b>2.3.6.</b> Import/Export</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='pim-README.html'><b>3.</b> Macros, A Practical Introduction</a>
 </li>
 <li><a  href='pat-README.html'><b>4.</b> Patterns</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
 </li>
 <li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
@@ -85,25 +85,25 @@
 </li>
 <li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
 </li>
 <li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
 </li>
 <li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </div>
 <div id='page-wrapper'>
 <div id='page'>
@@ -111,62 +111,18 @@
 
     <h1 class="title">TT Bundling</h1>
     
-<span class='rusttest'>macro_rules! call_a_or_b_on_tail {
-    ((a: $a:expr, b: $b:expr), call a: $($tail:tt)*) =&gt; {
-        $a(stringify!($($tail)*))
-    };
-
-    ((a: $a:expr, b: $b:expr), call b: $($tail:tt)*) =&gt; {
-        $b(stringify!($($tail)*))
-    };
-
-    ($ab:tt, $_skip:tt $($tail:tt)*) =&gt; {
-        call_a_or_b_on_tail!($ab, $($tail)*)
-    };
-}
-
-fn compute_len(s: &amp;str) -&gt; Option&lt;usize&gt; {
-    Some(s.len())
-}
-
-fn show_tail(s: &amp;str) -&gt; Option&lt;usize&gt; {
-    println!(&quot;tail: {:?}&quot;, s);
-    None
-}
-
-fn main() {
-    assert_eq!(
-        call_a_or_b_on_tail!(
-            (a: compute_len, b: show_tail),
-            the recursive part that skips over all these
-            tokens doesn&#39;t much care whether we will call a
-            or call b: only the terminal rules care.
-        ),
-        None
-    );
-    assert_eq!(
-        call_a_or_b_on_tail!(
-            (a: compute_len, b: show_tail),
-            and now, to justify the existence of two paths
-            we will also call a: its input should somehow
-            be self-referential, so let&#39;s make it return
-            some ninety one!
-        ),
-        Some(91)
-    );
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>call_a_or_b_on_tail</span> {
-    ((<span class='ident'>a</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='ident'>b</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>b</span>:<span class='ident'>expr</span>), <span class='ident'>call</span> <span class='ident'>a</span>: $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>) <span class='op'>=&gt;</span> {
-        <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>(<span class='macro'>stringify</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>))
+    ((<span class='ident'>a</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='ident'>b</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>b</span>:<span class='ident'>expr</span>), <span class='ident'>call</span> <span class='ident'>a</span>: $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> {
+        <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>(<span class='macro'>stringify</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>))
     };
 
-    ((<span class='ident'>a</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='ident'>b</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>b</span>:<span class='ident'>expr</span>), <span class='ident'>call</span> <span class='ident'>b</span>: $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>) <span class='op'>=&gt;</span> {
-        <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>b</span>(<span class='macro'>stringify</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>))
+    ((<span class='ident'>a</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='ident'>b</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>b</span>:<span class='ident'>expr</span>), <span class='ident'>call</span> <span class='ident'>b</span>: $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> {
+        <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>b</span>(<span class='macro'>stringify</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>))
     };
 
-    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>ab</span>:<span class='ident'>tt</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_skip</span>:<span class='ident'>tt</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>) <span class='op'>=&gt;</span> {
-        <span class='macro'>call_a_or_b_on_tail</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>ab</span>, $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>)
+    (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>ab</span>:<span class='ident'>tt</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_skip</span>:<span class='ident'>tt</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> {
+        <span class='macro'>call_a_or_b_on_tail</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>ab</span>, $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>)
     };
 }
 
@@ -199,7 +155,7 @@ fn main() {
         ),
         <span class='prelude-val'>Some</span>(<span class='number'>91</span>)
     );
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20call_a_or_b_on_tail%20%7B%0A%20%20%20%20((a%3A%20%24a%3Aexpr%2C%20b%3A%20%24b%3Aexpr)%2C%20call%20a%3A%20%24(%24tail%3Att)*)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%24a(stringify!(%24(%24tail)*))%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20((a%3A%20%24a%3Aexpr%2C%20b%3A%20%24b%3Aexpr)%2C%20call%20b%3A%20%24(%24tail%3Att)*)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%24b(stringify!(%24(%24tail)*))%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20(%24ab%3Att%2C%20%24_skip%3Att%20%24(%24tail%3Att)*)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20call_a_or_b_on_tail!(%24ab%2C%20%24(%24tail)*)%0A%20%20%20%20%7D%3B%0A%7D%0A%0Afn%20compute_len(s%3A%20%26str)%20-%3E%20Option%3Cusize%3E%20%7B%0A%20%20%20%20Some(s.len())%0A%7D%0A%0Afn%20show_tail(s%3A%20%26str)%20-%3E%20Option%3Cusize%3E%20%7B%0A%20%20%20%20println!(%22tail%3A%20%7B%3A%3F%7D%22%2C%20s)%3B%0A%20%20%20%20None%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20assert_eq!(%0A%20%20%20%20%20%20%20%20call_a_or_b_on_tail!(%0A%20%20%20%20%20%20%20%20%20%20%20%20(a%3A%20compute_len%2C%20b%3A%20show_tail)%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20the%20recursive%20part%20that%20skips%20over%20all%20these%0A%20%20%20%20%20%20%20%20%20%20%20%20tokens%20doesn't%20much%20care%20whether%20we%20will%20call%20a%0A%20%20%20%20%20%20%20%20%20%20%20%20or%20call%20b%3A%20only%20the%20terminal%20rules%20care.%0A%20%20%20%20%20%20%20%20)%2C%0A%20%20%20%20%20%20%20%20None%0A%20%20%20%20)%3B%0A%20%20%20%20assert_eq!(%0A%20%20%20%20%20%20%20%20call_a_or_b_on_tail!(%0A%20%20%20%20%20%20%20%20%20%20%20%20(a%3A%20compute_len%2C%20b%3A%20show_tail)%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20and%20now%2C%20to%20justify%20the%20existence%20of%20two%20paths%0A%20%20%20%20%20%20%20%20%20%20%20%20we%20will%20also%20call%20a%3A%20its%20input%20should%20somehow%0A%20%20%20%20%20%20%20%20%20%20%20%20be%20self-referential%2C%20so%20let's%20make%20it%20return%0A%20%20%20%20%20%20%20%20%20%20%20%20some%20ninety%20one!%0A%20%20%20%20%20%20%20%20)%2C%0A%20%20%20%20%20%20%20%20Some(91)%0A%20%20%20%20)%3B%0A%7D%0A">Run</a></pre>
 
 <p>In particularly complex recursive macros, a large number of arguments may be needed in order to carry identifiers and expressions to successive layers.  However, depending on the implementation there may be many intermediate layers which need to forward these arguments, but do not need to <em>use</em> them.</p>
 
@@ -207,11 +163,7 @@ fn main() {
 
 <p>The example above bundles the <code>$a</code> and <code>$b</code> expressions into a group which can then be forwarded as a single <code>tt</code> by the recursive rule.  This group is then destructured by the terminal rules to access the expressions.</p>
 
-    <script type="text/javascript">
-        window.playgroundUrl = "https://play.rust-lang.org";
-    </script>
     <script src='rustbook.js'></script>
-<script src='playpen.js'></script>
 </div></div>
 
 

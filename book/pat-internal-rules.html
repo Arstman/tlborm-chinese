@@ -28,25 +28,25 @@
                     </button>
                 </div>
 <div id='toc' class='mobile-hidden'>
-<ul class='chapter'>
+<ol class='chapter'>
 <li><a  href='README.html'><b>1.</b> Introduction</a>
 </li>
 <li><a  href='mbe-README.html'><b>2.</b> Macros, A Methodical Introduction</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-README.html'><b>2.1.</b> Syntax Extensions</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-source-analysis.html'><b>2.1.1.</b> Source Analysis</a>
 </li>
 <li><a  href='mbe-syn-macros-in-the-ast.html'><b>2.1.2.</b> Macros in the AST</a>
 </li>
 <li><a  href='mbe-syn-expansion.html'><b>2.1.3.</b> Expansion</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='mbe-macro-rules.html'><b>2.2.</b> macro_rules!</a>
 </li>
 <li><a  href='mbe-min-README.html'><b>2.3.</b> Minutiae</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-min-captures-and-expansion-redux.html'><b>2.3.1.</b> Captures and Expansion Redux</a>
 </li>
 <li><a  href='mbe-min-hygiene.html'><b>2.3.2.</b> Hygiene</a>
@@ -59,14 +59,14 @@
 </li>
 <li><a  href='mbe-min-import-export.html'><b>2.3.6.</b> Import/Export</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='pim-README.html'><b>3.</b> Macros, A Practical Introduction</a>
 </li>
 <li><a  href='pat-README.html'><b>4.</b> Patterns</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
 </li>
 <li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
@@ -85,25 +85,25 @@
 </li>
 <li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
 </li>
 <li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
 </li>
 <li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </div>
 <div id='page-wrapper'>
 <div id='page'>
@@ -111,27 +111,15 @@
 
     <h1 class="title">Internal rules</h1>
     
-<span class='rusttest'>#[macro_export]
-macro_rules! foo {
-    (@as_expr $e:expr) =&gt; {$e};
-
-    ($($tts:tt)*) =&gt; {
-        foo!(@as_expr $($tts)*)
-    };
-}
-
-fn main() {
-    assert_eq!(foo!(42), 42);
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='attribute'>#[<span class='ident'>macro_export</span>]</span>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>foo</span> {
-    (<span class='kw-2'>@</span><span class='ident'>as_expr</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>};
+    (@<span class='ident'>as_expr</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>};
 
-    ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tts</span>:<span class='ident'>tt</span>)<span class='op'>*</span>) <span class='op'>=&gt;</span> {
-        <span class='macro'>foo</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>as_expr</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tts</span>)<span class='op'>*</span>)
+    ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tts</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> {
+        <span class='macro'>foo</span><span class='macro'>!</span>(@<span class='ident'>as_expr</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tts</span>)<span class='kw-2'>*</span>)
     };
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=%23%5Bmacro_export%5D%0Amacro_rules!%20foo%20%7B%0A%20%20%20%20(%40as_expr%20%24e%3Aexpr)%20%3D%3E%20%7B%24e%7D%3B%0A%0A%20%20%20%20(%24(%24tts%3Att)*)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20foo!(%40as_expr%20%24(%24tts)*)%0A%20%20%20%20%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20assert_eq!(foo!(42)%2C%2042)%3B%0A%7D%0A">Run</a></pre>
 
 <p>Because macros do not interact with regular item privacy or lookup, any public macro <em>must</em> bring with it all other macros that it depends on.  This can lead to pollution of the global macro namespace, or even conflicts with macros from other crates.  It may also cause confusion to users who attempt to <em>selectively</em> import macros: they must transitively import <em>all</em> macros, including ones that may not be publicly documented.</p>
 
@@ -147,26 +135,15 @@ fn main() {
 
 <p>If exporting at least one internal macro is unavoidable (<em>e.g.</em> you have many macros that depend on a common set of utility rules), you can use this pattern to combine <em>all</em> internal macros into a single uber-macro.</p>
 
-<span class='rusttest'>fn main() {
-    macro_rules! crate_name_util {
-        (@as_expr $e:expr) =&gt; {$e};
-        (@as_item $i:item) =&gt; {$i};
-        (@count_tts) =&gt; {0usize};
-        // ...
-    }
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>crate_name_util</span> {
-    (<span class='kw-2'>@</span><span class='ident'>as_expr</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>};
-    (<span class='kw-2'>@</span><span class='ident'>as_item</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>:<span class='ident'>item</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>};
-    (<span class='kw-2'>@</span><span class='ident'>count_tts</span>) <span class='op'>=&gt;</span> {<span class='number'>0usize</span>};
+    (@<span class='ident'>as_expr</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>};
+    (@<span class='ident'>as_item</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>:<span class='ident'>item</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>};
+    (@<span class='ident'>count_tts</span>) <span class='op'>=&gt;</span> {<span class='number'>0usize</span>};
     <span class='comment'>// ...</span>
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Amacro_rules!%20crate_name_util%20%7B%0A%20%20%20%20(%40as_expr%20%24e%3Aexpr)%20%3D%3E%20%7B%24e%7D%3B%0A%20%20%20%20(%40as_item%20%24i%3Aitem)%20%3D%3E%20%7B%24i%7D%3B%0A%20%20%20%20(%40count_tts)%20%3D%3E%20%7B0usize%7D%3B%0A%20%20%20%20%2F%2F%20...%0A%7D%0A%7D">Run</a></pre>
 
-    <script type="text/javascript">
-        window.playgroundUrl = "https://play.rust-lang.org";
-    </script>
     <script src='rustbook.js'></script>
-<script src='playpen.js'></script>
 </div></div>
 
 

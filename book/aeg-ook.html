@@ -28,25 +28,25 @@
                     </button>
                 </div>
 <div id='toc' class='mobile-hidden'>
-<ul class='chapter'>
+<ol class='chapter'>
 <li><a  href='README.html'><b>1.</b> Introduction</a>
 </li>
 <li><a  href='mbe-README.html'><b>2.</b> Macros, A Methodical Introduction</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-README.html'><b>2.1.</b> Syntax Extensions</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-syn-source-analysis.html'><b>2.1.1.</b> Source Analysis</a>
 </li>
 <li><a  href='mbe-syn-macros-in-the-ast.html'><b>2.1.2.</b> Macros in the AST</a>
 </li>
 <li><a  href='mbe-syn-expansion.html'><b>2.1.3.</b> Expansion</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='mbe-macro-rules.html'><b>2.2.</b> macro_rules!</a>
 </li>
 <li><a  href='mbe-min-README.html'><b>2.3.</b> Minutiae</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='mbe-min-captures-and-expansion-redux.html'><b>2.3.1.</b> Captures and Expansion Redux</a>
 </li>
 <li><a  href='mbe-min-hygiene.html'><b>2.3.2.</b> Hygiene</a>
@@ -59,14 +59,14 @@
 </li>
 <li><a  href='mbe-min-import-export.html'><b>2.3.6.</b> Import/Export</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='pim-README.html'><b>3.</b> Macros, A Practical Introduction</a>
 </li>
 <li><a  href='pat-README.html'><b>4.</b> Patterns</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
 </li>
 <li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
@@ -85,25 +85,25 @@
 </li>
 <li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
-<ul class='section'>
+<ol class='section'>
 <li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
 </li>
 <li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
 </li>
 <li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
 </li>
-</ul>
+</ol>
 </li>
 <li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
-<ul class='section'>
+<ol class='section'>
 <li><a class='active' href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
-</ul>
+</ol>
 </li>
-</ul>
+</ol>
 </div>
 <div id='page-wrapper'>
 <div id='page'>
@@ -130,26 +130,19 @@
 <p>Ook! is interesting because it is known to be Turing-complete, meaning that any environment in which you can implement it must <em>also</em> be Turing-complete.</p>
 
 <h2 id='implementation' class='section-header'><a href='#implementation'>Implementation</a></h2>
-<span class='rusttest'>fn main() {
-    #![recursion_limit = &quot;158&quot;]
-}</span><pre class='rust rust-example-rendered'>
-<span class='attribute'>#<span class='op'>!</span>[<span class='ident'>recursion_limit</span> <span class='op'>=</span> <span class='string'>&quot;158&quot;</span>]</span></pre>
+<pre class='rust rust-example-rendered'>
+<span class='attribute'>#<span class='op'>!</span>[<span class='ident'>recursion_limit</span> <span class='op'>=</span> <span class='string'>&quot;158&quot;</span>]</span><a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0A%23!%5Brecursion_limit%20%3D%20%22158%22%5D%0A%7D">Run</a></pre>
 
 <p>This is, in fact, the lowest possible recursion limit for which the example program provided at the end will actually compile.  If you&#39;re wondering what could be so fantastically complex that it would <em>justify</em> a recursion limit nearly five times the default limit... <a href="https://en.wikipedia.org/wiki/Hello_world_program">take a wild guess</a>.</p>
 
-<span class='rusttest'>fn main() {
-    type CellType = u8;
-    const MEM_SIZE: usize = 30_000;
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='kw'>type</span> <span class='ident'>CellType</span> <span class='op'>=</span> <span class='ident'>u8</span>;
-<span class='kw'>const</span> <span class='ident'>MEM_SIZE</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>30_000</span>;</pre>
+<span class='kw'>const</span> <span class='ident'>MEM_SIZE</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>30_000</span>;<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Atype%20CellType%20%3D%20u8%3B%0Aconst%20MEM_SIZE%3A%20usize%20%3D%2030_000%3B%0A%7D">Run</a></pre>
 
 <p>These are here purely to ensure they are visible to the macro expansion.<sup id="fnref1"><a href="#fn1" rel="footnote">1</a></sup></p>
 
-<span class='rusttest'>fn main() {
-    macro_rules! Ook {
-}</span><pre class='rust rust-example-rendered'>
-<span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>Ook</span> {</pre>
+<pre class='rust rust-example-rendered'>
+<span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>Ook</span> {<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Amacro_rules!%20Ook%20%7B%0A%7D">Run</a></pre>
 
 <p>The name should <em>probably</em> have been <code>ook!</code> to match the standard naming convention, but the opportunity was simply too good to pass up.</p>
 
@@ -164,50 +157,12 @@
 <li>The use of underscore-prefixed names is so that the compiler will not complain about unused functions or variables if, for example, the user writes an Ook! program that does no I/O.</li>
 </ul>
 
-<span class='rusttest'>fn main() {
-        (@start $($Ooks:tt)*) =&gt; {
-            {
-                fn ook() -&gt; ::std::io::Result&lt;Vec&lt;CellType&gt;&gt; {
-                    use ::std::io;
-                    use ::std::io::prelude::*;
-        
-                    fn _re() -&gt; io::Error {
-                        io::Error::new(
-                            io::ErrorKind::Other,
-                            String::from(&quot;ran out of input&quot;))
-                    }
-                    
-                    fn _inc(a: &amp;mut [u8], i: usize) {
-                        let c = &amp;mut a[i];
-                        *c = c.wrapping_add(1);
-                    }
-                    
-                    fn _dec(a: &amp;mut [u8], i: usize) {
-                        let c = &amp;mut a[i];
-                        *c = c.wrapping_sub(1);
-                    }
-        
-                    let _r = &amp;mut io::stdin();
-                    let _w = &amp;mut io::stdout();
-            
-                    let mut _a: Vec&lt;CellType&gt; = Vec::with_capacity(MEM_SIZE);
-                    _a.extend(::std::iter::repeat(0).take(MEM_SIZE));
-                    let mut _i = 0;
-                    {
-                        let _a = &amp;mut *_a;
-                        Ook!(@e (_a, _i, _inc, _dec, _r, _w, _re); ($($Ooks)*));
-                    }
-                    Ok(_a)
-                }
-                ook()
-            }
-        };
-}</span><pre class='rust rust-example-rendered'>
-    (<span class='kw-2'>@</span><span class='ident'>start</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>Ooks</span>:<span class='ident'>tt</span>)<span class='op'>*</span>) <span class='op'>=&gt;</span> {
+<pre class='rust rust-example-rendered'>
+    (@<span class='ident'>start</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>Ooks</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> {
         {
             <span class='kw'>fn</span> <span class='ident'>ook</span>() <span class='op'>-&gt;</span> ::<span class='ident'>std</span>::<span class='ident'>io</span>::<span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>CellType</span><span class='op'>&gt;&gt;</span> {
                 <span class='kw'>use</span> ::<span class='ident'>std</span>::<span class='ident'>io</span>;
-                <span class='kw'>use</span> ::<span class='ident'>std</span>::<span class='ident'>io</span>::<span class='ident'>prelude</span>::<span class='op'>*</span>;
+                <span class='kw'>use</span> ::<span class='ident'>std</span>::<span class='ident'>io</span>::<span class='ident'>prelude</span>::<span class='kw-2'>*</span>;
     
                 <span class='kw'>fn</span> <span class='ident'>_re</span>() <span class='op'>-&gt;</span> <span class='ident'>io</span>::<span class='ident'>Error</span> {
                     <span class='ident'>io</span>::<span class='ident'>Error</span>::<span class='ident'>new</span>(
@@ -217,12 +172,12 @@
                 
                 <span class='kw'>fn</span> <span class='ident'>_inc</span>(<span class='ident'>a</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> [<span class='ident'>u8</span>], <span class='ident'>i</span>: <span class='ident'>usize</span>) {
                     <span class='kw'>let</span> <span class='ident'>c</span> <span class='op'>=</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>a</span>[<span class='ident'>i</span>];
-                    <span class='op'>*</span><span class='ident'>c</span> <span class='op'>=</span> <span class='ident'>c</span>.<span class='ident'>wrapping_add</span>(<span class='number'>1</span>);
+                    <span class='kw-2'>*</span><span class='ident'>c</span> <span class='op'>=</span> <span class='ident'>c</span>.<span class='ident'>wrapping_add</span>(<span class='number'>1</span>);
                 }
                 
                 <span class='kw'>fn</span> <span class='ident'>_dec</span>(<span class='ident'>a</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> [<span class='ident'>u8</span>], <span class='ident'>i</span>: <span class='ident'>usize</span>) {
                     <span class='kw'>let</span> <span class='ident'>c</span> <span class='op'>=</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>a</span>[<span class='ident'>i</span>];
-                    <span class='op'>*</span><span class='ident'>c</span> <span class='op'>=</span> <span class='ident'>c</span>.<span class='ident'>wrapping_sub</span>(<span class='number'>1</span>);
+                    <span class='kw-2'>*</span><span class='ident'>c</span> <span class='op'>=</span> <span class='ident'>c</span>.<span class='ident'>wrapping_sub</span>(<span class='number'>1</span>);
                 }
     
                 <span class='kw'>let</span> <span class='ident'>_r</span> <span class='op'>=</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>io</span>::<span class='ident'>stdin</span>();
@@ -232,14 +187,14 @@
                 <span class='ident'>_a</span>.<span class='ident'>extend</span>(::<span class='ident'>std</span>::<span class='ident'>iter</span>::<span class='ident'>repeat</span>(<span class='number'>0</span>).<span class='ident'>take</span>(<span class='ident'>MEM_SIZE</span>));
                 <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>_i</span> <span class='op'>=</span> <span class='number'>0</span>;
                 {
-                    <span class='kw'>let</span> <span class='ident'>_a</span> <span class='op'>=</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>*</span><span class='ident'>_a</span>;
-                    <span class='macro'>Ook</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>e</span> (<span class='ident'>_a</span>, <span class='ident'>_i</span>, <span class='ident'>_inc</span>, <span class='ident'>_dec</span>, <span class='ident'>_r</span>, <span class='ident'>_w</span>, <span class='ident'>_re</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>Ooks</span>)<span class='op'>*</span>));
+                    <span class='kw'>let</span> <span class='ident'>_a</span> <span class='op'>=</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='kw-2'>*</span><span class='ident'>_a</span>;
+                    <span class='macro'>Ook</span><span class='macro'>!</span>(@<span class='ident'>e</span> (<span class='ident'>_a</span>, <span class='ident'>_i</span>, <span class='ident'>_inc</span>, <span class='ident'>_dec</span>, <span class='ident'>_r</span>, <span class='ident'>_w</span>, <span class='ident'>_re</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>Ooks</span>)<span class='kw-2'>*</span>));
                 }
                 <span class='prelude-val'>Ok</span>(<span class='ident'>_a</span>)
             }
             <span class='ident'>ook</span>()
         }
-    };</pre>
+    };<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0A%20%20%20%20(%40start%20%24(%24Ooks%3Att)*)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20fn%20ook()%20-%3E%20%3A%3Astd%3A%3Aio%3A%3AResult%3CVec%3CCellType%3E%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20use%20%3A%3Astd%3A%3Aio%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20use%20%3A%3Astd%3A%3Aio%3A%3Aprelude%3A%3A*%3B%0A%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20fn%20_re()%20-%3E%20io%3A%3AError%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20io%3A%3AError%3A%3Anew(%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20io%3A%3AErrorKind%3A%3AOther%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20String%3A%3Afrom(%22ran%20out%20of%20input%22))%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20fn%20_inc(a%3A%20%26mut%20%5Bu8%5D%2C%20i%3A%20usize)%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20c%20%3D%20%26mut%20a%5Bi%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20*c%20%3D%20c.wrapping_add(1)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20fn%20_dec(a%3A%20%26mut%20%5Bu8%5D%2C%20i%3A%20usize)%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20c%20%3D%20%26mut%20a%5Bi%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20*c%20%3D%20c.wrapping_sub(1)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20_r%20%3D%20%26mut%20io%3A%3Astdin()%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20_w%20%3D%20%26mut%20io%3A%3Astdout()%3B%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20mut%20_a%3A%20Vec%3CCellType%3E%20%3D%20Vec%3A%3Awith_capacity(MEM_SIZE)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20_a.extend(%3A%3Astd%3A%3Aiter%3A%3Arepeat(0).take(MEM_SIZE))%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20mut%20_i%20%3D%200%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20_a%20%3D%20%26mut%20*_a%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Ook!(%40e%20(_a%2C%20_i%2C%20_inc%2C%20_dec%2C%20_r%2C%20_w%2C%20_re)%3B%20(%24(%24Ooks)*))%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Ok(_a)%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20ook()%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%7D">Run</a></pre>
 
 <h3 id='opcode-parsing' class='section-header'><a href='#opcode-parsing'>Opcode parsing</a></h3>
 <p>Next are the &quot;execute&quot; rules, which are used to parse opcodes from the input.</p>
@@ -248,159 +203,90 @@
 
 <p>First, is the rule that terminates our recursion: once we have no more input, we stop.</p>
 
-<span class='rusttest'>fn main() {
-        (@e $syms:tt; ()) =&gt; {};
-}</span><pre class='rust rust-example-rendered'>
-    (<span class='kw-2'>@</span><span class='ident'>e</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>:<span class='ident'>tt</span>; ()) <span class='op'>=&gt;</span> {};</pre>
+<pre class='rust rust-example-rendered'>
+    (@<span class='ident'>e</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>:<span class='ident'>tt</span>; ()) <span class='op'>=&gt;</span> {};<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0A%20%20%20%20(%40e%20%24syms%3Att%3B%20())%20%3D%3E%20%7B%7D%3B%0A%7D">Run</a></pre>
 
 <p>Next, we have a single rule for <em>almost</em> each opcode.  For these, we strip off the opcode, emit the corresponding Rust code, then recurse on the input tail: a textbook <a href="../pat/README.html#incremental-tt-munchers">TT muncher</a>.</p>
 
-<span class='rusttest'>fn main() {
-        // Increment pointer.
-        (@e ($a:expr, $i:expr, $inc:expr, $dec:expr, $r:expr, $w:expr, $re:expr);
-            (Ook. Ook? $($tail:tt)*))
-        =&gt; {
-            $i = ($i + 1) % MEM_SIZE;
-            Ook!(@e ($a, $i, $inc, $dec, $r, $w, $re); ($($tail)*));
-        };
-        
-        // Decrement pointer.
-        (@e ($a:expr, $i:expr, $inc:expr, $dec:expr, $r:expr, $w:expr, $re:expr);
-            (Ook? Ook. $($tail:tt)*))
-        =&gt; {
-            $i = if $i == 0 { MEM_SIZE } else { $i } - 1;
-            Ook!(@e ($a, $i, $inc, $dec, $r, $w, $re); ($($tail)*));
-        };
-        
-        // Increment pointee.
-        (@e ($a:expr, $i:expr, $inc:expr, $dec:expr, $r:expr, $w:expr, $re:expr);
-            (Ook. Ook. $($tail:tt)*))
-        =&gt; {
-            $inc($a, $i);
-            Ook!(@e ($a, $i, $inc, $dec, $r, $w, $re); ($($tail)*));
-        };
-        
-        // Decrement pointee.
-        (@e ($a:expr, $i:expr, $inc:expr, $dec:expr, $r:expr, $w:expr, $re:expr);
-            (Ook! Ook! $($tail:tt)*))
-        =&gt; {
-            $dec($a, $i);
-            Ook!(@e ($a, $i, $inc, $dec, $r, $w, $re); ($($tail)*));
-        };
-        
-        // Write to stdout.
-        (@e ($a:expr, $i:expr, $inc:expr, $dec:expr, $r:expr, $w:expr, $re:expr);
-            (Ook! Ook. $($tail:tt)*))
-        =&gt; {
-            try!($w.write_all(&amp;$a[$i .. $i+1]));
-            Ook!(@e ($a, $i, $inc, $dec, $r, $w, $re); ($($tail)*));
-        };
-        
-        // Read from stdin.
-        (@e ($a:expr, $i:expr, $inc:expr, $dec:expr, $r:expr, $w:expr, $re:expr);
-            (Ook. Ook! $($tail:tt)*))
-        =&gt; {
-            try!(
-                match $r.read(&amp;mut $a[$i .. $i+1]) {
-                    Ok(0) =&gt; Err($re()),
-                    ok @ Ok(..) =&gt; ok,
-                    err @ Err(..) =&gt; err
-                }
-            );
-            Ook!(@e ($a, $i, $inc, $dec, $r, $w, $re); ($($tail)*));
-        };
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
     <span class='comment'>// Increment pointer.</span>
-    (<span class='kw-2'>@</span><span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>:<span class='ident'>expr</span>);
-        (<span class='ident'>Ook</span>. <span class='ident'>Ook</span>? $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>))
+    (@<span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>:<span class='ident'>expr</span>);
+        (<span class='ident'>Ook</span>. <span class='ident'>Ook</span><span class='question-mark'>?</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>))
     <span class='op'>=&gt;</span> {
         <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span> <span class='op'>=</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span> <span class='op'>+</span> <span class='number'>1</span>) <span class='op'>%</span> <span class='ident'>MEM_SIZE</span>;
-        <span class='macro'>Ook</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>));
+        <span class='macro'>Ook</span><span class='macro'>!</span>(@<span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>));
     };
     
     <span class='comment'>// Decrement pointer.</span>
-    (<span class='kw-2'>@</span><span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>:<span class='ident'>expr</span>);
-        (<span class='ident'>Ook</span>? <span class='ident'>Ook</span>. $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>))
+    (@<span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>:<span class='ident'>expr</span>);
+        (<span class='ident'>Ook</span><span class='question-mark'>?</span> <span class='ident'>Ook</span>. $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>))
     <span class='op'>=&gt;</span> {
         <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span> <span class='op'>=</span> <span class='kw'>if</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span> <span class='op'>==</span> <span class='number'>0</span> { <span class='ident'>MEM_SIZE</span> } <span class='kw'>else</span> { <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span> } <span class='op'>-</span> <span class='number'>1</span>;
-        <span class='macro'>Ook</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>));
+        <span class='macro'>Ook</span><span class='macro'>!</span>(@<span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>));
     };
     
     <span class='comment'>// Increment pointee.</span>
-    (<span class='kw-2'>@</span><span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>:<span class='ident'>expr</span>);
-        (<span class='ident'>Ook</span>. <span class='ident'>Ook</span>. $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>))
+    (@<span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>:<span class='ident'>expr</span>);
+        (<span class='ident'>Ook</span>. <span class='ident'>Ook</span>. $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>))
     <span class='op'>=&gt;</span> {
         <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>);
-        <span class='macro'>Ook</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>));
+        <span class='macro'>Ook</span><span class='macro'>!</span>(@<span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>));
     };
     
     <span class='comment'>// Decrement pointee.</span>
-    (<span class='kw-2'>@</span><span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>:<span class='ident'>expr</span>);
-        (<span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>))
+    (@<span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>:<span class='ident'>expr</span>);
+        (<span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>))
     <span class='op'>=&gt;</span> {
         <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>);
-        <span class='macro'>Ook</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>));
+        <span class='macro'>Ook</span><span class='macro'>!</span>(@<span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>));
     };
     
     <span class='comment'>// Write to stdout.</span>
-    (<span class='kw-2'>@</span><span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>:<span class='ident'>expr</span>);
-        (<span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>. $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>))
+    (@<span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>:<span class='ident'>expr</span>);
+        (<span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>. $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>))
     <span class='op'>=&gt;</span> {
         <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>.<span class='ident'>write_all</span>(<span class='kw-2'>&amp;</span><span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>[<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span> .. <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span><span class='op'>+</span><span class='number'>1</span>]));
-        <span class='macro'>Ook</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>));
+        <span class='macro'>Ook</span><span class='macro'>!</span>(@<span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>));
     };
     
     <span class='comment'>// Read from stdin.</span>
-    (<span class='kw-2'>@</span><span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>:<span class='ident'>expr</span>);
-        (<span class='ident'>Ook</span>. <span class='macro'>Ook</span><span class='macro'>!</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>))
+    (@<span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>:<span class='ident'>expr</span>);
+        (<span class='ident'>Ook</span>. <span class='macro'>Ook</span><span class='macro'>!</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>))
     <span class='op'>=&gt;</span> {
         <span class='macro'>try</span><span class='macro'>!</span>(
             <span class='kw'>match</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>.<span class='ident'>read</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>[<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span> .. <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span><span class='op'>+</span><span class='number'>1</span>]) {
                 <span class='prelude-val'>Ok</span>(<span class='number'>0</span>) <span class='op'>=&gt;</span> <span class='prelude-val'>Err</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>()),
-                <span class='ident'>ok</span> <span class='kw-2'>@</span> <span class='prelude-val'>Ok</span>(..) <span class='op'>=&gt;</span> <span class='ident'>ok</span>,
-                <span class='ident'>err</span> <span class='kw-2'>@</span> <span class='prelude-val'>Err</span>(..) <span class='op'>=&gt;</span> <span class='ident'>err</span>
+                <span class='ident'>ok</span> @ <span class='prelude-val'>Ok</span>(..) <span class='op'>=&gt;</span> <span class='ident'>ok</span>,
+                <span class='ident'>err</span> @ <span class='prelude-val'>Err</span>(..) <span class='op'>=&gt;</span> <span class='ident'>err</span>
             }
         );
-        <span class='macro'>Ook</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>));
-    };</pre>
+        <span class='macro'>Ook</span><span class='macro'>!</span>(@<span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>));
+    };<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0A%20%20%20%20%2F%2F%20Increment%20pointer.%0A%20%20%20%20(%40e%20(%24a%3Aexpr%2C%20%24i%3Aexpr%2C%20%24inc%3Aexpr%2C%20%24dec%3Aexpr%2C%20%24r%3Aexpr%2C%20%24w%3Aexpr%2C%20%24re%3Aexpr)%3B%0A%20%20%20%20%20%20%20%20(Ook.%20Ook%3F%20%24(%24tail%3Att)*))%0A%20%20%20%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%24i%20%3D%20(%24i%20%2B%201)%20%25%20MEM_SIZE%3B%0A%20%20%20%20%20%20%20%20Ook!(%40e%20(%24a%2C%20%24i%2C%20%24inc%2C%20%24dec%2C%20%24r%2C%20%24w%2C%20%24re)%3B%20(%24(%24tail)*))%3B%0A%20%20%20%20%7D%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20Decrement%20pointer.%0A%20%20%20%20(%40e%20(%24a%3Aexpr%2C%20%24i%3Aexpr%2C%20%24inc%3Aexpr%2C%20%24dec%3Aexpr%2C%20%24r%3Aexpr%2C%20%24w%3Aexpr%2C%20%24re%3Aexpr)%3B%0A%20%20%20%20%20%20%20%20(Ook%3F%20Ook.%20%24(%24tail%3Att)*))%0A%20%20%20%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%24i%20%3D%20if%20%24i%20%3D%3D%200%20%7B%20MEM_SIZE%20%7D%20else%20%7B%20%24i%20%7D%20-%201%3B%0A%20%20%20%20%20%20%20%20Ook!(%40e%20(%24a%2C%20%24i%2C%20%24inc%2C%20%24dec%2C%20%24r%2C%20%24w%2C%20%24re)%3B%20(%24(%24tail)*))%3B%0A%20%20%20%20%7D%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20Increment%20pointee.%0A%20%20%20%20(%40e%20(%24a%3Aexpr%2C%20%24i%3Aexpr%2C%20%24inc%3Aexpr%2C%20%24dec%3Aexpr%2C%20%24r%3Aexpr%2C%20%24w%3Aexpr%2C%20%24re%3Aexpr)%3B%0A%20%20%20%20%20%20%20%20(Ook.%20Ook.%20%24(%24tail%3Att)*))%0A%20%20%20%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%24inc(%24a%2C%20%24i)%3B%0A%20%20%20%20%20%20%20%20Ook!(%40e%20(%24a%2C%20%24i%2C%20%24inc%2C%20%24dec%2C%20%24r%2C%20%24w%2C%20%24re)%3B%20(%24(%24tail)*))%3B%0A%20%20%20%20%7D%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20Decrement%20pointee.%0A%20%20%20%20(%40e%20(%24a%3Aexpr%2C%20%24i%3Aexpr%2C%20%24inc%3Aexpr%2C%20%24dec%3Aexpr%2C%20%24r%3Aexpr%2C%20%24w%3Aexpr%2C%20%24re%3Aexpr)%3B%0A%20%20%20%20%20%20%20%20(Ook!%20Ook!%20%24(%24tail%3Att)*))%0A%20%20%20%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%24dec(%24a%2C%20%24i)%3B%0A%20%20%20%20%20%20%20%20Ook!(%40e%20(%24a%2C%20%24i%2C%20%24inc%2C%20%24dec%2C%20%24r%2C%20%24w%2C%20%24re)%3B%20(%24(%24tail)*))%3B%0A%20%20%20%20%7D%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20Write%20to%20stdout.%0A%20%20%20%20(%40e%20(%24a%3Aexpr%2C%20%24i%3Aexpr%2C%20%24inc%3Aexpr%2C%20%24dec%3Aexpr%2C%20%24r%3Aexpr%2C%20%24w%3Aexpr%2C%20%24re%3Aexpr)%3B%0A%20%20%20%20%20%20%20%20(Ook!%20Ook.%20%24(%24tail%3Att)*))%0A%20%20%20%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20try!(%24w.write_all(%26%24a%5B%24i%20..%20%24i%2B1%5D))%3B%0A%20%20%20%20%20%20%20%20Ook!(%40e%20(%24a%2C%20%24i%2C%20%24inc%2C%20%24dec%2C%20%24r%2C%20%24w%2C%20%24re)%3B%20(%24(%24tail)*))%3B%0A%20%20%20%20%7D%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20Read%20from%20stdin.%0A%20%20%20%20(%40e%20(%24a%3Aexpr%2C%20%24i%3Aexpr%2C%20%24inc%3Aexpr%2C%20%24dec%3Aexpr%2C%20%24r%3Aexpr%2C%20%24w%3Aexpr%2C%20%24re%3Aexpr)%3B%0A%20%20%20%20%20%20%20%20(Ook.%20Ook!%20%24(%24tail%3Att)*))%0A%20%20%20%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20try!(%0A%20%20%20%20%20%20%20%20%20%20%20%20match%20%24r.read(%26mut%20%24a%5B%24i%20..%20%24i%2B1%5D)%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Ok(0)%20%3D%3E%20Err(%24re())%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20ok%20%40%20Ok(..)%20%3D%3E%20ok%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20err%20%40%20Err(..)%20%3D%3E%20err%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20)%3B%0A%20%20%20%20%20%20%20%20Ook!(%40e%20(%24a%2C%20%24i%2C%20%24inc%2C%20%24dec%2C%20%24r%2C%20%24w%2C%20%24re)%3B%20(%24(%24tail)*))%3B%0A%20%20%20%20%7D%3B%0A%7D">Run</a></pre>
 
 <p>Here is where things get more complicated.  This opcode, <code>Ook! Ook?</code>, marks the start of a loop.  Ook! loops are translated to the following Rust code:</p>
 
 <blockquote>
 <p><strong>Note</strong>: this is <em>not</em> part of the larger code.</p>
 
-<span class='rusttest'>fn main() {
-    while memory[ptr] != 0 {
-        // Contents of loop
-    }
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='kw'>while</span> <span class='ident'>memory</span>[<span class='ident'>ptr</span>] <span class='op'>!=</span> <span class='number'>0</span> {
     <span class='comment'>// Contents of loop</span>
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Awhile%20memory%5Bptr%5D%20!%3D%200%20%7B%0A%20%20%20%20%2F%2F%20Contents%20of%20loop%0A%7D%0A%7D">Run</a></pre>
 </blockquote>
 
 <p>Of course, we cannot <em>actually</em> emit an incomplete loop.  This <em>could</em> be solved by using <a href="../pat/README.html#push-down-accumulation">pushdown</a>, were it not for a more fundamental problem: we cannot <em>write</em> <code>while memory[ptr] != {</code>, at all, <em>anywhere</em>.  This is because doing so would introduce an unbalanced brace.</p>
 
 <p>The solution to this is to actually split the input into two parts: everything <em>inside</em> the loop, and everything <em>after</em> it.  The <code>@x</code> rules handle the first, <code>@s</code> the latter.</p>
 
-<span class='rusttest'>fn main() {
-        (@e ($a:expr, $i:expr, $inc:expr, $dec:expr, $r:expr, $w:expr, $re:expr);
-            (Ook! Ook? $($tail:tt)*))
-        =&gt; {
-            while $a[$i] != 0 {
-                Ook!(@x ($a, $i, $inc, $dec, $r, $w, $re); (); (); ($($tail)*));
-            }
-            Ook!(@s ($a, $i, $inc, $dec, $r, $w, $re); (); ($($tail)*));
-        };
-}</span><pre class='rust rust-example-rendered'>
-    (<span class='kw-2'>@</span><span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>:<span class='ident'>expr</span>);
-        (<span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>? $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>))
+<pre class='rust rust-example-rendered'>
+    (@<span class='ident'>e</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>:<span class='ident'>expr</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>:<span class='ident'>expr</span>);
+        (<span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span><span class='question-mark'>?</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>))
     <span class='op'>=&gt;</span> {
         <span class='kw'>while</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>[<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>] <span class='op'>!=</span> <span class='number'>0</span> {
-            <span class='macro'>Ook</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>x</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>); (); (); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>));
+            <span class='macro'>Ook</span><span class='macro'>!</span>(@<span class='ident'>x</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>); (); (); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>));
         }
-        <span class='macro'>Ook</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>s</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>); (); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>));
-    };</pre>
+        <span class='macro'>Ook</span><span class='macro'>!</span>(@<span class='ident'>s</span> (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inc</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>dec</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>r</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>w</span>, <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>re</span>); (); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>));
+    };<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0A%20%20%20%20(%40e%20(%24a%3Aexpr%2C%20%24i%3Aexpr%2C%20%24inc%3Aexpr%2C%20%24dec%3Aexpr%2C%20%24r%3Aexpr%2C%20%24w%3Aexpr%2C%20%24re%3Aexpr)%3B%0A%20%20%20%20%20%20%20%20(Ook!%20Ook%3F%20%24(%24tail%3Att)*))%0A%20%20%20%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20while%20%24a%5B%24i%5D%20!%3D%200%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20Ook!(%40x%20(%24a%2C%20%24i%2C%20%24inc%2C%20%24dec%2C%20%24r%2C%20%24w%2C%20%24re)%3B%20()%3B%20()%3B%20(%24(%24tail)*))%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20Ook!(%40s%20(%24a%2C%20%24i%2C%20%24inc%2C%20%24dec%2C%20%24r%2C%20%24w%2C%20%24re)%3B%20()%3B%20(%24(%24tail)*))%3B%0A%20%20%20%20%7D%3B%0A%7D">Run</a></pre>
 
 <h3 id='loop-extraction' class='section-header'><a href='#loop-extraction'>Loop extraction</a></h3>
 <p>Next are the <code>@x</code>, or &quot;extraction&quot;, rules.  These are responsible for taking an input tail and extracting the contents of a loop.  The general form of these rules is: <code>(@x $sym; $depth; $buf; $tail)</code>.</p>
@@ -423,130 +309,75 @@
 
 <p>Note that we <em>do not</em> need to do anything with the remaining input tail (that will be handled by the <code>@s</code> rules).</p>
 
-<span class='rusttest'>fn main() {
-        (@x $syms:tt; (); ($($buf:tt)*);
-            (Ook? Ook! $($tail:tt)*))
-        =&gt; {
-            // Outer-most loop is closed.  Process the buffered tokens.
-            Ook!(@e $syms; ($($buf)*));
-        };
-}</span><pre class='rust rust-example-rendered'>
-    (<span class='kw-2'>@</span><span class='ident'>x</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>:<span class='ident'>tt</span>; (); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>buf</span>:<span class='ident'>tt</span>)<span class='op'>*</span>);
-        (<span class='ident'>Ook</span>? <span class='macro'>Ook</span><span class='macro'>!</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>))
+<pre class='rust rust-example-rendered'>
+    (@<span class='ident'>x</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>:<span class='ident'>tt</span>; (); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>buf</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>);
+        (<span class='ident'>Ook</span><span class='question-mark'>?</span> <span class='macro'>Ook</span><span class='macro'>!</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>))
     <span class='op'>=&gt;</span> {
         <span class='comment'>// Outer-most loop is closed.  Process the buffered tokens.</span>
-        <span class='macro'>Ook</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>e</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>; ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>buf</span>)<span class='op'>*</span>));
-    };</pre>
+        <span class='macro'>Ook</span><span class='macro'>!</span>(@<span class='ident'>e</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>; ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>buf</span>)<span class='kw-2'>*</span>));
+    };<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0A%20%20%20%20(%40x%20%24syms%3Att%3B%20()%3B%20(%24(%24buf%3Att)*)%3B%0A%20%20%20%20%20%20%20%20(Ook%3F%20Ook!%20%24(%24tail%3Att)*))%0A%20%20%20%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20Outer-most%20loop%20is%20closed.%20%20Process%20the%20buffered%20tokens.%0A%20%20%20%20%20%20%20%20Ook!(%40e%20%24syms%3B%20(%24(%24buf)*))%3B%0A%20%20%20%20%7D%3B%0A%7D">Run</a></pre>
 
 <p>Next, we have rules for entering and exiting nested loops.  These adjust the counter and add the opcodes to the buffer.</p>
 
-<span class='rusttest'>fn main() {
-        (@x $syms:tt; ($($depth:tt)*); ($($buf:tt)*);
-            (Ook! Ook? $($tail:tt)*))
-        =&gt; {
-            // One level deeper.
-            Ook!(@x $syms; (@ $($depth)*); ($($buf)* Ook! Ook?); ($($tail)*));
-        };
-        
-        (@x $syms:tt; (@ $($depth:tt)*); ($($buf:tt)*);
-            (Ook? Ook! $($tail:tt)*))
-        =&gt; {
-            // One level higher.
-            Ook!(@x $syms; ($($depth)*); ($($buf)* Ook? Ook!); ($($tail)*));
-        };
-}</span><pre class='rust rust-example-rendered'>
-    (<span class='kw-2'>@</span><span class='ident'>x</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>:<span class='ident'>tt</span>; ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>:<span class='ident'>tt</span>)<span class='op'>*</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>buf</span>:<span class='ident'>tt</span>)<span class='op'>*</span>);
-        (<span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>? $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>))
+<pre class='rust rust-example-rendered'>
+    (@<span class='ident'>x</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>:<span class='ident'>tt</span>; ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>buf</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>);
+        (<span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span><span class='question-mark'>?</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>))
     <span class='op'>=&gt;</span> {
         <span class='comment'>// One level deeper.</span>
-        <span class='macro'>Ook</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>x</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>; (<span class='kw-2'>@</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>)<span class='op'>*</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>buf</span>)<span class='op'>*</span> <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>?); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>));
+        <span class='macro'>Ook</span><span class='macro'>!</span>(@<span class='ident'>x</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>; (@ $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>)<span class='kw-2'>*</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>buf</span>)<span class='op'>*</span> <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span><span class='question-mark'>?</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>));
     };
     
-    (<span class='kw-2'>@</span><span class='ident'>x</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>:<span class='ident'>tt</span>; (<span class='kw-2'>@</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>:<span class='ident'>tt</span>)<span class='op'>*</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>buf</span>:<span class='ident'>tt</span>)<span class='op'>*</span>);
-        (<span class='ident'>Ook</span>? <span class='macro'>Ook</span><span class='macro'>!</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>))
+    (@<span class='ident'>x</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>:<span class='ident'>tt</span>; (@ $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>buf</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>);
+        (<span class='ident'>Ook</span><span class='question-mark'>?</span> <span class='macro'>Ook</span><span class='macro'>!</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>))
     <span class='op'>=&gt;</span> {
         <span class='comment'>// One level higher.</span>
-        <span class='macro'>Ook</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>x</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>; ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>)<span class='op'>*</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>buf</span>)<span class='op'>*</span> <span class='ident'>Ook</span>? <span class='macro'>Ook</span><span class='macro'>!</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>));
-    };</pre>
+        <span class='macro'>Ook</span><span class='macro'>!</span>(@<span class='ident'>x</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>; ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>)<span class='kw-2'>*</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>buf</span>)<span class='op'>*</span> <span class='ident'>Ook</span><span class='question-mark'>?</span> <span class='macro'>Ook</span><span class='macro'>!</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>));
+    };<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0A%20%20%20%20(%40x%20%24syms%3Att%3B%20(%24(%24depth%3Att)*)%3B%20(%24(%24buf%3Att)*)%3B%0A%20%20%20%20%20%20%20%20(Ook!%20Ook%3F%20%24(%24tail%3Att)*))%0A%20%20%20%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20One%20level%20deeper.%0A%20%20%20%20%20%20%20%20Ook!(%40x%20%24syms%3B%20(%40%20%24(%24depth)*)%3B%20(%24(%24buf)*%20Ook!%20Ook%3F)%3B%20(%24(%24tail)*))%3B%0A%20%20%20%20%7D%3B%0A%20%20%20%20%0A%20%20%20%20(%40x%20%24syms%3Att%3B%20(%40%20%24(%24depth%3Att)*)%3B%20(%24(%24buf%3Att)*)%3B%0A%20%20%20%20%20%20%20%20(Ook%3F%20Ook!%20%24(%24tail%3Att)*))%0A%20%20%20%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%2F%2F%20One%20level%20higher.%0A%20%20%20%20%20%20%20%20Ook!(%40x%20%24syms%3B%20(%24(%24depth)*)%3B%20(%24(%24buf)*%20Ook%3F%20Ook!)%3B%20(%24(%24tail)*))%3B%0A%20%20%20%20%7D%3B%0A%7D">Run</a></pre>
 
 <p>Finally, we have a rule for &quot;everything else&quot;.  Note the <code>$op0</code> and <code>$op1</code> captures: as far as Rust is concerned, our Ook! tokens are always <em>two</em> Rust tokens: the identifier <code>Ook</code>, and another token.  Thus, we can generalise over all non-loop opcodes by matching <code>!</code>, <code>?</code>, and <code>.</code> as <code>tt</code>s.</p>
 
 <p>Here, we leave <code>$depth</code> untouched and just add the opcodes to the buffer.</p>
 
-<span class='rusttest'>fn main() {
-        (@x $syms:tt; $depth:tt; ($($buf:tt)*);
-            (Ook $op0:tt Ook $op1:tt $($tail:tt)*))
-        =&gt; {
-            Ook!(@x $syms; $depth; ($($buf)* Ook $op0 Ook $op1); ($($tail)*));
-        };
-}</span><pre class='rust rust-example-rendered'>
-    (<span class='kw-2'>@</span><span class='ident'>x</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>:<span class='ident'>tt</span>; <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>:<span class='ident'>tt</span>; ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>buf</span>:<span class='ident'>tt</span>)<span class='op'>*</span>);
-        (<span class='ident'>Ook</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>op0</span>:<span class='ident'>tt</span> <span class='ident'>Ook</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>op1</span>:<span class='ident'>tt</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>))
+<pre class='rust rust-example-rendered'>
+    (@<span class='ident'>x</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>:<span class='ident'>tt</span>; <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>:<span class='ident'>tt</span>; ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>buf</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>);
+        (<span class='ident'>Ook</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>op0</span>:<span class='ident'>tt</span> <span class='ident'>Ook</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>op1</span>:<span class='ident'>tt</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>))
     <span class='op'>=&gt;</span> {
-        <span class='macro'>Ook</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>x</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>; <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>; ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>buf</span>)<span class='op'>*</span> <span class='ident'>Ook</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>op0</span> <span class='ident'>Ook</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>op1</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>));
-    };</pre>
+        <span class='macro'>Ook</span><span class='macro'>!</span>(@<span class='ident'>x</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>; <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>; ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>buf</span>)<span class='op'>*</span> <span class='ident'>Ook</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>op0</span> <span class='ident'>Ook</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>op1</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>));
+    };<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0A%20%20%20%20(%40x%20%24syms%3Att%3B%20%24depth%3Att%3B%20(%24(%24buf%3Att)*)%3B%0A%20%20%20%20%20%20%20%20(Ook%20%24op0%3Att%20Ook%20%24op1%3Att%20%24(%24tail%3Att)*))%0A%20%20%20%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20Ook!(%40x%20%24syms%3B%20%24depth%3B%20(%24(%24buf)*%20Ook%20%24op0%20Ook%20%24op1)%3B%20(%24(%24tail)*))%3B%0A%20%20%20%20%7D%3B%0A%7D">Run</a></pre>
 
 <h3 id='loop-skipping' class='section-header'><a href='#loop-skipping'>Loop Skipping</a></h3>
 <p>This is <em>broadly</em> the same as loop extraction, except we don&#39;t care about the <em>contents</em> of the loop (and as such, don&#39;t need the accumulation buffer).  All we need to know is when we are <em>past</em> the loop.  At that point, we resume processing the input using the <code>@e</code> rules.</p>
 
 <p>As such, these rules are presented without further exposition.</p>
 
-<span class='rusttest'>fn main() {
-        // End of loop.
-        (@s $syms:tt; ();
-            (Ook? Ook! $($tail:tt)*))
-        =&gt; {
-            Ook!(@e $syms; ($($tail)*));
-        };
-    
-        // Enter nested loop.
-        (@s $syms:tt; ($($depth:tt)*);
-            (Ook! Ook? $($tail:tt)*))
-        =&gt; {
-            Ook!(@s $syms; (@ $($depth)*); ($($tail)*));
-        };
-        
-        // Exit nested loop.
-        (@s $syms:tt; (@ $($depth:tt)*);
-            (Ook? Ook! $($tail:tt)*))
-        =&gt; {
-            Ook!(@s $syms; ($($depth)*); ($($tail)*));
-        };
-    
-        // Not a loop opcode.
-        (@s $syms:tt; ($($depth:tt)*);
-            (Ook $op0:tt Ook $op1:tt $($tail:tt)*))
-        =&gt; {
-            Ook!(@s $syms; ($($depth)*); ($($tail)*));
-        };
-}</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
     <span class='comment'>// End of loop.</span>
-    (<span class='kw-2'>@</span><span class='ident'>s</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>:<span class='ident'>tt</span>; ();
-        (<span class='ident'>Ook</span>? <span class='macro'>Ook</span><span class='macro'>!</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>))
+    (@<span class='ident'>s</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>:<span class='ident'>tt</span>; ();
+        (<span class='ident'>Ook</span><span class='question-mark'>?</span> <span class='macro'>Ook</span><span class='macro'>!</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>))
     <span class='op'>=&gt;</span> {
-        <span class='macro'>Ook</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>e</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>; ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>));
+        <span class='macro'>Ook</span><span class='macro'>!</span>(@<span class='ident'>e</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>; ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>));
     };
 
     <span class='comment'>// Enter nested loop.</span>
-    (<span class='kw-2'>@</span><span class='ident'>s</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>:<span class='ident'>tt</span>; ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>:<span class='ident'>tt</span>)<span class='op'>*</span>);
-        (<span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>? $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>))
+    (@<span class='ident'>s</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>:<span class='ident'>tt</span>; ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>);
+        (<span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span><span class='question-mark'>?</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>))
     <span class='op'>=&gt;</span> {
-        <span class='macro'>Ook</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>s</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>; (<span class='kw-2'>@</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>)<span class='op'>*</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>));
+        <span class='macro'>Ook</span><span class='macro'>!</span>(@<span class='ident'>s</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>; (@ $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>)<span class='kw-2'>*</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>));
     };
     
     <span class='comment'>// Exit nested loop.</span>
-    (<span class='kw-2'>@</span><span class='ident'>s</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>:<span class='ident'>tt</span>; (<span class='kw-2'>@</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>:<span class='ident'>tt</span>)<span class='op'>*</span>);
-        (<span class='ident'>Ook</span>? <span class='macro'>Ook</span><span class='macro'>!</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>))
+    (@<span class='ident'>s</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>:<span class='ident'>tt</span>; (@ $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>);
+        (<span class='ident'>Ook</span><span class='question-mark'>?</span> <span class='macro'>Ook</span><span class='macro'>!</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>))
     <span class='op'>=&gt;</span> {
-        <span class='macro'>Ook</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>s</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>; ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>)<span class='op'>*</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>));
+        <span class='macro'>Ook</span><span class='macro'>!</span>(@<span class='ident'>s</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>; ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>)<span class='kw-2'>*</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>));
     };
 
     <span class='comment'>// Not a loop opcode.</span>
-    (<span class='kw-2'>@</span><span class='ident'>s</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>:<span class='ident'>tt</span>; ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>:<span class='ident'>tt</span>)<span class='op'>*</span>);
-        (<span class='ident'>Ook</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>op0</span>:<span class='ident'>tt</span> <span class='ident'>Ook</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>op1</span>:<span class='ident'>tt</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='op'>*</span>))
+    (@<span class='ident'>s</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>:<span class='ident'>tt</span>; ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>);
+        (<span class='ident'>Ook</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>op0</span>:<span class='ident'>tt</span> <span class='ident'>Ook</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>op1</span>:<span class='ident'>tt</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>))
     <span class='op'>=&gt;</span> {
-        <span class='macro'>Ook</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>s</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>; ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>)<span class='op'>*</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='op'>*</span>));
-    };</pre>
+        <span class='macro'>Ook</span><span class='macro'>!</span>(@<span class='ident'>s</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>syms</span>; ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>depth</span>)<span class='kw-2'>*</span>); ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>));
+    };<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0A%20%20%20%20%2F%2F%20End%20of%20loop.%0A%20%20%20%20(%40s%20%24syms%3Att%3B%20()%3B%0A%20%20%20%20%20%20%20%20(Ook%3F%20Ook!%20%24(%24tail%3Att)*))%0A%20%20%20%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20Ook!(%40e%20%24syms%3B%20(%24(%24tail)*))%3B%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20%2F%2F%20Enter%20nested%20loop.%0A%20%20%20%20(%40s%20%24syms%3Att%3B%20(%24(%24depth%3Att)*)%3B%0A%20%20%20%20%20%20%20%20(Ook!%20Ook%3F%20%24(%24tail%3Att)*))%0A%20%20%20%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20Ook!(%40s%20%24syms%3B%20(%40%20%24(%24depth)*)%3B%20(%24(%24tail)*))%3B%0A%20%20%20%20%7D%3B%0A%20%20%20%20%0A%20%20%20%20%2F%2F%20Exit%20nested%20loop.%0A%20%20%20%20(%40s%20%24syms%3Att%3B%20(%40%20%24(%24depth%3Att)*)%3B%0A%20%20%20%20%20%20%20%20(Ook%3F%20Ook!%20%24(%24tail%3Att)*))%0A%20%20%20%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20Ook!(%40s%20%24syms%3B%20(%24(%24depth)*)%3B%20(%24(%24tail)*))%3B%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20%2F%2F%20Not%20a%20loop%20opcode.%0A%20%20%20%20(%40s%20%24syms%3Att%3B%20(%24(%24depth%3Att)*)%3B%0A%20%20%20%20%20%20%20%20(Ook%20%24op0%3Att%20Ook%20%24op1%3Att%20%24(%24tail%3Att)*))%0A%20%20%20%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20Ook!(%40s%20%24syms%3B%20(%24(%24depth)*)%3B%20(%24(%24tail)*))%3B%0A%20%20%20%20%7D%3B%0A%7D">Run</a></pre>
 
 <h3 id='entry-point' class='section-header'><a href='#entry-point'>Entry point</a></h3>
 <p>This is the only non-internal rule.</p>
@@ -555,107 +386,59 @@
 
 <p>When you are writing, modifying, or debugging a macro like this, it is wise to temporarily prefix rules such as this one with something, such as <code>@entry</code>.  This prevents the infinite recursion case, and you are more likely to get matcher errors at the appropriate place.</p>
 
-<span class='rusttest'>fn main() {
-        ($($Ooks:tt)*) =&gt; {
-            Ook!(@start $($Ooks)*)
-        };
-    }
-}</span><pre class='rust rust-example-rendered'>
-    ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>Ooks</span>:<span class='ident'>tt</span>)<span class='op'>*</span>) <span class='op'>=&gt;</span> {
-        <span class='macro'>Ook</span><span class='macro'>!</span>(<span class='kw-2'>@</span><span class='ident'>start</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>Ooks</span>)<span class='op'>*</span>)
+<pre class='rust rust-example-rendered'>
+    ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>Ooks</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> {
+        <span class='macro'>Ook</span><span class='macro'>!</span>(@<span class='ident'>start</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>Ooks</span>)<span class='kw-2'>*</span>)
     };
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0A%20%20%20%20(%24(%24Ooks%3Att)*)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20Ook!(%40start%20%24(%24Ooks)*)%0A%20%20%20%20%7D%3B%0A%7D%0A%7D">Run</a></pre>
 
 <h3 id='usage' class='section-header'><a href='#usage'>Usage</a></h3>
 <p>Here, finally, is our test program.</p>
 
-<span class='rusttest'>fn main() {
-    let _ = Ook!(
-        Ook. Ook?  Ook. Ook.  Ook. Ook.  Ook. Ook.
-        Ook. Ook.  Ook. Ook.  Ook. Ook.  Ook. Ook.
-        Ook. Ook.  Ook. Ook.  Ook! Ook?  Ook? Ook.
-        Ook. Ook.  Ook. Ook.  Ook. Ook.  Ook. Ook.
-        Ook. Ook.  Ook. Ook.  Ook. Ook.  Ook. Ook.
-        Ook. Ook?  Ook! Ook!  Ook? Ook!  Ook? Ook.
-        Ook! Ook.  Ook. Ook?  Ook. Ook.  Ook. Ook.
-        Ook. Ook.  Ook. Ook.  Ook. Ook.  Ook. Ook.
-        Ook. Ook.  Ook! Ook?  Ook? Ook.  Ook. Ook.
-        Ook. Ook.  Ook. Ook.  Ook. Ook.  Ook. Ook?
-        Ook! Ook!  Ook? Ook!  Ook? Ook.  Ook. Ook.
-        Ook! Ook.  Ook. Ook.  Ook. Ook.  Ook. Ook.
-        Ook. Ook.  Ook. Ook.  Ook. Ook.  Ook. Ook.
-        Ook! Ook.  Ook! Ook.  Ook. Ook.  Ook. Ook.
-        Ook. Ook.  Ook! Ook.  Ook. Ook?  Ook. Ook?
-        Ook. Ook?  Ook. Ook.  Ook. Ook.  Ook. Ook.
-        Ook. Ook.  Ook. Ook.  Ook. Ook.  Ook. Ook.
-        Ook. Ook.  Ook! Ook?  Ook? Ook.  Ook. Ook.
-        Ook. Ook.  Ook. Ook.  Ook. Ook.  Ook. Ook?
-        Ook! Ook!  Ook? Ook!  Ook? Ook.  Ook! Ook.
-        Ook. Ook?  Ook. Ook?  Ook. Ook?  Ook. Ook.
-        Ook. Ook.  Ook. Ook.  Ook. Ook.  Ook. Ook.
-        Ook. Ook.  Ook. Ook.  Ook. Ook.  Ook. Ook.
-        Ook. Ook.  Ook! Ook?  Ook? Ook.  Ook. Ook.
-        Ook. Ook.  Ook. Ook.  Ook. Ook.  Ook. Ook.
-        Ook. Ook.  Ook. Ook.  Ook. Ook.  Ook. Ook.
-        Ook. Ook?  Ook! Ook!  Ook? Ook!  Ook? Ook.
-        Ook! Ook!  Ook! Ook!  Ook! Ook!  Ook! Ook.
-        Ook? Ook.  Ook? Ook.  Ook? Ook.  Ook? Ook.
-        Ook! Ook.  Ook. Ook.  Ook. Ook.  Ook. Ook.
-        Ook! Ook.  Ook! Ook!  Ook! Ook!  Ook! Ook!
-        Ook! Ook!  Ook! Ook!  Ook! Ook!  Ook! Ook.
-        Ook! Ook!  Ook! Ook!  Ook! Ook!  Ook! Ook!
-        Ook! Ook!  Ook! Ook!  Ook! Ook!  Ook! Ook!
-        Ook! Ook.  Ook. Ook?  Ook. Ook?  Ook. Ook.
-        Ook! Ook.  Ook! Ook?  Ook! Ook!  Ook? Ook!
-        Ook. Ook.  Ook. Ook.  Ook. Ook.  Ook. Ook.
-        Ook. Ook.  Ook. Ook.  Ook. Ook.  Ook. Ook.
-        Ook. Ook.  Ook. Ook.  Ook! Ook.
-    );
-}
-</span><pre class='rust rust-example-rendered'>
+<pre class='rust rust-example-rendered'>
 <span class='kw'>fn</span> <span class='ident'>main</span>() {
     <span class='kw'>let</span> _ <span class='op'>=</span> <span class='macro'>Ook</span><span class='macro'>!</span>(
-        <span class='ident'>Ook</span>. <span class='ident'>Ook</span>?  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
+        <span class='ident'>Ook</span>. <span class='ident'>Ook</span><span class='question-mark'>?</span>  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
         <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
-        <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>?  <span class='ident'>Ook</span>? <span class='ident'>Ook</span>.
+        <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span><span class='question-mark'>?</span>  <span class='ident'>Ook</span><span class='question-mark'>?</span> <span class='ident'>Ook</span>.
         <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
         <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
-        <span class='ident'>Ook</span>. <span class='ident'>Ook</span>?  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='ident'>Ook</span>? <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='ident'>Ook</span>? <span class='ident'>Ook</span>.
-        <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>?  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
+        <span class='ident'>Ook</span>. <span class='ident'>Ook</span><span class='question-mark'>?</span>  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='ident'>Ook</span><span class='question-mark'>?</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='ident'>Ook</span><span class='question-mark'>?</span> <span class='ident'>Ook</span>.
+        <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span><span class='question-mark'>?</span>  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
         <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
-        <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>?  <span class='ident'>Ook</span>? <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
-        <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>?
-        <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='ident'>Ook</span>? <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='ident'>Ook</span>? <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
+        <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span><span class='question-mark'>?</span>  <span class='ident'>Ook</span><span class='question-mark'>?</span> <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
+        <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span><span class='question-mark'>?</span>
+        <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='ident'>Ook</span><span class='question-mark'>?</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='ident'>Ook</span><span class='question-mark'>?</span> <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
         <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
         <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
         <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>.  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
-        <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>?  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>?
-        <span class='ident'>Ook</span>. <span class='ident'>Ook</span>?  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
+        <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span><span class='question-mark'>?</span>  <span class='ident'>Ook</span>. <span class='ident'>Ook</span><span class='question-mark'>?</span>
+        <span class='ident'>Ook</span>. <span class='ident'>Ook</span><span class='question-mark'>?</span>  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
         <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
-        <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>?  <span class='ident'>Ook</span>? <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
-        <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>?
-        <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='ident'>Ook</span>? <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='ident'>Ook</span>? <span class='ident'>Ook</span>.  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>.
-        <span class='ident'>Ook</span>. <span class='ident'>Ook</span>?  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>?  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>?  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
-        <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
-        <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
-        <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>?  <span class='ident'>Ook</span>? <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
+        <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span><span class='question-mark'>?</span>  <span class='ident'>Ook</span><span class='question-mark'>?</span> <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
+        <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span><span class='question-mark'>?</span>
+        <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='ident'>Ook</span><span class='question-mark'>?</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='ident'>Ook</span><span class='question-mark'>?</span> <span class='ident'>Ook</span>.  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>.
+        <span class='ident'>Ook</span>. <span class='ident'>Ook</span><span class='question-mark'>?</span>  <span class='ident'>Ook</span>. <span class='ident'>Ook</span><span class='question-mark'>?</span>  <span class='ident'>Ook</span>. <span class='ident'>Ook</span><span class='question-mark'>?</span>  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
         <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
         <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
-        <span class='ident'>Ook</span>. <span class='ident'>Ook</span>?  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='ident'>Ook</span>? <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='ident'>Ook</span>? <span class='ident'>Ook</span>.
+        <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span><span class='question-mark'>?</span>  <span class='ident'>Ook</span><span class='question-mark'>?</span> <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
+        <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
+        <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
+        <span class='ident'>Ook</span>. <span class='ident'>Ook</span><span class='question-mark'>?</span>  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='ident'>Ook</span><span class='question-mark'>?</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='ident'>Ook</span><span class='question-mark'>?</span> <span class='ident'>Ook</span>.
         <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>.
-        <span class='ident'>Ook</span>? <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>? <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>? <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>? <span class='ident'>Ook</span>.
+        <span class='ident'>Ook</span><span class='question-mark'>?</span> <span class='ident'>Ook</span>.  <span class='ident'>Ook</span><span class='question-mark'>?</span> <span class='ident'>Ook</span>.  <span class='ident'>Ook</span><span class='question-mark'>?</span> <span class='ident'>Ook</span>.  <span class='ident'>Ook</span><span class='question-mark'>?</span> <span class='ident'>Ook</span>.
         <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
         <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>.  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>
         <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>.
         <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>
         <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>
-        <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>?  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>?  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
-        <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>.  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>?  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='ident'>Ook</span>? <span class='macro'>Ook</span><span class='macro'>!</span>
+        <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span><span class='question-mark'>?</span>  <span class='ident'>Ook</span>. <span class='ident'>Ook</span><span class='question-mark'>?</span>  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
+        <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>.  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span><span class='question-mark'>?</span>  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='macro'>Ook</span><span class='macro'>!</span>  <span class='ident'>Ook</span><span class='question-mark'>?</span> <span class='macro'>Ook</span><span class='macro'>!</span>
         <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
         <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.
         <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='ident'>Ook</span>. <span class='ident'>Ook</span>.  <span class='macro'>Ook</span><span class='macro'>!</span> <span class='ident'>Ook</span>.
     );
-}</pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0A%20%20%20%20let%20_%20%3D%20Ook!(%0A%20%20%20%20%20%20%20%20Ook.%20Ook%3F%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook!%20Ook%3F%20%20Ook%3F%20Ook.%0A%20%20%20%20%20%20%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook.%20Ook%3F%20%20Ook!%20Ook!%20%20Ook%3F%20Ook!%20%20Ook%3F%20Ook.%0A%20%20%20%20%20%20%20%20Ook!%20Ook.%20%20Ook.%20Ook%3F%20%20Ook.%20Ook.%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook.%20Ook.%20%20Ook!%20Ook%3F%20%20Ook%3F%20Ook.%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook%3F%0A%20%20%20%20%20%20%20%20Ook!%20Ook!%20%20Ook%3F%20Ook!%20%20Ook%3F%20Ook.%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook!%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook!%20Ook.%20%20Ook!%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook.%20Ook.%20%20Ook!%20Ook.%20%20Ook.%20Ook%3F%20%20Ook.%20Ook%3F%0A%20%20%20%20%20%20%20%20Ook.%20Ook%3F%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook.%20Ook.%20%20Ook!%20Ook%3F%20%20Ook%3F%20Ook.%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook%3F%0A%20%20%20%20%20%20%20%20Ook!%20Ook!%20%20Ook%3F%20Ook!%20%20Ook%3F%20Ook.%20%20Ook!%20Ook.%0A%20%20%20%20%20%20%20%20Ook.%20Ook%3F%20%20Ook.%20Ook%3F%20%20Ook.%20Ook%3F%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook.%20Ook.%20%20Ook!%20Ook%3F%20%20Ook%3F%20Ook.%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook.%20Ook%3F%20%20Ook!%20Ook!%20%20Ook%3F%20Ook!%20%20Ook%3F%20Ook.%0A%20%20%20%20%20%20%20%20Ook!%20Ook!%20%20Ook!%20Ook!%20%20Ook!%20Ook!%20%20Ook!%20Ook.%0A%20%20%20%20%20%20%20%20Ook%3F%20Ook.%20%20Ook%3F%20Ook.%20%20Ook%3F%20Ook.%20%20Ook%3F%20Ook.%0A%20%20%20%20%20%20%20%20Ook!%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook!%20Ook.%20%20Ook!%20Ook!%20%20Ook!%20Ook!%20%20Ook!%20Ook!%0A%20%20%20%20%20%20%20%20Ook!%20Ook!%20%20Ook!%20Ook!%20%20Ook!%20Ook!%20%20Ook!%20Ook.%0A%20%20%20%20%20%20%20%20Ook!%20Ook!%20%20Ook!%20Ook!%20%20Ook!%20Ook!%20%20Ook!%20Ook!%0A%20%20%20%20%20%20%20%20Ook!%20Ook!%20%20Ook!%20Ook!%20%20Ook!%20Ook!%20%20Ook!%20Ook!%0A%20%20%20%20%20%20%20%20Ook!%20Ook.%20%20Ook.%20Ook%3F%20%20Ook.%20Ook%3F%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook!%20Ook.%20%20Ook!%20Ook%3F%20%20Ook!%20Ook!%20%20Ook%3F%20Ook!%0A%20%20%20%20%20%20%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook.%20Ook.%0A%20%20%20%20%20%20%20%20Ook.%20Ook.%20%20Ook.%20Ook.%20%20Ook!%20Ook.%0A%20%20%20%20)%3B%0A%7D%0A">Run</a></pre>
 
 <p>The output when run (after a considerable pause for the compiler to do hundreds of recursive macro expansions) is:</p>
 
@@ -690,11 +473,7 @@
 </ol>
 </div>
 
-    <script type="text/javascript">
-        window.playgroundUrl = "https://play.rust-lang.org";
-    </script>
     <script src='rustbook.js'></script>
-<script src='playpen.js'></script>
 </div></div>
 
 

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <title>宏，一份条理清晰的介绍</title>
+    <title>宏，彻底剖析</title>
 
     <link rel="stylesheet" type="text/css" href="rustbook.css">
 
@@ -31,39 +31,39 @@
 <ol class='chapter'>
 <li><a  href='README.html'><b>1.</b> Introduction</a>
 </li>
-<li><a class='active' href='mbe-README.html'><b>2.</b> Macros, A Methodical Introduction</a>
+<li><a class='active' href='mbe-README.html'><b>2.</b> 宏，彻底剖析</a>
 <ol class='section'>
-<li><a  href='mbe-syn-README.html'><b>2.1.</b> Syntax Extensions</a>
+<li><a  href='mbe-syn-README.html'><b>2.1.</b> 语法扩展</a>
 <ol class='section'>
-<li><a  href='mbe-syn-source-analysis.html'><b>2.1.1.</b> Source Analysis</a>
+<li><a  href='mbe-syn-source-analysis.html'><b>2.1.1.</b> 源码解析过程</a>
 </li>
-<li><a  href='mbe-syn-macros-in-the-ast.html'><b>2.1.2.</b> Macros in the AST</a>
+<li><a  href='mbe-syn-macros-in-the-ast.html'><b>2.1.2.</b> AST中的宏</a>
 </li>
-<li><a  href='mbe-syn-expansion.html'><b>2.1.3.</b> Expansion</a>
+<li><a  href='mbe-syn-expansion.html'><b>2.1.3.</b> 展开</a>
 </li>
 </ol>
 </li>
 <li><a  href='mbe-macro-rules.html'><b>2.2.</b> macro_rules!</a>
 </li>
-<li><a  href='mbe-min-README.html'><b>2.3.</b> Minutiae</a>
+<li><a  href='mbe-min-README.html'><b>2.3.</b> 细枝末节</a>
 <ol class='section'>
-<li><a  href='mbe-min-captures-and-expansion-redux.html'><b>2.3.1.</b> Captures and Expansion Redux</a>
+<li><a  href='mbe-min-captures-and-expansion-redux.html'><b>2.3.1.</b> 再探捕获与展开</a>
 </li>
-<li><a  href='mbe-min-hygiene.html'><b>2.3.2.</b> Hygiene</a>
+<li><a  href='mbe-min-hygiene.html'><b>2.3.2.</b> 卫生性</a>
 </li>
-<li><a  href='mbe-min-non-identifier-identifiers.html'><b>2.3.3.</b> Non-Identifier Identifiers</a>
+<li><a  href='mbe-min-non-identifier-identifiers.html'><b>2.3.3.</b> 不是标识符的标识符</a>
 </li>
-<li><a  href='mbe-min-debugging.html'><b>2.3.4.</b> Debugging</a>
+<li><a  href='mbe-min-debugging.html'><b>2.3.4.</b> 调试</a>
 </li>
-<li><a  href='mbe-min-scoping.html'><b>2.3.5.</b> Scoping</a>
+<li><a  href='mbe-min-scoping.html'><b>2.3.5.</b> 作用域</a>
 </li>
-<li><a  href='mbe-min-import-export.html'><b>2.3.6.</b> Import/Export</a>
-</li>
-</ol>
+<li><a  href='mbe-min-import-export.html'><b>2.3.6.</b> 导入/导出</a>
 </li>
 </ol>
 </li>
-<li><a  href='pim-README.html'><b>3.</b> Macros, A Practical Introduction</a>
+</ol>
+</li>
+<li><a  href='pim-README.html'><b>3.</b> 宏，实践介绍</a>
 </li>
 <li><a  href='pat-README.html'><b>4.</b> Patterns</a>
 <ol class='section'>
@@ -109,10 +109,10 @@
 <div id='page'>
 
 
-    <h1 class="title">宏，一份条理清晰的介绍</h1>
+    <h1 class="title">宏，彻底剖析</h1>
     <p>本章节将介绍Rust的“示例宏”(Macro-By-Example)系统:<code>macro_rules</code>。我们不会通过实际的示例来介绍它，而将尝试对此系统的**运作方式**给出完备且彻底的解释。因此，本章的目标读者应是那些想要理清这整个系统的人，而非那些仅仅想要了解它一般该怎么用的人。</p>
 
-<p>在<a href="http://doc.rust-lang.org/book/macros.html">Rust官方教程中也有一章讲解宏</a>(<a href="https://kaisery.gitbooks.io/rust-book-chinese/content/content/Macros%20%E5%AE%8F.html">中文版</a>)，它更易理解，提供的解释更加高层。本书也有一章<a href="https://danielkeep.github.io/practical-intro-to-macros.html">实践介绍</a>，旨在阐释如何在实践中实现一个宏。</p>
+<p>在<a href="http://doc.rust-lang.org/book/macros.html">Rust官方教程中也有一章讲解宏</a>(<a href="https://kaisery.gitbooks.io/rust-book-chinese/content/content/Macros%20%E5%AE%8F.html">中文版</a>)，它更易理解，提供的解释更加高层。本书也有一章<a href="pim-README.html">实践介绍</a>，旨在阐释如何在实践中实现一个宏。</p>
 
     <script src='rustbook.js'></script>
 </div></div>

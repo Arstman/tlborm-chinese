@@ -205,7 +205,7 @@ macro_rules! recurrence {
         <tr>
             <td colspan="4" style="font-size:.7em;">
 
-<em>注意</em>：这有两个 ⌂，因为下一个输入标记既能匹配重复元素间的分隔符逗号，也能匹配标志重复结束的逗号。宏系统将同时追踪这两种可能，直到决定具体选择为止。
+<em>注意</em>：这有两个 ⌂，因为下个输入标记既能匹配 重复元素间的分隔符逗号，也能匹配 标志重复结束的逗号。宏系统将同时追踪这两种可能，直到决定具体选择为止。
 
             </td>
         </tr>
@@ -226,7 +226,7 @@ macro_rules! recurrence {
         <tr>
             <td colspan="4" style="font-size:.7em;">
 
-<em>注意</em>：第三个被划掉的记号表明，基于上个被消耗的标记，宏系统排除了一项先前存在的分支可能。
+<em>注意</em>：第三个被划掉的记号表明，基于上个被消耗的标记，宏系统排除了一项先前存在的可能。
 
             </td>
         </tr>
@@ -261,7 +261,7 @@ macro_rules! recurrence {
         <tr>
             <td colspan="4" style="font-size:.7em;">
 
-<em>注意</em>：这一步表明，类似<tt>$recur:expr</tt>的绑定将消耗<em>一整个表达式</em>。此处什么组成一个有效的表达式由编译器决定。稍后我们会谈到，其它语言构造也能够有类似的行为。
+<em>注意</em>：这一步表明，类似<tt>$recur:expr</tt>的绑定将消耗<em>一个完整的表达式</em>。此处，究竟什么算是一个完整的表达式，将由编译器决定。稍后我们会谈到语言其它部分的类似行为。
 
             </td>
         </tr>
@@ -272,7 +272,7 @@ macro_rules! recurrence {
 
 从此表中得到的最关键收获在于，宏系统会依次尝试将提供给它的每个标记当作输入，与提供给它的每条规则进行匹配。我们稍后还将谈回到这一“尝试”。
 
-现在，我们将写出宏完全展开后的最终版本。对此，我们所期望的结果类似：
+接下来我们首先将写出宏调用完全展开后的形态。我们想要的结构类似：
 
 ```rust
 let fib = {
@@ -282,9 +282,9 @@ let fib = {
     }
 ```
 
-这就是我们实际会使用的迭代器类型。其中，`mem`将负责存储最近算得的两个斐波那契值，保证递推计算能够顺利进行；`pos`则负责记录当前的`n`值。
+它就是我们实际使用的迭代器类型。其中，`mem`负责存储最近算得的两个斐波那契值，保证递推计算能够顺利进行；`pos`则负责记录当前的`n`值。
 
-> **附注**：此处选用`u64`是因为，对斐波那契数列来说，它已经“足够大”了。先不必担心其它数列是否适用，我们会提到的。
+> **附注**：此处选用`u64`是因为，对斐波那契数列来说，它已经“足够”了。先不必担心它是否适用于其它数列，我们会提到这一点的。
 
 ```rust
     impl Iterator for Recurrence {
@@ -315,7 +315,7 @@ let fib = {
     }
 ```
 
-这段相对难些。对于具体如何定义`a`，我们稍后再提。`TODO_shuffle_down_and_append`的真面目也将留到稍后揭晓；我们想使之做到：将`next_val`放至数组末尾，并将数组中剩下的元素依次前移一格，丢掉首个元素。
+这段稍微难办一点。对于具体如何定义`a`，我们稍后再提。`TODO_shuffle_down_and_append`的真面目也将留到稍后揭晓；我们想让它做到：将`next_val`放至数组末尾，并将数组中剩下的元素依次前移一格，最后丢掉原先的首元素。
 
 ```rust
 
@@ -364,7 +364,7 @@ for e in fib.take(10) { println!("{}", e) }
 
 > **附注**：是的，这样做的确意味着每次调用该宏时，我们都会重新定义并实现一个`Recurrence`结构。如果`#[inline]`属性应用得当，在最终编译出的二进制文件中，大部分冗余都将被优化掉。
 
-写展开部分时，边写边检查也很有用。如果在过程中发现展开的某些内容需要根据调用的不同发生改变，但这些内容并未被我们的宏语法定义囊括，那就应去考虑清楚该在哪儿引入它们。在此示例中，我们先前用过一次`u64`，但调用端不一定想要这种类型；而且我们的宏语法定义并没有提供其他选择。因此，我们可以做一些修改。
+在写展开部分的过程中时常检查，也是一个有效的技巧。如果在过程中发现，展开中的某些内容需要根据调用的不同发生改变，但这些内容并未被我们的宏语法定义囊括；那就要去考虑，应该怎样去引入它们。在此示例中，我们先前用过一次`u64`，但调用端想要的类型不一定是它；然而我们的宏语法并没有提供其它选择。因此，我们可以做一些修改。
 
 ```rust
 macro_rules! recurrence {
@@ -379,17 +379,17 @@ for e in fib.take(10) { println!("{}", e) }
 # fn main() {}
 ```
 
-我们加入了一个新的捕获`sty`，它应该是一个类型(type)。
+我们加入了一个新的捕获`sty`，它应是一个类型(type)。
 
-> **附注**：在捕获的冒号之后的部分，可以是几种语法匹配候选项之一；如果你不清楚的话。最常用的包括`item`，`expr`和`ty`。完整的解释可在[宏，彻底解析-`macro_rules!`-捕获](mbe-macro-rules.html#捕获)部分找到。
+> **附注**：如果你不清楚的话，在捕获冒号之后的部分，可是几种语法匹配候选项之一。最常用的包括`item`，`expr`和`ty`。完整的解释可在[宏，彻底解析-`macro_rules!`-捕获](mbe-macro-rules.html#捕获)部分找到。
 >
-> 还有一件事值得注意：为方便语言的未来发展，对于跟在某些特定的匹配之后的标记，编译器施加了一些限制。这种情况常常在试图匹配至表达式(expression)或语句(statement)时出现：仅允许`=>`，`,`和`;`这些标记之一跟在它们后面。
+> 还有一点值得注意：为方便语言的未来发展，对于跟在某些特定的匹配之后的标记，编译器施加了一些限制。这种情况常在试图匹配至表达式(expression)或语句(statement)时出现：它们后面仅允许跟进`=>`，`,`和`;`这些标记之一。
 >
 > 完整清单可在[宏，彻底解析-细枝末节-再探捕获与展开](mbe-min-captures-and-expansion-redux.md)找到。
 
 ## 索引与移位
 
-在此节中我们将跳过一些内容，因为它们实际上与宏的联系不甚紧密。我们本节的目标是，让用户可以通过索引`a`来访问数列中先前的值；它应该就像切口一样，让我们能持续访问数列中最近的几个(在本例中，两个)值。
+在此节中我们将略去一些实际上与宏的联系不甚紧密的内容。本节我们的目标是，让用户可以通过索引`a`来访问数列中先前的值。`a`应该如同一个切口，让我们得以持续访问数列中最近几个(在本例中，两个)值。
 
 通过采用封装类，我们可以相对简单地做到这点：
 
@@ -426,7 +426,7 @@ impl<'a> Index<usize> for IndexOffset<'a> {
 let a = IndexOffset { slice: &self.mem, offset: n };
 ```
 
-如何处理`TODO_shuffle_down_and_append`是我们现在唯一剩下的问题了。我没能在标准库中找到可以直接使用的方法，但自己造一个并不难。
+如何处理`TODO_shuffle_down_and_append`是我们现在剩下的唯一问题了。我没能在标准库中寻得可以直接使用的方法，但自己造一个出来并不难。
 
 ```rust
 {
@@ -441,7 +441,7 @@ let a = IndexOffset { slice: &self.mem, offset: n };
 
 它把新值替换至数组末尾，并把其他值向前移动一位。
 
-> **附注**：采用这种做法，将使得我们的代码可同时被用于不可拷贝(non-copyable，即没有实现Copy trait)的类型。
+> **附注**：采用这种做法，将使得我们的代码可同时被用于不可拷贝(non-copyable)的类型。
 
 至此，最终起作用的代码将是：
 
@@ -523,7 +523,7 @@ fn main() {
 }
 ```
 
-注意我们改变了`n`与`a`的声明顺序，同时将它们(与递推表达式一同)用一个新区块包裹了起来。改变声明顺序的理由很明显(`n`得在`a`前被定义才能被`a`使用)。而包裹的理由则是，如果不，借用引用`&self.mem`将会阻止随后的`swap`操作(在某物仍存在其它别名时，无法对其进行改变)。包裹块将确保`&self.mem`产生的借用在彼时过期。
+注意我们改变了`n`与`a`的声明顺序，同时将它们(与递推表达式一同)用一个新区块包裹了起来。改变声明顺序的理由很明显(`n`得在`a`前被定义才能被`a`使用)。而包裹的理由则是：如果不，借用引用`&self.mem`将会阻止随后的`swap`操作(在某物仍存在其它别名时，无法对其进行改变)。包裹区块将确保`&self.mem`产生的借用在彼时过期。
 
 顺带一提，将交换`mem`的代码包进区块里的唯一原因，正是为了缩减`std::mem::swap`的可用范畴，以保持代码整洁。
 
@@ -531,6 +531,7 @@ fn main() {
 
 ```text
 0
+1
 1
 2
 3
@@ -541,7 +542,7 @@ fn main() {
 34
 ```
 
-成功了！现在，让我们把这段代码复制粘贴进宏的展开部分，并在它们原本的位置换上一次宏调用。这样我们得到：
+成功了！现在，让我们把这段代码复制粘贴进宏的展开部分，并把它们原本所在的位置换成一次宏调用。这样我们得到：
 
 ```rust
 macro_rules! recurrence {
@@ -636,13 +637,13 @@ recurrence.rs:69     let fib = recurrence![a[n]: u64 = 0, 1, ..., a[n-1] + a[n-2
 
 > **附注**：有关宏系统如何解读我们的规则，我之前的确撒了点小谎。通常来说，宏系统确实应当如我前述的那般运作，但在这里它没有。`macro_rules`的机制，由此看来，是存在一些小毛病的；我们得记得偶尔去做一些调控，好让它我们期许的那般运作。
 >
-> 在这例情况下，问题有两个。其一，宏系统不清楚什么东西能够组成各式语法元素(如表达式)而什么不能；那是语法解析器的工作。其二，在试图捕获复合语法元素(如表达式)的过程中，它没可能不100%地陷入该捕获中去。
+> 在本例中，问题有两个。其一，宏系统不清楚各式各样的语法元素(如表达式)可由什么样的东西构成，或不能由什么样的东西构成；那是语法解析器的工作。其二，在试图捕获复合语法元素(如表达式)的过程中，它无法不100%地首先陷入该捕获中去。
 >
-> 换句话说，宏系统可以请求语法解析器去试图把某些输入当作表达式来进行解析；但无论语法解析器在此间遇见任何问题，都将中止进程以示回应。目前，宏系统处理这种窘境的唯一方式，就是对任何可能产生这类问题的情境下达禁令。
+> 换句话说，宏系统可以向语法解析器发出请求，让后者试图把某段输入当作表达式来进行解析；但此间无论语法解析器遇见任何问题，都将中止整个进程以示回应。目前，宏系统处理这种窘境的唯一方式，就是对任何可能产生此类问题的情境加以禁止。
 >
-> 好的一面在于，对于这些情况，完全没有任何人感到高兴。关键词`macro`早已被预留，已被未来更加严密的宏系统采用。直到那天来临之前，该做的事我们只好做。
+> 好的一面在于，对于这摊子情况，没有任何人感到高兴。关键词`macro`早已被预留，以备未来更加严密的宏系统使用。直到那天来临之前，我们还是只得该怎么做就怎么做。
 
-还好，修正方案也挺简单：从宏句法中去掉逗号。出于平衡考量，我们将移除`...`双边的逗号：
+还好，修正方案也很简单：从宏句法中去掉逗号即可。出于平衡考量，我们将移除`...`双边的逗号：[^译注1]
 
 ```rust
 macro_rules! recurrence {
@@ -664,9 +665,11 @@ fn main() {
 
 成功！现在，我们该将捕获部分捕获到的内容替代进展开部分中了。
 
+[^译注1]: 在目前的稳定版本(Rust 1.14.0)下，去掉双边逗号后的代码无法通过编译。`rustc`报错“error: `$inits:expr` may be followed by `...`, which is not allowed for `expr` fragments”。解决方案是将这两处逗号替换为其它字面值，如分号；与之前的捕获所用分隔符不同即可。
+
 ### 替换
 
-在宏中替换你捕获到的内容相对简单，通过`$sty:ty`捕获到的内容可以使用`$sty`来替换。好，让我们换掉那些`u64`吧：
+在宏中替换你捕获到的内容相对简单，通过`$sty:ty`捕获到的内容可用`$sty`来替换。好，让我们换掉那些`u64`吧：
 
 ```rust
 macro_rules! recurrence {
@@ -757,9 +760,9 @@ fn main() {
 //                             ^~~~~~~~~~~ changed
 ```
 
-此句与捕获的效果正好相反：将`inits`重复1或多次，用逗号分隔。展开结果与期望一致，我们得到标记序列：`0, 1`。
+此段代码与捕获的效果正好相反：将`inits`捕得的内容排列开来，总共有1或多次，每条内容之间用逗号分隔。展开的结果与期望一致，我们得到标记序列：`0, 1`。
 
-不过，从`inits`转换出字面值`2`需要一些技巧。没有直接有效的方法，但我们可以通过另一个宏做到。我们一步一步来。
+不过，通过`inits`转换出字面值`2`需要一些技巧。没有直接可行的方法，但我们可以通过另一个宏做到。我们一步一步来。
 
 ```rust
 macro_rules! count_exprs {
@@ -769,7 +772,7 @@ macro_rules! count_exprs {
 # fn main() {}
 ```
 
-先做显而易见的情况：未给表达式时，我们期望`count_exprs`展开为字面值`0`。
+先写显而易见的情况：未给表达式时，我们期望`count_exprs`展开为字面值`0`。
 
 ```rust
 macro_rules! count_exprs {
@@ -784,7 +787,7 @@ macro_rules! count_exprs {
 
 > **附注**：你可能已经注意到了，这里的展开部分我用的是括号而非花括号。`macro_rules`其实不关心你用的是什么，只要它成对匹配即可：`( )`，`{ }`或`[ ]`。实际上，宏本身的匹配符(即紧跟宏名称后的匹配符)、语法规则外的匹配符及相应展开部分外的匹配符都可以替换。
 >
-> 在调用宏时它们也可被替换，但有些限制：当宏被以`{...}`或`(...);`形式调用时，它总是会被解析为一个条目(item，比如，`struct`或`fn`声明)。在函数体内这一点很重要，它将消除“解析成表达式”和“解析成语句”之间的歧义。
+> 调用宏时的括号也可被替换，但有些限制：当宏被以`{...}`或`(...);`形式调用时，它总是会被解析为一个条目(item，比如，`struct`或`fn`声明)。在函数体内部时，这一特征很重要，它将消除“解析成表达式”和“解析成语句”之间的歧义。
 
 有一个表达式的情况该怎么办？应该展开为字面值`1`。
 
@@ -821,7 +824,7 @@ macro_rules! count_exprs {
 # }
 ```
 
-We can "simplify" this a little by re-expressing the case of two expressions recursively.
+通过递归调用重新表达，我们可将扩展部分“精简”出来：
 
 ```rust
 macro_rules! count_exprs {
@@ -840,7 +843,7 @@ macro_rules! count_exprs {
 # }
 ```
 
-这样做可行，因为Rust可将`1 + 1`封装成一个常量。那么三种表达式的情况呢？
+这样做可行是因为，Rust可将`1 + 1`合并成一个常量。那么，三种表达式的情况呢？
 
 ```rust
 macro_rules! count_exprs {
@@ -862,9 +865,9 @@ macro_rules! count_exprs {
 # }
 ```
 
-> **附注**：你可能会想，我们是否能反转这些规则的排序。在此情境下，可以。但在有些情况下，宏系统可能会对此挑剔。如果你发现自己的一个多规则宏系统老是报错或者给出期望外的结果，但你发誓它应该能用，试着调一下规则的排序吧。
+> **附注**：你可能会想，我们是否能翻转这些规则的排列顺序。在此情境下，可以。但在有些情况下，宏系统可能会对此挑剔。如果你发现自己有一个包含多项规则的宏系统老是报错，或给出期望外的结果；但你发誓它应该能用，试着调换一下规则的排序吧。
 
-我们希望你现在已经能看出套路。通过匹配至一个表达式加上0或多个表达式并展开成1+a，我们可以减少规则列表的数目：
+我们希望你现在已经能看出规律。通过匹配至一个表达式加上0或多个表达式并展开成1+a，我们可以减少规则列表的数目：
 
 ```rust
 macro_rules! count_exprs {
@@ -885,9 +888,9 @@ macro_rules! count_exprs {
 # }
 ```
 
-> **<abbr title="Just for this example">仅对此例</abbr>**：这并非计数仅有或其最好的方法。稍后你可再研读[计数](blk-counting.md)一节。
+> **<abbr title="Just for this example">仅对此例</abbr>**：这段代码并非计数仅有或其最好的方法。若有兴趣，稍后可以研读[计数](blk-counting.md)一节。
 
-有此工具后，我们可修改`recurrence`以决定`mem`所需的大小。
+有此工具后，我们可再次修改`recurrence`，确定`mem`所需的大小。
 
 ```rust
 // added:
@@ -1044,7 +1047,7 @@ macro_rules! recurrence {
 # }
 ```
 
-现在，试图编译的话...
+现在试图编译的话...
 
 ```text
 recurrence.rs:77:48: 77:49 error: unresolved name `a`
@@ -1075,7 +1078,7 @@ recurrence.rs:77:15: 77:64 note: expansion site
 $ rustc -Z unstable-options --pretty expanded recurrence.rs
 ```
 
-参数`--pretty expanded`将促使`rustc`展开宏，并将输出的AST重新转换为源代码。此选项当前被认定为不稳定，因此我们还要添加`-Z unstable-options`。输出信息(经过格式清理后)如下；特别留意`$recur`被替换的位置：
+参数`--pretty expanded`将促使`rustc`展开宏，并将输出的AST再重转为源代码。此选项当前被认定为是`unstable`，因此我们还要添加`-Z unstable-options`。输出的信息(经过整理格式后)如下；特别留意`$recur`被替换掉的位置：
 
 ```ignore
 #![feature(no_std)]
@@ -1172,7 +1175,7 @@ fn main() {
 }
 ```
 
-呃..这看起来完全可以！如果我们加上几条`#![feature(...)]`属性，并把它送去给一个nightly版本的`rustc`，甚至能够编译成功...什么情况？！
+呃..这看起来完全合法！如果我们加上几条`#![feature(...)]`属性，并把它送去给一个nightly版本的`rustc`，甚至真能通过编译...究竟什么情况？！
 
 > **附注**：上述代码无法通过非nightly版`rustc`编译。这是因为，`println!`宏的展开结果依赖于编译器内部的细节，这些细节尚未被公开稳定化。
 
@@ -1196,7 +1199,7 @@ let four = using_a!(a / 10);
 # fn main() {}
 ```
 
-此宏接受一个表达式，然后把它包进一个定义了变量`a`的区块里。我们随后用它绕个弯子来求`4`。这个例子中实际上存在2种句法上下文，但我们看不见它们。为了帮助说明，我们给每个上下文都上一种不同的颜色。我们从未展开的代码开始，此时仅有一种上下文：
+此宏接受一个表达式，然后把它包进一个定义了变量`a`的区块里。我们随后用它绕个弯子来求`4`。这个例子中实际上存在2种句法上下文，但我们看不见它们。为了帮助说明，我们给每个上下文都上一种不同的颜色。我们从未展开的代码开始上色，此时仅看得见一种上下文：
 
 <pre class="rust rust-example-rendered"><span class="synctx-0"><span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">using_a</span> {&#xa;    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> {&#xa;        {&#xa;            <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="number">42</span>;&#xa;            <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>&#xa;        }&#xa;    }&#xa;}&#xa;&#xa;<span class="kw">let</span> <span class="ident">four</span> <span class="op">=</span> <span class="macro">using_a</span><span class="macro">!</span>(<span class="ident">a</span> <span class="op">/</span> <span class="number">10</span>);</span></pre>
 
@@ -1206,9 +1209,9 @@ let four = using_a!(a / 10);
 
 可以看到，在宏中定义的<code><span class="synctx-1">a</span></code>与调用所提供的<code><span class="synctx-0">a</span></code>处于不同的上下文中。因此，虽然它们的字母表示一致，编译器仍将它们视作完全不同的标识符。
 
-宏的这一特性需要格外留意：它们可能会产生无法编译的AST，但同样的代码手写或者通过`--pretty expanded`转印出来则能够通过编译。
+宏的这一特性需要格外留意：它们可能会产出无法通过编译的AST；但同样的代码，手写或通过`--pretty expanded`转印出来则能够通过编译。
 
-解决方案是，采用适当的句法上下文来捕获标识符。我们沿用上例，并作修改：
+解决方案是，采用合适的句法上下文来捕获标识符。我们沿用上例，并作修改：
 
 <pre class="rust rust-example-rendered"><span class="synctx-0"><span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">using_a</span> {&#xa;    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> {&#xa;        {&#xa;            <span class="kw">let</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="op">=</span> <span class="number">42</span>;&#xa;            <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>&#xa;        }&#xa;    }&#xa;}&#xa;&#xa;<span class="kw">let</span> <span class="ident">four</span> <span class="op">=</span> <span class="macro">using_a</span><span class="macro">!</span>(<span class="ident">a</span>, <span class="ident">a</span> <span class="op">/</span> <span class="number">10</span>);</span></pre>
 

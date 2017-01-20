@@ -53,7 +53,7 @@ macro_rules! gibberish {
 
 ## 捕获
 
-宏模式中还可以包含捕获。这允许输入匹配在某种通用语法基础上进行，并使得结果被捕获进某个变量中。此变量可在输出中被替换使用。Patterns can also contain captures.  These allow input to be matched based on some general grammar category, with the result captured to a variable which can then be substituted into the output.
+宏模式中还可以包含捕获。这允许输入匹配在某种通用语法基础上进行，并使得结果被捕获进某个变量中。此变量可在输出中被替换使用。
 
 捕获由`$`符号紧跟一个标识符(identifier)紧跟一个冒号(`:`)紧跟捕获种类组成。捕获种类须是如下之一：
 

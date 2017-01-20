@@ -1,4 +1,4 @@
-% Trailing separators
+% 尾部分隔符
 
 ```ignore
 macro_rules! match_exprs {
@@ -6,8 +6,8 @@ macro_rules! match_exprs {
 }
 ```
 
-There are various places in the Rust grammar where trailing commas are permitted.  The two common ways of matching (for example) a list of expressions (`$($exprs:expr),*` and `$($exprs:expr,)*`) can deal with *either* no trailing comma *or* a trailing comma, but *not both*.
+Rust语法在很多地方允许尾部分隔符存在。一列(举例说)表达式的常见匹配方式有两种(`$($exprs:expr),*`和`$($exprs:expr,)*`)；一种可处理无尾部分隔符的情况，一种可处理有的情况；但没办法同时匹配到。
 
-Placing a `$(,)*` repetition *after* the main list, however, will capture any number (including zero or one) of trailing commas, or any other separator you may be using.
+不过，在主重复的尾部放置一个`$(,)*`重复，则可以匹配到任意数量(包括0或1)的尾部分隔符。
 
-Note that this cannot be used in all contexts.  If the compiler rejects this, you will likely need to use multiple arms and/or incremental matching.
+注意此模式并非对所有情况都适用。如果被编译器拒绝，可以尝试增加匹配臂和/或使用逐条匹配。

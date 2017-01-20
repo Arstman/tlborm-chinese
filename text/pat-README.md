@@ -1,3 +1,3 @@
-% 模式
+% 常用模式
 
-Parsing and expansion patterns.
+解析与扩展中的常用套路。

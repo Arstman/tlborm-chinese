@@ -1,4 +1,4 @@
-% Incremental TT munchers
+% 标记树撕咬机
 
 ```rust
 macro_rules! mixed_rules {
@@ -32,15 +32,15 @@ macro_rules! mixed_rules {
 # }
 ```
 
-This pattern is perhaps the *most powerful* macro parsing technique available, allowing one to parse grammars of significant complexity.
+此模式可能是最强大的宏解析技巧。通过使用它，一些极其复杂的语法都能得到解析。
 
-A "TT muncher" is a recursive macro that works by incrementally processing its input one step at a time.  At each step, it matches and removes (munches) some sequence of tokens from the start of its input, generates some intermediate output, then recurses on the input tail.
+“标记树撕咬机”是一种递归宏，其工作机制有赖于对输入的顺次、逐步处理。处理过程的每一步中，它都将匹配并移除(“撕咬”掉)输入头部的一列标记，得到一些中间结果，然后再递归地处理输入剩下的尾部。
 
-The reason for "TT" in the name specifically is that the unprocessed part of the input is *always* captured as `$($tail:tt)*`.  This is done as a `tt` repetition is the only way to *losslessly* capture part of a macro's input.
+名称中含有“标记树”，是因为输入中尚未被处理的部分总是被捕获在`$($tail:tt)*`的形式中。之所以如此，是因为只有通过使用`tt`的重复才能做到无损地捕获住提供给宏的部分输入。
 
-The only hard restrictions on TT munchers are those imposed on the macro system as a whole:
+标记树撕咬机仅有的限制，也是整个宏系统的局限：
 
-* You can only match against literals and grammar constructs which can be captured by `macro_rules!`.
-* You cannot match unbalanced groups.
+* 你只能匹配`macro_rules!`允许匹配的字面值和语法结构。
+* 你无法匹配不成对的标记组(unbalanced group)。
 
-It is important, however, to keep the macro recursion limit in mind.  `macro_rules!` does not have *any* form of tail recursion elimination or optimisation.  It is recommended that, when writing a TT muncher, you make reasonable efforts to keep recursion as limited as possible.  This can be done by adding additional rules to account for variation in the input (as opposed to recursion into an intermediate layer), or by making compromises on the input syntax to make using standard repetitions more tractable.
+然而，需要把宏递归的局限性纳入考量。`macro_rules!`没有做任何形式的尾递归消除或优化。在写标记树撕咬机时，推荐多花些功夫，尽可能地限制递归调用的次数。对于输入的变化，增加额外的匹配分支(而非采用中间层并使用递归)；或对输入句法施加限制，以便于对标准重复的记录追踪。

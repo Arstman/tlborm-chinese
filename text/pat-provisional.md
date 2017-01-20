@@ -1,6 +1,6 @@
-% Provisional
+% 临时措施
 
-This section is for patterns or techniques which are of dubious value, or which might be *too* niche for inclusion.
+本节将留给那些价值有待探讨，以及那些可能有缺陷因而不适合出现在正文中的模式与技巧。
 
 ## Abacus Counters
 
@@ -51,7 +51,7 @@ A value of *n* is represented by *n* instances of a specific token stored in a g
 
 In this way, operations on the counter are like flicking tokens back and forth like an abacus.[^abacus]
 
-[^abacus]:
+[^abacus]: 
     This desperately thin reasoning conceals the *real* reason for this name: to avoid having *yet another* thing with "token" in the name.  Talk to your writer about avoiding [semantic satiation](https://en.wikipedia.org/wiki/Semantic_satiation) today!
 
     In fairness, it could *also* have been called ["unary counting"](https://en.wikipedia.org/wiki/Unary_numeral_system).

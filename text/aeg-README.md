@@ -1,5 +1,5 @@
-% Annotated Examples
+% 实例注解
 
-This section contains real-world[^*] macros which have been annotated to explain their design and construction.
+此章节包含一些实际代码环境[^*]中的宏，并附上说明其设计与构造的注解。
 
-[^*]: For the most part.
+[^*]: 大部分情况下是如此

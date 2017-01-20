@@ -1,6 +1,6 @@
-% AST Coercion
+% AST强转
 
-The Rust parser is not very robust in the face of `tt` substitutions.  Problems can arise when the parser is expecting a particular grammar construct and *instead* finds a lump of substituted `tt` tokens.  Rather than attempt to parse them, it will often just *give up*.  In these cases, it is necessary to employ an AST coercion.
+在替换`tt`时，Rust的解析器并不十分可靠。当它期望得到某类特定的语法构造时，如果摆在它面前的是一坨替换后的`tt`标记，就有可能出现问题。解析器常常直接选择死亡，而非尝试去解析它们。在这类情况中，就要用到AST强转。
 
 ```rust
 # #![allow(dead_code)]
@@ -17,10 +17,6 @@ macro_rules! as_stmt { ($s:stmt) => {$s} }
 # }
 ```
 
-These coercions are often used with [push-down accumulation] macros in order to get the parser to treat the final `tt` sequence as a particular kind of grammar construct.
+这些强制变换经常与[下推累积](pat-push-down-accumulation.md)宏一同使用，以使解析器能够将最终输出的`tt`序列当作某类特定的语法构造对待。
 
-Note that this specific set of macros is determined by what macros are allowed to expand to, *not* what they are able to capture.  That is, because macros cannot appear in type position[^issue-27245], you cannot have an `as_ty!` macro.
-
-[push-down accumulation]: pat-push-down-accumulation.html
-
-[^issue-27245]: See [Issue #27245](https://github.com/rust-lang/rust/issues/27245).
+注意，之所以只有这几种强转宏，是因为决定可用强转类型的点在于宏可展开在哪些地方，而不是宏能够捕捉哪些东西。也就是说，因为宏没办法在·`type`处展开[issue-27245](https://github.com/rust-lang/rust/issues/27245)，所以就没办法实现什么`as_ty!`强转。

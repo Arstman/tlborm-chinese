@@ -1,10 +1,10 @@
-% Visibility
+% 可见性
 
-Matching and substituting visibility can be tricky in Rust, due to the absence of any kind of `vis` matcher.
+在Rust中，因为没有类似`vis`的匹配选项，匹配替换可见性标记比较难搞。
 
-## Matching and Ignoring
+## 匹配与忽略
 
-Depending on context, this can be done using a repetition:
+根据上下文，可由重复做到这点：
 
 ```rust
 macro_rules! struct_name {
@@ -16,11 +16,11 @@ macro_rules! struct_name {
 # }
 ```
 
-The above example will match `struct` items that are private or public.  Or `pub pub` (very public), or even `pub pub pub pub` (really very quite public).  The best defense against this is to simply hope that people using the macro are not excessively silly.
+上例将匹配公共可见或本地可见的`struct`条目。但它还能匹配到`pub pub` (十分公开?)甚至是`pub pub pub pub` (真的非常非常公开)。防止这种情况出现的最好方法，只有祈祷调用方没那么多毛病。
 
-## Matching and Substituting
+## 匹配和替换
 
-Because you cannot bind a repetition in and of itself to a variable, there is no way to store the contents of `$(pub)*` such that it can be substituted.  As a result, multiple rules are needed.
+由于不能将重复的内容和其自身同时绑定至一个变量，没有办法将`$(pub)*`的内容直接拿去替换使用。因此，我们只好使用多条规则：
 
 ```rust
 macro_rules! newtype_new {
@@ -50,8 +50,6 @@ macro_rules! as_item { ($i:item) => {$i} }
 # }
 ```
 
-> **See also**: [AST Coercion].
+> **参考**：[AST强转](blk-ast-coercion.md).
 
-In this case, we are using the ability to match an arbitrary sequence of tokens inside a group to match either `()` or `(pub)`, then substitute the contents into the output.  Because the parser will not expect a `tt` repetition expansion in this position, we need to use [AST coercion] to get the expansion to parse correctly.
-
-[AST Coercion]: blk-ast-coercion.html
+这里，我们用到了宏对成组的任意标记的匹配能力，来同时匹配`()`与`(pub)`，并将所得内容替换到输出中。因为在此处解析器不会期望看到一个`tt`重复的展开结果，我们需要使用[AST强转](blk-ast-coercion.md)来使代码正常运作。

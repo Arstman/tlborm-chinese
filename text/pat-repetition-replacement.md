@@ -1,4 +1,4 @@
-% Repetition replacement
+% 重复替代
 
 ```ignore
 macro_rules! replace_expr {
@@ -6,9 +6,9 @@ macro_rules! replace_expr {
 }
 ```
 
-This pattern is where a matched repetition sequence is simply discarded, with the variable being used to instead drive some repeated pattern that is related to the input only in terms of length.
+在此模式中，匹配到的重复序列将被直接丢弃，仅留用它所带来的长度信息；原本标记所在的位置将被替换成某种重复要素。
 
-For example, consider constructing a default instance of a tuple with more than 12 elements (the limit as of Rust 1.2).
+举个例子，考虑如何为一个元素多于12个(Rust 1.2下的最大值)的`tuple`提供默认值。
 
 ```rust
 macro_rules! tuple_default {
@@ -31,6 +31,6 @@ macro_rules! tuple_default {
 # assert_eq!(tuple_default!(i32, bool, String), (0, false, String::new()));
 ```
 
-> **<abbr title="Just for this example">JFTE</abbr>**: we *could* have simply used `$tup_tys::default()`.
+> **<abbr title="Just for this example">仅对此例</abbr>**：我们其实可以直接用`$tup_tys::default()`。
 
-Here, we are not actually *using* the matched types.  Instead, we throw them away and instead replace them with a single, repeated expression.  To put it another way, we don't care *what* the types are, only *how many* there are.
+上例中，我们并未真正使用匹配到的类型。实际上，我们把它抛开了，并用用一个表达式重复替代。换句话说，我们实际关心的不是有哪些类型，而是有多少个类型。

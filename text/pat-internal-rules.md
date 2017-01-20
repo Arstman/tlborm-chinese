@@ -1,4 +1,4 @@
-% Internal rules
+%内用规则
 
 ```rust
 #[macro_export]
@@ -15,17 +15,17 @@ macro_rules! foo {
 # }
 ```
 
-Because macros do not interact with regular item privacy or lookup, any public macro *must* bring with it all other macros that it depends on.  This can lead to pollution of the global macro namespace, or even conflicts with macros from other crates.  It may also cause confusion to users who attempt to *selectively* import macros: they must transitively import *all* macros, including ones that may not be publicly documented.
+宏并不参与标准的条目可见性与查找流程，因此，如果一个公共可见宏在其内部调用了其它宏，那么被调用的宏也将必须公共可见。这会污染全局命名空间，甚至会与来自其它`crate`的宏发生冲突。那些想对宏进行*选择性*导入的用户也会因之感到困惑；他们必须导入*所有*宏——包括公开文档并未记录的——才能使代码正常运转。
 
-A good solution is to conceal what would otherwise be other public macros *inside* the macro being exported.  The above example shows how the common `as_expr!` macro could be moved *into* the publicly exported macro that is using it.
+将这些本不该公共可见的宏封装进需要被导出的宏内部，是一个不错的解决方案。上例展示了如何将常用的`as_expr!`宏移至另一个宏的内部，仅有后者公共可见。
 
-The reason for using `@` is that, as of Rust 1.2, the `@` token is *not* used in prefix position; as such, it cannot conflict with anything.  Other symbols or unique prefixes may be used as desired, but use of `@` has started to become widespread, so using it may aid readers in understanding your code.
+之所以用`@`，是因为在Rust 1.2下，该标记尚无任何在前缀位置的用法；因此，我们的语法定义不会与任何东西撞车。想用的话，别的符号或特有前缀都可以；但`@`的用例已被传播开来，因此，使用它可能更容易帮助读者理解你的代码。
 
-> **Note**: the `@` token was previously used in prefix position to denote a garbage-collected pointer, back when the language used sigils to denote pointer types.  Its only *current* purpose is for binding names to patterns.  For this, however, it is used as an *infix* operator, and thus does not conflict with its use here.
+> **注意**：标记`@`先前曾作为前缀被用于表示被垃圾回收了的指针，那时的语言还在采用各种记号代表指针类型。现在的标记`@`只有一种用法：将名称绑定至模式中。而在此用法中它是中缀运算符，与我们的上述用例并不冲突。
 
-Additionally, internal rules will often come *before* any "bare" rules, to avoid issues with `macro_rules!` incorrectly attempting to parse an internal invocation as something it cannot possibly be, such as an expression.
+还有一点，内用规则通常应排在“真正的”规则之前。这样做可避免`macro_rules!`错把内规调用解析成别的东西，比如表达式。
 
-If exporting at least one internal macro is unavoidable (*e.g.* you have many macros that depend on a common set of utility rules), you can use this pattern to combine *all* internal macros into a single uber-macro.
+如果导出内用规则无法避免(比如说，有一干效用性的宏规则，很多应被导出的宏都同时需要用到它们)，你仍可以采用此规则，将所有内用规则封装到一个“究极”效用宏里去：
 
 ```ignore
 macro_rules! crate_name_util {

@@ -1,4 +1,4 @@
-% Enum Parsing
+% 枚举解析
 
 ```rust
 macro_rules! parse_unitary_variants {
@@ -76,10 +76,6 @@ macro_rules! parse_unitary_variants {
 # }
 ```
 
-This macro shows how you can use an [incremental tt muncher] and [push-down accumulation] to parse the variants of an `enum` where all variants are unitary (*i.e.* they have no payload).  Upon completion, `parse_unitary_variants!` invokes a [callback] macro with the list of variants (plus any other arbitrary arguments supplied).
+此宏展示了如何使用[标记树撕咬机](pat-incremental-tt-munchers.md)与[下推累积](pat-push-down-accumulation.md)来解析类C枚举的变量。完成后的`parse_unitary_variants!`宏将调用一个[回调](pat-callbacks.md)宏，为后者提供枚举中的所有选择(以及任何附加参数)。
 
-This can be modified to also parse `struct` fields, compute tag values for the variants, or even extract the names of *all* variants in an arbitrary `enum`.
-
-[incremental tt muncher]: pat-incremental-tt-munchers.html
-[push-down accumulation]: pat-push-down-accumulation.html
-[callback]: pat-callbacks.html
+经过改造后，此宏将也能用于解析`struct`的域，或为枚举变量计算标签值，甚至是将任意一个枚举中的所有变量名称都提取出来。

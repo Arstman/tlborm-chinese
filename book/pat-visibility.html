@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <title>Visibility</title>
+    <title>可见性</title>
 
     <link rel="stylesheet" type="text/css" href="rustbook.css">
 
@@ -65,39 +65,39 @@
 </li>
 <li><a  href='pim-README.html'><b>3.</b> 宏，实践介绍</a>
 </li>
-<li><a  href='pat-README.html'><b>4.</b> Patterns</a>
+<li><a  href='pat-README.html'><b>4.</b> 常用模式</a>
 <ol class='section'>
-<li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
+<li><a  href='pat-callbacks.html'><b>4.1.</b> 回调</a>
 </li>
-<li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
+<li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> 标记树撕咬机</a>
 </li>
-<li><a  href='pat-internal-rules.html'><b>4.3.</b> Internal Rules</a>
+<li><a  href='pat-internal-rules.html'><b>4.3.</b> 内用规则</a>
 </li>
-<li><a  href='pat-push-down-accumulation.html'><b>4.4.</b> Push-Down Accumulation</a>
+<li><a  href='pat-push-down-accumulation.html'><b>4.4.</b> 下推累积</a>
 </li>
-<li><a  href='pat-repetition-replacement.html'><b>4.5.</b> Repetition Replacement</a>
+<li><a  href='pat-repetition-replacement.html'><b>4.5.</b> 重复替代</a>
 </li>
-<li><a  href='pat-trailing-separators.html'><b>4.6.</b> Trailing Separators</a>
+<li><a  href='pat-trailing-separators.html'><b>4.6.</b> 尾部分隔符</a>
 </li>
-<li><a  href='pat-tt-bundling.html'><b>4.7.</b> TT Bundling</a>
+<li><a  href='pat-tt-bundling.html'><b>4.7.</b> 标记树聚束</a>
 </li>
-<li><a class='active' href='pat-visibility.html'><b>4.8.</b> Visibility</a>
+<li><a class='active' href='pat-visibility.html'><b>4.8.</b> 可见性</a>
 </li>
-<li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
+<li><a  href='pat-provisional.html'><b>4.9.</b> 临时措施</a>
 </li>
 </ol>
 </li>
-<li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
+<li><a  href='blk-README.html'><b>5.</b> 轮子</a>
 <ol class='section'>
-<li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
+<li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST强转</a>
 </li>
-<li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
+<li><a  href='blk-counting.html'><b>5.2.</b> 计数</a>
 </li>
-<li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
+<li><a  href='blk-enum-parsing.html'><b>5.3.</b> 枚举解析</a>
 </li>
 </ol>
 </li>
-<li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
+<li><a  href='aeg-README.html'><b>6.</b> 实例注解</a>
 <ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
@@ -109,21 +109,21 @@
 <div id='page'>
 
 
-    <h1 class="title">Visibility</h1>
-    <p>Matching and substituting visibility can be tricky in Rust, due to the absence of any kind of <code>vis</code> matcher.</p>
+    <h1 class="title">可见性</h1>
+    <p>在Rust中，因为没有类似<code>vis</code>的匹配选项，匹配替换可见性标记比较难搞。</p>
 
-<h2 id='matching-and-ignoring' class='section-header'><a href='#matching-and-ignoring'>Matching and Ignoring</a></h2>
-<p>Depending on context, this can be done using a repetition:</p>
+<h2 id='匹配与忽略' class='section-header'><a href='#匹配与忽略'>匹配与忽略</a></h2>
+<p>根据上下文，可由重复做到这点：</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>struct_name</span> {
     ($(<span class='kw'>pub</span>)<span class='op'>*</span> <span class='kw'>struct</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>:<span class='ident'>ident</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>rest</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> { <span class='macro'>stringify</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>name</span>) };
 }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20struct_name%20%7B%0A%20%20%20%20(%24(pub)*%20struct%20%24name%3Aident%20%24(%24rest%3Att)*)%20%3D%3E%20%7B%20stringify!(%24name)%20%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20assert_eq!(struct_name!(pub%20struct%20Jim%3B)%2C%20%22Jim%22)%3B%0A%7D%0A">Run</a></pre>
 
-<p>The above example will match <code>struct</code> items that are private or public.  Or <code>pub pub</code> (very public), or even <code>pub pub pub pub</code> (really very quite public).  The best defense against this is to simply hope that people using the macro are not excessively silly.</p>
+<p>上例将匹配公共可见或本地可见的<code>struct</code>条目。但它还能匹配到<code>pub pub</code> (十分公开?)甚至是<code>pub pub pub pub</code> (真的非常非常公开)。防止这种情况出现的最好方法，只有祈祷调用方没那么多毛病。</p>
 
-<h2 id='matching-and-substituting' class='section-header'><a href='#matching-and-substituting'>Matching and Substituting</a></h2>
-<p>Because you cannot bind a repetition in and of itself to a variable, there is no way to store the contents of <code>$(pub)*</code> such that it can be substituted.  As a result, multiple rules are needed.</p>
+<h2 id='匹配和替换' class='section-header'><a href='#匹配和替换'>匹配和替换</a></h2>
+<p>由于不能将重复的内容和其自身同时绑定至一个变量，没有办法将<code>$(pub)*</code>的内容直接拿去替换使用。因此，我们只好使用多条规则：</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>newtype_new</span> {
@@ -144,10 +144,10 @@
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>as_item</span> { (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>:<span class='ident'>item</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>i</span>} }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20newtype_new%20%7B%0A%20%20%20%20(struct%20%24name%3Aident(%24t%3Aty)%3B)%20%3D%3E%20%7B%20newtype_new!%20%7B%20()%20struct%20%24name(%24t)%3B%20%7D%20%7D%3B%0A%20%20%20%20(pub%20struct%20%24name%3Aident(%24t%3Aty)%3B)%20%3D%3E%20%7B%20newtype_new!%20%7B%20(pub)%20struct%20%24name(%24t)%3B%20%7D%20%7D%3B%0A%20%20%20%20%0A%20%20%20%20((%24(%24vis%3Att)*)%20struct%20%24name%3Aident(%24t%3Aty)%3B)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20as_item!%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20impl%20%24name%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%24(%24vis)*%20fn%20new(value%3A%20%24t)%20-%3E%20Self%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%24name(value)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%7D%0A%0Amacro_rules!%20as_item%20%7B%20(%24i%3Aitem)%20%3D%3E%20%7B%24i%7D%20%7D%0A%0A%23%5Bderive(Debug%2C%20Eq%2C%20PartialEq)%5D%0Astruct%20Dummy(i32)%3B%0A%0Anewtype_new!%20%7B%20struct%20Dummy(i32)%3B%20%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20assert_eq!(Dummy%3A%3Anew(42)%2C%20Dummy(42))%3B%0A%7D%0A">Run</a></pre>
 
 <blockquote>
-<p><strong>See also</strong>: <a href="blk-ast-coercion.html">AST Coercion</a>.</p>
+<p><strong>参考</strong>：<a href="blk-ast-coercion.html">AST强转</a>.</p>
 </blockquote>
 
-<p>In this case, we are using the ability to match an arbitrary sequence of tokens inside a group to match either <code>()</code> or <code>(pub)</code>, then substitute the contents into the output.  Because the parser will not expect a <code>tt</code> repetition expansion in this position, we need to use <a href="blk-ast-coercion.html">AST coercion</a> to get the expansion to parse correctly.</p>
+<p>这里，我们用到了宏对成组的任意标记的匹配能力，来同时匹配<code>()</code>与<code>(pub)</code>，并将所得内容替换到输出中。因为在此处解析器不会期望看到一个<code>tt</code>重复的展开结果，我们需要使用<a href="blk-ast-coercion.html">AST强转</a>来使代码正常运作。</p>
 
     <script src='rustbook.js'></script>
 </div></div>

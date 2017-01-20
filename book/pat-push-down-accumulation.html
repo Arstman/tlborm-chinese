@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <title>Push-down Accumulation</title>
+    <title>下推累积</title>
 
     <link rel="stylesheet" type="text/css" href="rustbook.css">
 
@@ -65,39 +65,39 @@
 </li>
 <li><a  href='pim-README.html'><b>3.</b> 宏，实践介绍</a>
 </li>
-<li><a  href='pat-README.html'><b>4.</b> Patterns</a>
+<li><a  href='pat-README.html'><b>4.</b> 常用模式</a>
 <ol class='section'>
-<li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
+<li><a  href='pat-callbacks.html'><b>4.1.</b> 回调</a>
 </li>
-<li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
+<li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> 标记树撕咬机</a>
 </li>
-<li><a  href='pat-internal-rules.html'><b>4.3.</b> Internal Rules</a>
+<li><a  href='pat-internal-rules.html'><b>4.3.</b> 内用规则</a>
 </li>
-<li><a class='active' href='pat-push-down-accumulation.html'><b>4.4.</b> Push-Down Accumulation</a>
+<li><a class='active' href='pat-push-down-accumulation.html'><b>4.4.</b> 下推累积</a>
 </li>
-<li><a  href='pat-repetition-replacement.html'><b>4.5.</b> Repetition Replacement</a>
+<li><a  href='pat-repetition-replacement.html'><b>4.5.</b> 重复替代</a>
 </li>
-<li><a  href='pat-trailing-separators.html'><b>4.6.</b> Trailing Separators</a>
+<li><a  href='pat-trailing-separators.html'><b>4.6.</b> 尾部分隔符</a>
 </li>
-<li><a  href='pat-tt-bundling.html'><b>4.7.</b> TT Bundling</a>
+<li><a  href='pat-tt-bundling.html'><b>4.7.</b> 标记树聚束</a>
 </li>
-<li><a  href='pat-visibility.html'><b>4.8.</b> Visibility</a>
+<li><a  href='pat-visibility.html'><b>4.8.</b> 可见性</a>
 </li>
-<li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
+<li><a  href='pat-provisional.html'><b>4.9.</b> 临时措施</a>
 </li>
 </ol>
 </li>
-<li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
+<li><a  href='blk-README.html'><b>5.</b> 轮子</a>
 <ol class='section'>
-<li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
+<li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST强转</a>
 </li>
-<li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
+<li><a  href='blk-counting.html'><b>5.2.</b> 计数</a>
 </li>
-<li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
+<li><a  href='blk-enum-parsing.html'><b>5.3.</b> 枚举解析</a>
 </li>
 </ol>
 </li>
-<li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
+<li><a  href='aeg-README.html'><b>6.</b> 实例注解</a>
 <ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
@@ -109,7 +109,7 @@
 <div id='page'>
 
 
-    <h1 class="title">Push-down Accumulation</h1>
+    <h1 class="title">下推累积</h1>
     
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>init_array</span> {
@@ -132,9 +132,9 @@
 
 <span class='kw'>let</span> <span class='ident'>strings</span>: [<span class='ident'>String</span>; <span class='number'>3</span>] <span class='op'>=</span> <span class='macro'>init_array</span><span class='macro'>!</span>[<span class='ident'>String</span>::<span class='ident'>from</span>(<span class='string'>&quot;hi!&quot;</span>); <span class='number'>3</span>];<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Amacro_rules!%20init_array%20%7B%0A%20%20%20%20(%40accum%20(0%2C%20%24_e%3Aexpr)%20-%3E%20(%24(%24body%3Att)*))%0A%20%20%20%20%20%20%20%20%3D%3E%20%7Binit_array!(%40as_expr%20%5B%24(%24body)*%5D)%7D%3B%0A%20%20%20%20(%40accum%20(1%2C%20%24e%3Aexpr)%20-%3E%20(%24(%24body%3Att)*))%0A%20%20%20%20%20%20%20%20%3D%3E%20%7Binit_array!(%40accum%20(0%2C%20%24e)%20-%3E%20(%24(%24body)*%20%24e%2C))%7D%3B%0A%20%20%20%20(%40accum%20(2%2C%20%24e%3Aexpr)%20-%3E%20(%24(%24body%3Att)*))%0A%20%20%20%20%20%20%20%20%3D%3E%20%7Binit_array!(%40accum%20(1%2C%20%24e)%20-%3E%20(%24(%24body)*%20%24e%2C))%7D%3B%0A%20%20%20%20(%40accum%20(3%2C%20%24e%3Aexpr)%20-%3E%20(%24(%24body%3Att)*))%0A%20%20%20%20%20%20%20%20%3D%3E%20%7Binit_array!(%40accum%20(2%2C%20%24e)%20-%3E%20(%24(%24body)*%20%24e%2C))%7D%3B%0A%20%20%20%20(%40as_expr%20%24e%3Aexpr)%20%3D%3E%20%7B%24e%7D%3B%0A%20%20%20%20%5B%24e%3Aexpr%3B%20%24n%3Att%5D%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20let%20e%20%3D%20%24e%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20init_array!(%40accum%20(%24n%2C%20e.clone())%20-%3E%20())%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%7D%0A%0Alet%20strings%3A%20%5BString%3B%203%5D%20%3D%20init_array!%5BString%3A%3Afrom(%22hi!%22)%3B%203%5D%3B%0Aassert_eq!(format!(%22%7B%3A%3F%7D%22%2C%20strings)%2C%20%22%5B%5C%22hi!%5C%22%2C%20%5C%22hi!%5C%22%2C%20%5C%22hi!%5C%22%5D%22)%3B%0A%7D">Run</a></pre>
 
-<p>All macros in Rust <strong>must</strong> result in a complete, supported syntax element (such as an expression, item, <em>etc.</em>).  This means that it is impossible to have a macro expand to a partial construct.</p>
+<p>在Rust中，所有宏最终必须展开为一个完整、有效的句法元素(比如表达式、条目等等)。这意味着，不可能定义一个最终展开为残缺构造的宏。</p>
 
-<p>One might hope that the above example could be more directly expressed like so:</p>
+<p>有些人可能希望，上例中的宏能被更加直截了当地表述成：</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>init_array</span> {
@@ -150,7 +150,7 @@
     };
 }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Amacro_rules!%20init_array%20%7B%0A%20%20%20%20(%40accum%200%2C%20%24_e%3Aexpr)%20%3D%3E%20%7B%2F*%20empty%20*%2F%7D%3B%0A%20%20%20%20(%40accum%201%2C%20%24e%3Aexpr)%20%3D%3E%20%7B%24e%7D%3B%0A%20%20%20%20(%40accum%202%2C%20%24e%3Aexpr)%20%3D%3E%20%7B%24e%2C%20init_array!(%40accum%201%2C%20%24e)%7D%3B%0A%20%20%20%20(%40accum%203%2C%20%24e%3Aexpr)%20%3D%3E%20%7B%24e%2C%20init_array!(%40accum%202%2C%20%24e)%7D%3B%0A%20%20%20%20%5B%24e%3Aexpr%3B%20%24n%3Att%5D%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20let%20e%20%3D%20%24e%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%5Binit_array!(%40accum%20%24n%2C%20e)%5D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%7D%0A%7D">Run</a></pre>
 
-<p>The expectation is that the expansion of the array literal would proceed as follows:</p>
+<p>他们预期的展开过程如下：</p>
 
 <pre class='rust rust-example-rendered'>
             [<span class='macro'>init_array</span><span class='macro'>!</span>(@<span class='ident'>accum</span> <span class='number'>3</span>, <span class='ident'>e</span>)]
@@ -158,9 +158,9 @@
             [<span class='ident'>e</span>, <span class='ident'>e</span>, <span class='macro'>init_array</span><span class='macro'>!</span>(@<span class='ident'>accum</span> <span class='number'>1</span>, <span class='ident'>e</span>)]
             [<span class='ident'>e</span>, <span class='ident'>e</span>, <span class='ident'>e</span>]<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%5Binit_array!(%40accum%203%2C%20e)%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%5Be%2C%20init_array!(%40accum%202%2C%20e)%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%5Be%2C%20e%2C%20init_array!(%40accum%201%2C%20e)%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%5Be%2C%20e%2C%20e%5D%0A%7D">Run</a></pre>
 
-<p>However, this would require each intermediate step to expand to an incomplete expression.  Even though the intermediate results will never be used <em>outside</em> of a macro context, it is still forbidden.</p>
+<p>然而，这一思路中，每个中间步骤的展开结果都是一个不完整的表达式。即便这些中间结果对外部来说绝不可见，Rust仍然禁止这种用法。</p>
 
-<p>Push-down, however, allows us to incrementally build up a sequence of tokens without needing to actually have a complete construct at any point prior to completion.  In the example given at the top, the sequence of macro invocations proceeds as follows:</p>
+<p>下推累积则使我们得以在完全完成之前毋需考虑构造的完整性，进而累积构建出我们所需的标记序列。顶端给出的示例中，宏调用的展开过程如下：</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>init_array</span><span class='macro'>!</span> { <span class='ident'>String</span>:: <span class='ident'>from</span> ( <span class='string'>&quot;hi!&quot;</span> ) ; <span class='number'>3</span> }
@@ -170,11 +170,11 @@
 <span class='macro'>init_array</span><span class='macro'>!</span> { @ <span class='ident'>accum</span> ( <span class='number'>0</span> , <span class='ident'>e</span>.<span class='ident'>clone</span>() ) <span class='op'>-&gt;</span> ( <span class='ident'>e</span>.<span class='ident'>clone</span>() , <span class='ident'>e</span>.<span class='ident'>clone</span>() , <span class='ident'>e</span>.<span class='ident'>clone</span>() , ) }
 <span class='macro'>init_array</span><span class='macro'>!</span> { @ <span class='ident'>as_expr</span> [ <span class='ident'>e</span>.<span class='ident'>clone</span>() , <span class='ident'>e</span>.<span class='ident'>clone</span>() , <span class='ident'>e</span>.<span class='ident'>clone</span>() , ] }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Ainit_array!%20%7B%20String%3A%3A%20from%20(%20%22hi!%22%20)%20%3B%203%20%7D%0Ainit_array!%20%7B%20%40%20accum%20(%203%20%2C%20e%20.%20clone%20(%20%20)%20)%20-%3E%20(%20%20)%20%7D%0Ainit_array!%20%7B%20%40%20accum%20(%202%20%2C%20e.clone()%20)%20-%3E%20(%20e.clone()%20%2C%20)%20%7D%0Ainit_array!%20%7B%20%40%20accum%20(%201%20%2C%20e.clone()%20)%20-%3E%20(%20e.clone()%20%2C%20e.clone()%20%2C%20)%20%7D%0Ainit_array!%20%7B%20%40%20accum%20(%200%20%2C%20e.clone()%20)%20-%3E%20(%20e.clone()%20%2C%20e.clone()%20%2C%20e.clone()%20%2C%20)%20%7D%0Ainit_array!%20%7B%20%40%20as_expr%20%5B%20e.clone()%20%2C%20e.clone()%20%2C%20e.clone()%20%2C%20%5D%20%7D%0A%7D">Run</a></pre>
 
-<p>As you can see, each layer adds to the accumulated output until the terminating rule finally emits it as a complete construct.</p>
+<p>可以看到，每一步都在累积输出，直到规则完成，给出完整的表达式。</p>
 
-<p>The only critical part of the above formulation is the use of <code>$($body:tt)*</code> to preserve the output without triggering parsing.  The use of <code>($input) -&gt; ($output)</code> is simply a convention adopted to help clarify the behaviour of such macros.</p>
+<p>上述过程的关键点在于，使用<code>$($body:tt)*</code>来保存输出中间值，而不触发其它解析机制。采用<code>($input) -&gt; ($output)</code>的形式仅是出于传统，用以明示此类宏的作用。</p>
 
-<p>Push-down accumulation is frequently used as part of <a href="#incremental-tt-munchers">incremental TT munchers</a>, as it allows arbitrarily complex intermediate results to be constructed.</p>
+<p>由于可以存储任意复杂的中间结果，下推累积在构建<a href="#incremental-tt-munchers">标记树撕咬机</a>的过程中经常被用到。</p>
 
     <script src='rustbook.js'></script>
 </div></div>

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <title>AST Coercion</title>
+    <title>AST强转</title>
 
     <link rel="stylesheet" type="text/css" href="rustbook.css">
 
@@ -65,39 +65,39 @@
 </li>
 <li><a  href='pim-README.html'><b>3.</b> 宏，实践介绍</a>
 </li>
-<li><a  href='pat-README.html'><b>4.</b> Patterns</a>
+<li><a  href='pat-README.html'><b>4.</b> 常用模式</a>
 <ol class='section'>
-<li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
+<li><a  href='pat-callbacks.html'><b>4.1.</b> 回调</a>
 </li>
-<li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
+<li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> 标记树撕咬机</a>
 </li>
-<li><a  href='pat-internal-rules.html'><b>4.3.</b> Internal Rules</a>
+<li><a  href='pat-internal-rules.html'><b>4.3.</b> 内用规则</a>
 </li>
-<li><a  href='pat-push-down-accumulation.html'><b>4.4.</b> Push-Down Accumulation</a>
+<li><a  href='pat-push-down-accumulation.html'><b>4.4.</b> 下推累积</a>
 </li>
-<li><a  href='pat-repetition-replacement.html'><b>4.5.</b> Repetition Replacement</a>
+<li><a  href='pat-repetition-replacement.html'><b>4.5.</b> 重复替代</a>
 </li>
-<li><a  href='pat-trailing-separators.html'><b>4.6.</b> Trailing Separators</a>
+<li><a  href='pat-trailing-separators.html'><b>4.6.</b> 尾部分隔符</a>
 </li>
-<li><a  href='pat-tt-bundling.html'><b>4.7.</b> TT Bundling</a>
+<li><a  href='pat-tt-bundling.html'><b>4.7.</b> 标记树聚束</a>
 </li>
-<li><a  href='pat-visibility.html'><b>4.8.</b> Visibility</a>
+<li><a  href='pat-visibility.html'><b>4.8.</b> 可见性</a>
 </li>
-<li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
+<li><a  href='pat-provisional.html'><b>4.9.</b> 临时措施</a>
 </li>
 </ol>
 </li>
-<li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
+<li><a  href='blk-README.html'><b>5.</b> 轮子</a>
 <ol class='section'>
-<li><a class='active' href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
+<li><a class='active' href='blk-ast-coercion.html'><b>5.1.</b> AST强转</a>
 </li>
-<li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
+<li><a  href='blk-counting.html'><b>5.2.</b> 计数</a>
 </li>
-<li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
+<li><a  href='blk-enum-parsing.html'><b>5.3.</b> 枚举解析</a>
 </li>
 </ol>
 </li>
-<li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
+<li><a  href='aeg-README.html'><b>6.</b> 实例注解</a>
 <ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
@@ -109,8 +109,8 @@
 <div id='page'>
 
 
-    <h1 class="title">AST Coercion</h1>
-    <p>The Rust parser is not very robust in the face of <code>tt</code> substitutions.  Problems can arise when the parser is expecting a particular grammar construct and <em>instead</em> finds a lump of substituted <code>tt</code> tokens.  Rather than attempt to parse them, it will often just <em>give up</em>.  In these cases, it is necessary to employ an AST coercion.</p>
+    <h1 class="title">AST强转</h1>
+    <p>在替换<code>tt</code>时，Rust的解析器并不十分可靠。当它期望得到某类特定的语法构造时，如果摆在它面前的是一坨替换后的<code>tt</code>标记，就有可能出现问题。解析器常常直接选择死亡，而非尝试去解析它们。在这类情况中，就要用到AST强转。</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>as_expr</span> { (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>e</span>} }
@@ -118,20 +118,9 @@
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>as_pat</span>  { (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>p</span>:<span class='ident'>pat</span>) <span class='op'>=&gt;</span>  {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>p</span>} }
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>as_stmt</span> { (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>s</span>:<span class='ident'>stmt</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>s</span>} }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=%23!%5Ballow(dead_code)%5D%0A%0Amacro_rules!%20as_expr%20%7B%20(%24e%3Aexpr)%20%3D%3E%20%7B%24e%7D%20%7D%0Amacro_rules!%20as_item%20%7B%20(%24i%3Aitem)%20%3D%3E%20%7B%24i%7D%20%7D%0Amacro_rules!%20as_pat%20%20%7B%20(%24p%3Apat)%20%3D%3E%20%20%7B%24p%7D%20%7D%0Amacro_rules!%20as_stmt%20%7B%20(%24s%3Astmt)%20%3D%3E%20%7B%24s%7D%20%7D%0A%0Aas_item!%7Bstruct%20Dummy%3B%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20as_stmt!(let%20as_pat!(_)%20%3D%20as_expr!(42))%3B%0A%7D%0A">Run</a></pre>
 
-<p>These coercions are often used with <a href="pat-push-down-accumulation.html">push-down accumulation</a> macros in order to get the parser to treat the final <code>tt</code> sequence as a particular kind of grammar construct.</p>
+<p>这些强制变换经常与<a href="pat-push-down-accumulation.html">下推累积</a>宏一同使用，以使解析器能够将最终输出的<code>tt</code>序列当作某类特定的语法构造对待。</p>
 
-<p>Note that this specific set of macros is determined by what macros are allowed to expand to, <em>not</em> what they are able to capture.  That is, because macros cannot appear in type position<sup id="fnref1"><a href="#fn1" rel="footnote">1</a></sup>, you cannot have an <code>as_ty!</code> macro.</p>
-
-<div class="footnotes">
-<hr>
-<ol>
-
-<li id="fn1">
-<p>See <a href="https://github.com/rust-lang/rust/issues/27245">Issue #27245</a>.&nbsp;<a href="#fnref1" rev="footnote">&#8617;</a></p>
-</li>
-
-</ol>
-</div>
+<p>注意，之所以只有这几种强转宏，是因为决定可用强转类型的点在于宏可展开在哪些地方，而不是宏能够捕捉哪些东西。也就是说，因为宏没办法在·<code>type</code>处展开<a href="https://github.com/rust-lang/rust/issues/27245">issue-27245</a>，所以就没办法实现什么<code>as_ty!</code>强转。</p>
 
     <script src='rustbook.js'></script>
 </div></div>

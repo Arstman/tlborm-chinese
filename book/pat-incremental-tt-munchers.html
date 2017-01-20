@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <title>Incremental TT munchers</title>
+    <title>标记树撕咬机</title>
 
     <link rel="stylesheet" type="text/css" href="rustbook.css">
 
@@ -65,39 +65,39 @@
 </li>
 <li><a  href='pim-README.html'><b>3.</b> 宏，实践介绍</a>
 </li>
-<li><a  href='pat-README.html'><b>4.</b> Patterns</a>
+<li><a  href='pat-README.html'><b>4.</b> 常用模式</a>
 <ol class='section'>
-<li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
+<li><a  href='pat-callbacks.html'><b>4.1.</b> 回调</a>
 </li>
-<li><a class='active' href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
+<li><a class='active' href='pat-incremental-tt-munchers.html'><b>4.2.</b> 标记树撕咬机</a>
 </li>
-<li><a  href='pat-internal-rules.html'><b>4.3.</b> Internal Rules</a>
+<li><a  href='pat-internal-rules.html'><b>4.3.</b> 内用规则</a>
 </li>
-<li><a  href='pat-push-down-accumulation.html'><b>4.4.</b> Push-Down Accumulation</a>
+<li><a  href='pat-push-down-accumulation.html'><b>4.4.</b> 下推累积</a>
 </li>
-<li><a  href='pat-repetition-replacement.html'><b>4.5.</b> Repetition Replacement</a>
+<li><a  href='pat-repetition-replacement.html'><b>4.5.</b> 重复替代</a>
 </li>
-<li><a  href='pat-trailing-separators.html'><b>4.6.</b> Trailing Separators</a>
+<li><a  href='pat-trailing-separators.html'><b>4.6.</b> 尾部分隔符</a>
 </li>
-<li><a  href='pat-tt-bundling.html'><b>4.7.</b> TT Bundling</a>
+<li><a  href='pat-tt-bundling.html'><b>4.7.</b> 标记树聚束</a>
 </li>
-<li><a  href='pat-visibility.html'><b>4.8.</b> Visibility</a>
+<li><a  href='pat-visibility.html'><b>4.8.</b> 可见性</a>
 </li>
-<li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
+<li><a  href='pat-provisional.html'><b>4.9.</b> 临时措施</a>
 </li>
 </ol>
 </li>
-<li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
+<li><a  href='blk-README.html'><b>5.</b> 轮子</a>
 <ol class='section'>
-<li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
+<li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST强转</a>
 </li>
-<li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
+<li><a  href='blk-counting.html'><b>5.2.</b> 计数</a>
 </li>
-<li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
+<li><a  href='blk-enum-parsing.html'><b>5.3.</b> 枚举解析</a>
 </li>
 </ol>
 </li>
-<li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
+<li><a  href='aeg-README.html'><b>6.</b> 实例注解</a>
 <ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
@@ -109,7 +109,7 @@
 <div id='page'>
 
 
-    <h1 class="title">Incremental TT munchers</h1>
+    <h1 class="title">标记树撕咬机</h1>
     
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>mixed_rules</span> {
@@ -129,20 +129,20 @@
     };
 }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20mixed_rules%20%7B%0A%20%20%20%20()%20%3D%3E%20%7B%7D%3B%0A%20%20%20%20(trace%20%24name%3Aident%3B%20%24(%24tail%3Att)*)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20println!(concat!(stringify!(%24name)%2C%20%22%20%3D%20%7B%3A%3F%7D%22)%2C%20%24name)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20mixed_rules!(%24(%24tail)*)%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%20%20%20%20(trace%20%24name%3Aident%20%3D%20%24init%3Aexpr%3B%20%24(%24tail%3Att)*)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20let%20%24name%20%3D%20%24init%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20println!(concat!(stringify!(%24name)%2C%20%22%20%3D%20%7B%3A%3F%7D%22)%2C%20%24name)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20mixed_rules!(%24(%24tail)*)%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20let%20a%20%3D%2042%3B%0A%20%20%20%20let%20b%20%3D%20%22Ho-dee-oh-di-oh-di-oh!%22%3B%0A%20%20%20%20let%20c%20%3D%20(false%2C%202%2C%20'c')%3B%0A%20%20%20%20mixed_rules!(%0A%20%20%20%20%20%20%20%20trace%20a%3B%0A%20%20%20%20%20%20%20%20trace%20b%3B%0A%20%20%20%20%20%20%20%20trace%20c%3B%0A%20%20%20%20%20%20%20%20trace%20b%20%3D%20%22They%20took%20her%20where%20they%20put%20the%20crazies.%22%3B%0A%20%20%20%20%20%20%20%20trace%20b%3B%0A%20%20%20%20)%3B%0A%7D%0A">Run</a></pre>
 
-<p>This pattern is perhaps the <em>most powerful</em> macro parsing technique available, allowing one to parse grammars of significant complexity.</p>
+<p>此模式可能是最强大的宏解析技巧。通过使用它，一些极其复杂的语法都能得到解析。</p>
 
-<p>A &quot;TT muncher&quot; is a recursive macro that works by incrementally processing its input one step at a time.  At each step, it matches and removes (munches) some sequence of tokens from the start of its input, generates some intermediate output, then recurses on the input tail.</p>
+<p>“标记树撕咬机”是一种递归宏，其工作机制有赖于对输入的顺次、逐步处理。处理过程的每一步中，它都将匹配并移除(“撕咬”掉)输入头部的一列标记，得到一些中间结果，然后再递归地处理输入剩下的尾部。</p>
 
-<p>The reason for &quot;TT&quot; in the name specifically is that the unprocessed part of the input is <em>always</em> captured as <code>$($tail:tt)*</code>.  This is done as a <code>tt</code> repetition is the only way to <em>losslessly</em> capture part of a macro&#39;s input.</p>
+<p>名称中含有“标记树”，是因为输入中尚未被处理的部分总是被捕获在<code>$($tail:tt)*</code>的形式中。之所以如此，是因为只有通过使用<code>tt</code>的重复才能做到无损地捕获住提供给宏的部分输入。</p>
 
-<p>The only hard restrictions on TT munchers are those imposed on the macro system as a whole:</p>
+<p>标记树撕咬机仅有的限制，也是整个宏系统的局限：</p>
 
 <ul>
-<li>You can only match against literals and grammar constructs which can be captured by <code>macro_rules!</code>.</li>
-<li>You cannot match unbalanced groups.</li>
+<li>你只能匹配<code>macro_rules!</code>允许匹配的字面值和语法结构。</li>
+<li>你无法匹配不成对的标记组(unbalanced group)。</li>
 </ul>
 
-<p>It is important, however, to keep the macro recursion limit in mind.  <code>macro_rules!</code> does not have <em>any</em> form of tail recursion elimination or optimisation.  It is recommended that, when writing a TT muncher, you make reasonable efforts to keep recursion as limited as possible.  This can be done by adding additional rules to account for variation in the input (as opposed to recursion into an intermediate layer), or by making compromises on the input syntax to make using standard repetitions more tractable.</p>
+<p>然而，需要把宏递归的局限性纳入考量。<code>macro_rules!</code>没有做任何形式的尾递归消除或优化。在写标记树撕咬机时，推荐多花些功夫，尽可能地限制递归调用的次数。对于输入的变化，增加额外的匹配分支(而非采用中间层并使用递归)；或对输入句法施加限制，以便于对标准重复的记录追踪。</p>
 
     <script src='rustbook.js'></script>
 </div></div>

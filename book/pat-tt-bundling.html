@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <title>TT Bundling</title>
+    <title>标记树聚束</title>
 
     <link rel="stylesheet" type="text/css" href="rustbook.css">
 
@@ -65,39 +65,39 @@
 </li>
 <li><a  href='pim-README.html'><b>3.</b> 宏，实践介绍</a>
 </li>
-<li><a  href='pat-README.html'><b>4.</b> Patterns</a>
+<li><a  href='pat-README.html'><b>4.</b> 常用模式</a>
 <ol class='section'>
-<li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
+<li><a  href='pat-callbacks.html'><b>4.1.</b> 回调</a>
 </li>
-<li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
+<li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> 标记树撕咬机</a>
 </li>
-<li><a  href='pat-internal-rules.html'><b>4.3.</b> Internal Rules</a>
+<li><a  href='pat-internal-rules.html'><b>4.3.</b> 内用规则</a>
 </li>
-<li><a  href='pat-push-down-accumulation.html'><b>4.4.</b> Push-Down Accumulation</a>
+<li><a  href='pat-push-down-accumulation.html'><b>4.4.</b> 下推累积</a>
 </li>
-<li><a  href='pat-repetition-replacement.html'><b>4.5.</b> Repetition Replacement</a>
+<li><a  href='pat-repetition-replacement.html'><b>4.5.</b> 重复替代</a>
 </li>
-<li><a  href='pat-trailing-separators.html'><b>4.6.</b> Trailing Separators</a>
+<li><a  href='pat-trailing-separators.html'><b>4.6.</b> 尾部分隔符</a>
 </li>
-<li><a class='active' href='pat-tt-bundling.html'><b>4.7.</b> TT Bundling</a>
+<li><a class='active' href='pat-tt-bundling.html'><b>4.7.</b> 标记树聚束</a>
 </li>
-<li><a  href='pat-visibility.html'><b>4.8.</b> Visibility</a>
+<li><a  href='pat-visibility.html'><b>4.8.</b> 可见性</a>
 </li>
-<li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
+<li><a  href='pat-provisional.html'><b>4.9.</b> 临时措施</a>
 </li>
 </ol>
 </li>
-<li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
+<li><a  href='blk-README.html'><b>5.</b> 轮子</a>
 <ol class='section'>
-<li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
+<li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST强转</a>
 </li>
-<li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
+<li><a  href='blk-counting.html'><b>5.2.</b> 计数</a>
 </li>
-<li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
+<li><a  href='blk-enum-parsing.html'><b>5.3.</b> 枚举解析</a>
 </li>
 </ol>
 </li>
-<li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
+<li><a  href='aeg-README.html'><b>6.</b> 实例注解</a>
 <ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
@@ -109,15 +109,15 @@
 <div id='page'>
 
 
-    <h1 class="title">TT Bundling</h1>
+    <h1 class="title">标记树聚束</h1>
     
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>call_a_or_b_on_tail</span> {
-    ((<span class='ident'>a</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='ident'>b</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>b</span>:<span class='ident'>expr</span>), <span class='ident'>call</span> <span class='ident'>a</span>: $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> {
+    ((<span class='ident'>a</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='ident'>b</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>b</span>:<span class='ident'>expr</span>), <span class='ident'>调a</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> {
         <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>(<span class='macro'>stringify</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>))
     };
 
-    ((<span class='ident'>a</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='ident'>b</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>b</span>:<span class='ident'>expr</span>), <span class='ident'>call</span> <span class='ident'>b</span>: $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> {
+    ((<span class='ident'>a</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>a</span>:<span class='ident'>expr</span>, <span class='ident'>b</span>: <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>b</span>:<span class='ident'>expr</span>), <span class='ident'>调b</span> $(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> {
         <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>b</span>(<span class='macro'>stringify</span><span class='macro'>!</span>($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tail</span>)<span class='kw-2'>*</span>))
     };
 
@@ -139,29 +139,27 @@
     <span class='macro'>assert_eq</span><span class='macro'>!</span>(
         <span class='macro'>call_a_or_b_on_tail</span><span class='macro'>!</span>(
             (<span class='ident'>a</span>: <span class='ident'>compute_len</span>, <span class='ident'>b</span>: <span class='ident'>show_tail</span>),
-            <span class='ident'>the</span> <span class='ident'>recursive</span> <span class='ident'>part</span> <span class='ident'>that</span> <span class='ident'>skips</span> <span class='ident'>over</span> <span class='ident'>all</span> <span class='ident'>these</span>
-            <span class='ident'>tokens</span> <span class='ident'>doesn</span><span class='lifetime'>&#39;t</span> <span class='ident'>much</span> <span class='ident'>care</span> <span class='ident'>whether</span> <span class='ident'>we</span> <span class='ident'>will</span> <span class='ident'>call</span> <span class='ident'>a</span>
-            <span class='ident'>or</span> <span class='ident'>call</span> <span class='ident'>b</span>: <span class='ident'>only</span> <span class='ident'>the</span> <span class='ident'>terminal</span> <span class='ident'>rules</span> <span class='ident'>care</span>.
+            <span class='ident'>规则的</span> <span class='ident'>递归部分</span> <span class='ident'>将</span> <span class='ident'>跳过</span> <span class='ident'>所有这些</span> <span class='ident'>标记</span>
+            <span class='ident'>它们</span> <span class='ident'>并不</span> <span class='ident'>关心</span> <span class='ident'>我们究竟</span> <span class='ident'>调b</span> <span class='ident'>还是</span> <span class='ident'>调a</span>
+            <span class='ident'>只有</span> <span class='ident'>终结规则</span> <span class='ident'>关心</span>
         ),
         <span class='prelude-val'>None</span>
     );
     <span class='macro'>assert_eq</span><span class='macro'>!</span>(
         <span class='macro'>call_a_or_b_on_tail</span><span class='macro'>!</span>(
-            (<span class='ident'>a</span>: <span class='ident'>compute_len</span>, <span class='ident'>b</span>: <span class='ident'>show_tail</span>),
-            <span class='ident'>and</span> <span class='ident'>now</span>, <span class='ident'>to</span> <span class='ident'>justify</span> <span class='ident'>the</span> <span class='ident'>existence</span> <span class='ident'>of</span> <span class='ident'>two</span> <span class='ident'>paths</span>
-            <span class='ident'>we</span> <span class='ident'>will</span> <span class='ident'>also</span> <span class='ident'>call</span> <span class='ident'>a</span>: <span class='ident'>its</span> <span class='ident'>input</span> <span class='ident'>should</span> <span class='ident'>somehow</span>
-            <span class='ident'>be</span> <span class='self'>self</span><span class='op'>-</span><span class='ident'>referential</span>, <span class='ident'>so</span> <span class='kw'>let</span><span class='lifetime'>&#39;s</span> <span class='ident'>make</span> <span class='ident'>it</span> <span class='kw'>return</span>
-            <span class='ident'>some</span> <span class='ident'>ninety</span> <span class='macro'>one</span><span class='macro'>!</span>
-        ),
-        <span class='prelude-val'>Some</span>(<span class='number'>91</span>)
+        (<span class='ident'>a</span>: <span class='ident'>compute_len</span>, <span class='ident'>b</span>: <span class='ident'>show_tail</span>),
+        <span class='ident'>而现在</span> <span class='ident'>为了</span> <span class='ident'>显式</span> <span class='ident'>可能的路径</span> <span class='ident'>有两条</span>
+        <span class='ident'>我们也</span> <span class='ident'>调a</span> <span class='ident'>一哈</span>: <span class='ident'>它的</span> <span class='ident'>输入</span> <span class='ident'>应该</span>
+        <span class='ident'>自我引用</span> <span class='ident'>因此</span> <span class='ident'>我们给它</span> <span class='ident'>一个</span> <span class='number'>72</span>),
+        <span class='prelude-val'>Some</span>(<span class='number'>72</span>)
     );
-}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20call_a_or_b_on_tail%20%7B%0A%20%20%20%20((a%3A%20%24a%3Aexpr%2C%20b%3A%20%24b%3Aexpr)%2C%20call%20a%3A%20%24(%24tail%3Att)*)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%24a(stringify!(%24(%24tail)*))%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20((a%3A%20%24a%3Aexpr%2C%20b%3A%20%24b%3Aexpr)%2C%20call%20b%3A%20%24(%24tail%3Att)*)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%24b(stringify!(%24(%24tail)*))%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20(%24ab%3Att%2C%20%24_skip%3Att%20%24(%24tail%3Att)*)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20call_a_or_b_on_tail!(%24ab%2C%20%24(%24tail)*)%0A%20%20%20%20%7D%3B%0A%7D%0A%0Afn%20compute_len(s%3A%20%26str)%20-%3E%20Option%3Cusize%3E%20%7B%0A%20%20%20%20Some(s.len())%0A%7D%0A%0Afn%20show_tail(s%3A%20%26str)%20-%3E%20Option%3Cusize%3E%20%7B%0A%20%20%20%20println!(%22tail%3A%20%7B%3A%3F%7D%22%2C%20s)%3B%0A%20%20%20%20None%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20assert_eq!(%0A%20%20%20%20%20%20%20%20call_a_or_b_on_tail!(%0A%20%20%20%20%20%20%20%20%20%20%20%20(a%3A%20compute_len%2C%20b%3A%20show_tail)%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20the%20recursive%20part%20that%20skips%20over%20all%20these%0A%20%20%20%20%20%20%20%20%20%20%20%20tokens%20doesn't%20much%20care%20whether%20we%20will%20call%20a%0A%20%20%20%20%20%20%20%20%20%20%20%20or%20call%20b%3A%20only%20the%20terminal%20rules%20care.%0A%20%20%20%20%20%20%20%20)%2C%0A%20%20%20%20%20%20%20%20None%0A%20%20%20%20)%3B%0A%20%20%20%20assert_eq!(%0A%20%20%20%20%20%20%20%20call_a_or_b_on_tail!(%0A%20%20%20%20%20%20%20%20%20%20%20%20(a%3A%20compute_len%2C%20b%3A%20show_tail)%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20and%20now%2C%20to%20justify%20the%20existence%20of%20two%20paths%0A%20%20%20%20%20%20%20%20%20%20%20%20we%20will%20also%20call%20a%3A%20its%20input%20should%20somehow%0A%20%20%20%20%20%20%20%20%20%20%20%20be%20self-referential%2C%20so%20let's%20make%20it%20return%0A%20%20%20%20%20%20%20%20%20%20%20%20some%20ninety%20one!%0A%20%20%20%20%20%20%20%20)%2C%0A%20%20%20%20%20%20%20%20Some(91)%0A%20%20%20%20)%3B%0A%7D%0A">Run</a></pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20call_a_or_b_on_tail%20%7B%0A%20%20%20%20((a%3A%20%24a%3Aexpr%2C%20b%3A%20%24b%3Aexpr)%2C%20%E8%B0%83a%20%24(%24tail%3Att)*)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%24a(stringify!(%24(%24tail)*))%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20((a%3A%20%24a%3Aexpr%2C%20b%3A%20%24b%3Aexpr)%2C%20%E8%B0%83b%20%24(%24tail%3Att)*)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%24b(stringify!(%24(%24tail)*))%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20(%24ab%3Att%2C%20%24_skip%3Att%20%24(%24tail%3Att)*)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20call_a_or_b_on_tail!(%24ab%2C%20%24(%24tail)*)%0A%20%20%20%20%7D%3B%0A%7D%0A%0Afn%20compute_len(s%3A%20%26str)%20-%3E%20Option%3Cusize%3E%20%7B%0A%20%20%20%20Some(s.len())%0A%7D%0A%0Afn%20show_tail(s%3A%20%26str)%20-%3E%20Option%3Cusize%3E%20%7B%0A%20%20%20%20println!(%22tail%3A%20%7B%3A%3F%7D%22%2C%20s)%3B%0A%20%20%20%20None%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20assert_eq!(%0A%20%20%20%20%20%20%20%20call_a_or_b_on_tail!(%0A%20%20%20%20%20%20%20%20%20%20%20%20(a%3A%20compute_len%2C%20b%3A%20show_tail)%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%E8%A7%84%E5%88%99%E7%9A%84%20%E9%80%92%E5%BD%92%E9%83%A8%E5%88%86%20%E5%B0%86%20%E8%B7%B3%E8%BF%87%20%E6%89%80%E6%9C%89%E8%BF%99%E4%BA%9B%20%E6%A0%87%E8%AE%B0%0A%20%20%20%20%20%20%20%20%20%20%20%20%E5%AE%83%E4%BB%AC%20%E5%B9%B6%E4%B8%8D%20%E5%85%B3%E5%BF%83%20%E6%88%91%E4%BB%AC%E7%A9%B6%E7%AB%9F%20%E8%B0%83b%20%E8%BF%98%E6%98%AF%20%E8%B0%83a%0A%20%20%20%20%20%20%20%20%20%20%20%20%E5%8F%AA%E6%9C%89%20%E7%BB%88%E7%BB%93%E8%A7%84%E5%88%99%20%E5%85%B3%E5%BF%83%0A%20%20%20%20%20%20%20%20)%2C%0A%20%20%20%20%20%20%20%20None%0A%20%20%20%20)%3B%0A%20%20%20%20assert_eq!(%0A%20%20%20%20%20%20%20%20call_a_or_b_on_tail!(%0A%20%20%20%20%20%20%20%20(a%3A%20compute_len%2C%20b%3A%20show_tail)%2C%0A%20%20%20%20%20%20%20%20%E8%80%8C%E7%8E%B0%E5%9C%A8%20%E4%B8%BA%E4%BA%86%20%E6%98%BE%E5%BC%8F%20%E5%8F%AF%E8%83%BD%E7%9A%84%E8%B7%AF%E5%BE%84%20%E6%9C%89%E4%B8%A4%E6%9D%A1%0A%20%20%20%20%20%20%20%20%E6%88%91%E4%BB%AC%E4%B9%9F%20%E8%B0%83a%20%E4%B8%80%E5%93%88%3A%20%E5%AE%83%E7%9A%84%20%E8%BE%93%E5%85%A5%20%E5%BA%94%E8%AF%A5%0A%20%20%20%20%20%20%20%20%E8%87%AA%E6%88%91%E5%BC%95%E7%94%A8%20%E5%9B%A0%E6%AD%A4%20%E6%88%91%E4%BB%AC%E7%BB%99%E5%AE%83%20%E4%B8%80%E4%B8%AA%2072)%2C%0A%20%20%20%20%20%20%20%20Some(72)%0A%20%20%20%20)%3B%0A%7D%0A">Run</a></pre>
 
-<p>In particularly complex recursive macros, a large number of arguments may be needed in order to carry identifiers and expressions to successive layers.  However, depending on the implementation there may be many intermediate layers which need to forward these arguments, but do not need to <em>use</em> them.</p>
+<p>在十分复杂的递归宏中，可能需要非常多的参数，才足以在每层调用之间传递必要的标识符与表达式。然而，根据实现上的差异，可能存在许多这样的中间层，它们转发了这些参数，但并没有用到。</p>
 
-<p>As such, it can be very useful to bundle all such arguments together into a single TT by placing them in a group.  This allows layers which do not need to use the arguments to simply capture and substitute a single <code>tt</code>, rather than having to exactly capture and substitute the entire argument group.</p>
+<p>因此，将所有这些参数聚成一束，通过分组将其放进单独一棵标记树里；可以省事许多。这样一来，那些用不到这些参数的递归层可以直接捕获并替换这棵标记树，而不需要把整组参数完完全全准准确确地捕获替换掉。</p>
 
-<p>The example above bundles the <code>$a</code> and <code>$b</code> expressions into a group which can then be forwarded as a single <code>tt</code> by the recursive rule.  This group is then destructured by the terminal rules to access the expressions.</p>
+<p>上面的例子把表达式<code>$a</code>和<code>$b</code>聚束，然后作为一棵<code>tt</code>交由递归规则转发。随后，终结规则将这组标记打开，并访问其中的表达式。</p>
 
     <script src='rustbook.js'></script>
 </div></div>

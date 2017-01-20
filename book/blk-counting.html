@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <title>Counting</title>
+    <title>计数</title>
 
     <link rel="stylesheet" type="text/css" href="rustbook.css">
 
@@ -65,39 +65,39 @@
 </li>
 <li><a  href='pim-README.html'><b>3.</b> 宏，实践介绍</a>
 </li>
-<li><a  href='pat-README.html'><b>4.</b> Patterns</a>
+<li><a  href='pat-README.html'><b>4.</b> 常用模式</a>
 <ol class='section'>
-<li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
+<li><a  href='pat-callbacks.html'><b>4.1.</b> 回调</a>
 </li>
-<li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
+<li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> 标记树撕咬机</a>
 </li>
-<li><a  href='pat-internal-rules.html'><b>4.3.</b> Internal Rules</a>
+<li><a  href='pat-internal-rules.html'><b>4.3.</b> 内用规则</a>
 </li>
-<li><a  href='pat-push-down-accumulation.html'><b>4.4.</b> Push-Down Accumulation</a>
+<li><a  href='pat-push-down-accumulation.html'><b>4.4.</b> 下推累积</a>
 </li>
-<li><a  href='pat-repetition-replacement.html'><b>4.5.</b> Repetition Replacement</a>
+<li><a  href='pat-repetition-replacement.html'><b>4.5.</b> 重复替代</a>
 </li>
-<li><a  href='pat-trailing-separators.html'><b>4.6.</b> Trailing Separators</a>
+<li><a  href='pat-trailing-separators.html'><b>4.6.</b> 尾部分隔符</a>
 </li>
-<li><a  href='pat-tt-bundling.html'><b>4.7.</b> TT Bundling</a>
+<li><a  href='pat-tt-bundling.html'><b>4.7.</b> 标记树聚束</a>
 </li>
-<li><a  href='pat-visibility.html'><b>4.8.</b> Visibility</a>
+<li><a  href='pat-visibility.html'><b>4.8.</b> 可见性</a>
 </li>
-<li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
+<li><a  href='pat-provisional.html'><b>4.9.</b> 临时措施</a>
 </li>
 </ol>
 </li>
-<li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
+<li><a  href='blk-README.html'><b>5.</b> 轮子</a>
 <ol class='section'>
-<li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
+<li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST强转</a>
 </li>
-<li><a class='active' href='blk-counting.html'><b>5.2.</b> Counting</a>
+<li><a class='active' href='blk-counting.html'><b>5.2.</b> 计数</a>
 </li>
-<li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
+<li><a  href='blk-enum-parsing.html'><b>5.3.</b> 枚举解析</a>
 </li>
 </ol>
 </li>
-<li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
+<li><a  href='aeg-README.html'><b>6.</b> 实例注解</a>
 <ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
@@ -109,10 +109,10 @@
 <div id='page'>
 
 
-    <h1 class="title">Counting</h1>
+    <h1 class="title">计数</h1>
     
-<h2 id='repetition-with-replacement' class='section-header'><a href='#repetition-with-replacement'>Repetition with replacement</a></h2>
-<p>Counting things in a macro is a surprisingly tricky task.  The simplest way is to use replacement with a repetition match.</p>
+<h2 id='重复替代' class='section-header'><a href='#重复替代'>重复替代</a></h2>
+<p>在宏中计数是一项让人吃惊地难搞的活儿。最简单的方式是采用重复替代。</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>replace_expr</span> {
@@ -123,15 +123,15 @@
     ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tts</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> {<span class='number'>0usize</span> $(<span class='op'>+</span> <span class='macro'>replace_expr</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tts</span> <span class='number'>1usize</span>))<span class='kw-2'>*</span>};
 }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20replace_expr%20%7B%0A%20%20%20%20(%24_t%3Att%20%24sub%3Aexpr)%20%3D%3E%20%7B%24sub%7D%3B%0A%7D%0A%0Amacro_rules!%20count_tts%20%7B%0A%20%20%20%20(%24(%24tts%3Att)*)%20%3D%3E%20%7B0usize%20%24(%2B%20replace_expr!(%24tts%201usize))*%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20assert_eq!(count_tts!(0%201%202)%2C%203)%3B%0A%7D%0A">Run</a></pre>
 
-<p>This is a fine approach for smallish numbers, but will likely <em>crash the compiler</em> with inputs of around 500 or so tokens.  Consider that the output will look something like this:</p>
+<p>对于小数目来说，这方法不错，但当输入量到达500标记附近时，编译器将被击溃。想想吧，输出的结果将类似：</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='number'>0usize</span> <span class='op'>+</span> <span class='number'>1usize</span> <span class='op'>+</span> <span class='comment'>/* ~500 `+ 1usize`s */</span> <span class='op'>+</span> <span class='number'>1usize</span><a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0A0usize%20%2B%201usize%20%2B%20%2F*%20~500%20%60%2B%201usize%60s%20*%2F%20%2B%201usize%0A%7D">Run</a></pre>
 
-<p>The compiler must parse this into an AST, which will produce what is effectively a perfectly unbalanced binary tree 500+ levels deep.</p>
+<p>编译器必须把这一大串解析成一棵AST，那可会是一棵完美失衡的500多级深的二叉树。</p>
 
-<h2 id='recursion' class='section-header'><a href='#recursion'>Recursion</a></h2>
-<p>An older approach is to use recursion.</p>
+<h2 id='递归' class='section-header'><a href='#递归'>递归</a></h2>
+<p>递归是个老套路。</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>count_tts</span> {
@@ -140,12 +140,12 @@
 }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20count_tts%20%7B%0A%20%20%20%20()%20%3D%3E%20%7B0usize%7D%3B%0A%20%20%20%20(%24_head%3Att%20%24(%24tail%3Att)*)%20%3D%3E%20%7B1usize%20%2B%20count_tts!(%24(%24tail)*)%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20assert_eq!(count_tts!(0%201%202)%2C%203)%3B%0A%7D%0A">Run</a></pre>
 
 <blockquote>
-<p><strong>Note</strong>: As of <code>rustc</code> 1.2, the compiler has <em>grevious</em> performance problems when large numbers of integer literals of unknown type must undergo inference.  We are using explicitly <code>usize</code>-typed literals here to avoid that.</p>
+<p><strong>注意</strong>：对于<code>rustc</code>1.2来说，很不幸，编译器在处理大数量的类型未知的整型字面值时将会出现性能问题。我们此处显式采用<code>usize</code>类型就是为了避免这种不幸。</p>
 
-<p>If this is not suitable (such as when the type must be substitutable), you can help matters by using <code>as</code> (<em>e.g.</em> <code>0 as $ty</code>, <code>1 as $ty</code>, <em>etc.</em>).</p>
+<p>如果这样做并不合适(比如说，当类型必须可替换时)，可通过<code>as</code>来减轻问题。(比如，<code>0 as $ty</code>, <code>1 as $ty</code>等)。</p>
 </blockquote>
 
-<p>This <em>works</em>, but will trivially exceed the recursion limit.  Unlike the repetition approach, you can extend the input size by matching multiple tokens at once.</p>
+<p>这方法管用，但很快就会超出宏递归的次数限制。与重复替换不同的是，可通过增加匹配分支来增加可处理的输入面值。</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>count_tts</span> {
@@ -185,19 +185,19 @@
         ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
         ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
         
-        <span class='comment'>// Repetition breaks somewhere after this</span>
+        <span class='comment'>// 重复替换手段差不多将在此处崩溃</span>
         ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
         ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
 
         ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
         ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,, ,,,,,,,,,,
     ));
-}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20count_tts%20%7B%0A%20%20%20%20(%24_a%3Att%20%24_b%3Att%20%24_c%3Att%20%24_d%3Att%20%24_e%3Att%0A%20%20%20%20%20%24_f%3Att%20%24_g%3Att%20%24_h%3Att%20%24_i%3Att%20%24_j%3Att%0A%20%20%20%20%20%24_k%3Att%20%24_l%3Att%20%24_m%3Att%20%24_n%3Att%20%24_o%3Att%0A%20%20%20%20%20%24_p%3Att%20%24_q%3Att%20%24_r%3Att%20%24_s%3Att%20%24_t%3Att%0A%20%20%20%20%20%24(%24tail%3Att)*)%0A%20%20%20%20%20%20%20%20%3D%3E%20%7B20usize%20%2B%20count_tts!(%24(%24tail)*)%7D%3B%0A%20%20%20%20(%24_a%3Att%20%24_b%3Att%20%24_c%3Att%20%24_d%3Att%20%24_e%3Att%0A%20%20%20%20%20%24_f%3Att%20%24_g%3Att%20%24_h%3Att%20%24_i%3Att%20%24_j%3Att%0A%20%20%20%20%20%24(%24tail%3Att)*)%0A%20%20%20%20%20%20%20%20%3D%3E%20%7B10usize%20%2B%20count_tts!(%24(%24tail)*)%7D%3B%0A%20%20%20%20(%24_a%3Att%20%24_b%3Att%20%24_c%3Att%20%24_d%3Att%20%24_e%3Att%0A%20%20%20%20%20%24(%24tail%3Att)*)%0A%20%20%20%20%20%20%20%20%3D%3E%20%7B5usize%20%2B%20count_tts!(%24(%24tail)*)%7D%3B%0A%20%20%20%20(%24_a%3Att%0A%20%20%20%20%20%24(%24tail%3Att)*)%0A%20%20%20%20%20%20%20%20%3D%3E%20%7B1usize%20%2B%20count_tts!(%24(%24tail)*)%7D%3B%0A%20%20%20%20()%20%3D%3E%20%7B0usize%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20assert_eq!(700%2C%20count_tts!(%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%2F%2F%20Repetition%20breaks%20somewhere%20after%20this%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20))%3B%0A%7D%0A">Run</a></pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20count_tts%20%7B%0A%20%20%20%20(%24_a%3Att%20%24_b%3Att%20%24_c%3Att%20%24_d%3Att%20%24_e%3Att%0A%20%20%20%20%20%24_f%3Att%20%24_g%3Att%20%24_h%3Att%20%24_i%3Att%20%24_j%3Att%0A%20%20%20%20%20%24_k%3Att%20%24_l%3Att%20%24_m%3Att%20%24_n%3Att%20%24_o%3Att%0A%20%20%20%20%20%24_p%3Att%20%24_q%3Att%20%24_r%3Att%20%24_s%3Att%20%24_t%3Att%0A%20%20%20%20%20%24(%24tail%3Att)*)%0A%20%20%20%20%20%20%20%20%3D%3E%20%7B20usize%20%2B%20count_tts!(%24(%24tail)*)%7D%3B%0A%20%20%20%20(%24_a%3Att%20%24_b%3Att%20%24_c%3Att%20%24_d%3Att%20%24_e%3Att%0A%20%20%20%20%20%24_f%3Att%20%24_g%3Att%20%24_h%3Att%20%24_i%3Att%20%24_j%3Att%0A%20%20%20%20%20%24(%24tail%3Att)*)%0A%20%20%20%20%20%20%20%20%3D%3E%20%7B10usize%20%2B%20count_tts!(%24(%24tail)*)%7D%3B%0A%20%20%20%20(%24_a%3Att%20%24_b%3Att%20%24_c%3Att%20%24_d%3Att%20%24_e%3Att%0A%20%20%20%20%20%24(%24tail%3Att)*)%0A%20%20%20%20%20%20%20%20%3D%3E%20%7B5usize%20%2B%20count_tts!(%24(%24tail)*)%7D%3B%0A%20%20%20%20(%24_a%3Att%0A%20%20%20%20%20%24(%24tail%3Att)*)%0A%20%20%20%20%20%20%20%20%3D%3E%20%7B1usize%20%2B%20count_tts!(%24(%24tail)*)%7D%3B%0A%20%20%20%20()%20%3D%3E%20%7B0usize%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20assert_eq!(700%2C%20count_tts!(%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%2F%2F%20%E9%87%8D%E5%A4%8D%E6%9B%BF%E6%8D%A2%E6%89%8B%E6%AE%B5%E5%B7%AE%E4%B8%8D%E5%A4%9A%E5%B0%86%E5%9C%A8%E6%AD%A4%E5%A4%84%E5%B4%A9%E6%BA%83%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20%20%20%20%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%20%2C%2C%2C%2C%2C%2C%2C%2C%2C%2C%0A%20%20%20%20))%3B%0A%7D%0A">Run</a></pre>
 
-<p>This particular formulation will work up to ~1,200 tokens.</p>
+<p>我们列出的这种形式可以处理差不多1,200个标记。</p>
 
-<h2 id='slice-length' class='section-header'><a href='#slice-length'>Slice length</a></h2>
-<p>A third approach is to help the compiler construct a shallow AST that won&#39;t lead to a stack overflow.  This can be done by constructing an array literal and calling the <code>len</code> method.</p>
+<h2 id='切片长度' class='section-header'><a href='#切片长度'>切片长度</a></h2>
+<p>第三种方法，是帮助编译器构建一个深度较小的AST，以避免栈溢出。可以通过新建数列，并调用其<code>len</code>方法来做到。</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>replace_expr</span> {
@@ -208,12 +208,12 @@
     ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tts</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> {<span class='op'>&lt;</span>[()]<span class='op'>&gt;</span>::<span class='ident'>len</span>(<span class='kw-2'>&amp;</span>[$(<span class='macro'>replace_expr</span><span class='macro'>!</span>(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>tts</span> ())),<span class='kw-2'>*</span>])};
 }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20replace_expr%20%7B%0A%20%20%20%20(%24_t%3Att%20%24sub%3Aexpr)%20%3D%3E%20%7B%24sub%7D%3B%0A%7D%0A%0Amacro_rules!%20count_tts%20%7B%0A%20%20%20%20(%24(%24tts%3Att)*)%20%3D%3E%20%7B%3C%5B()%5D%3E%3A%3Alen(%26%5B%24(replace_expr!(%24tts%20()))%2C*%5D)%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20assert_eq!(count_tts!(0%201%202)%2C%203)%3B%0A%7D%0A">Run</a></pre>
 
-<p>This has been tested to work up to 10,000 tokens, and can probably go much higher.  The <em>downside</em> is that as of Rust 1.2, this <em>cannot</em> be used to produce a constant expression.  Although the result can be optimised to a simple constant (in debug builds it compiles down to a load from memory), it still cannot be used in constant positions (such as the value of <code>const</code>s, or a fixed array&#39;s size).</p>
+<p>经过测试，这种方法可处理高达10,000个标记数，可能还能多上不少。缺点是，就Rust 1.2来说，没法拿它生成常量表达式。即便结果可以被优化成一个简单的常数(在<code>debug build</code>里得到的编译结果仅是一次内存载入)，它仍然无法被用在常量位置(如<code>const</code>值或定长数组的长度值)。</p>
 
-<p>However, if a non-constant count is acceptable, this is very much the preferred method.</p>
+<p>不过，如果非常量计数够用的话，此方法很大程度上是上选。</p>
 
-<h2 id='enum-counting' class='section-header'><a href='#enum-counting'>Enum counting</a></h2>
-<p>This approach can be used where you need to count a set of mutually distinct identifiers.  Additionally, the result of this approach is usable as a constant.</p>
+<h2 id='枚举计数' class='section-header'><a href='#枚举计数'>枚举计数</a></h2>
+<p>当你需要计互不相同的标识符的数量时，可以用到此方法。结果还可被用作常量。</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>count_idents</span> {
@@ -227,9 +227,7 @@
     };
 }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20count_idents%20%7B%0A%20%20%20%20(%24(%24idents%3Aident)%2C*%20%24(%2C)*)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%23%5Ballow(dead_code%2C%20non_camel_case_types)%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20enum%20Idents%20%7B%20%24(%24idents%2C)*%20__CountIdentsLast%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20COUNT%3A%20u32%20%3D%20Idents%3A%3A__CountIdentsLast%20as%20u32%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20COUNT%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20const%20COUNT%3A%20u32%20%3D%20count_idents!(A%2C%20B%2C%20C)%3B%0A%20%20%20%20assert_eq!(COUNT%2C%203)%3B%0A%7D%0A">Run</a></pre>
 
-<p>This method does have two drawbacks.  First, as implied above, it can <em>only</em> count valid identifiers (which are also not keywords), and it does not allow those identifiers to repeat.</p>
-
-<p>Secondly, this approach is <em>not</em> hygienic, meaning that if whatever identifier you use in place of <code>__CountIdentsLast</code> is provided as input, the macro will fail due to the duplicate variants in the <code>enum</code>.</p>
+<p>此方法的确有两大缺陷。其一，如上所述，它仅能被用于数有效的标识符(同时还不能是关键词)，而且它不允许那些标识符有重复。其二，此方法不具备卫生性；就是说如果你的末位标识符(在<code>__CountIdentsLast</code>位置的标识符)的字面值也是输入之一，宏调用就会失败，因为<code>enum</code>中包含重复变量。</p>
 
     <script src='rustbook.js'></script>
 </div></div>

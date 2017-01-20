@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <title>Internal rules</title>
+    <title>内用规则</title>
 
     <link rel="stylesheet" type="text/css" href="rustbook.css">
 
@@ -65,39 +65,39 @@
 </li>
 <li><a  href='pim-README.html'><b>3.</b> 宏，实践介绍</a>
 </li>
-<li><a  href='pat-README.html'><b>4.</b> Patterns</a>
+<li><a  href='pat-README.html'><b>4.</b> 常用模式</a>
 <ol class='section'>
-<li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
+<li><a  href='pat-callbacks.html'><b>4.1.</b> 回调</a>
 </li>
-<li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
+<li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> 标记树撕咬机</a>
 </li>
-<li><a class='active' href='pat-internal-rules.html'><b>4.3.</b> Internal Rules</a>
+<li><a class='active' href='pat-internal-rules.html'><b>4.3.</b> 内用规则</a>
 </li>
-<li><a  href='pat-push-down-accumulation.html'><b>4.4.</b> Push-Down Accumulation</a>
+<li><a  href='pat-push-down-accumulation.html'><b>4.4.</b> 下推累积</a>
 </li>
-<li><a  href='pat-repetition-replacement.html'><b>4.5.</b> Repetition Replacement</a>
+<li><a  href='pat-repetition-replacement.html'><b>4.5.</b> 重复替代</a>
 </li>
-<li><a  href='pat-trailing-separators.html'><b>4.6.</b> Trailing Separators</a>
+<li><a  href='pat-trailing-separators.html'><b>4.6.</b> 尾部分隔符</a>
 </li>
-<li><a  href='pat-tt-bundling.html'><b>4.7.</b> TT Bundling</a>
+<li><a  href='pat-tt-bundling.html'><b>4.7.</b> 标记树聚束</a>
 </li>
-<li><a  href='pat-visibility.html'><b>4.8.</b> Visibility</a>
+<li><a  href='pat-visibility.html'><b>4.8.</b> 可见性</a>
 </li>
-<li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
+<li><a  href='pat-provisional.html'><b>4.9.</b> 临时措施</a>
 </li>
 </ol>
 </li>
-<li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
+<li><a  href='blk-README.html'><b>5.</b> 轮子</a>
 <ol class='section'>
-<li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
+<li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST强转</a>
 </li>
-<li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
+<li><a  href='blk-counting.html'><b>5.2.</b> 计数</a>
 </li>
-<li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
+<li><a  href='blk-enum-parsing.html'><b>5.3.</b> 枚举解析</a>
 </li>
 </ol>
 </li>
-<li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
+<li><a  href='aeg-README.html'><b>6.</b> 实例注解</a>
 <ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
@@ -109,7 +109,7 @@
 <div id='page'>
 
 
-    <h1 class="title">Internal rules</h1>
+    <h1 class="title">内用规则</h1>
     
 <pre class='rust rust-example-rendered'>
 <span class='attribute'>#[<span class='ident'>macro_export</span>]</span>
@@ -121,19 +121,19 @@
     };
 }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=%23%5Bmacro_export%5D%0Amacro_rules!%20foo%20%7B%0A%20%20%20%20(%40as_expr%20%24e%3Aexpr)%20%3D%3E%20%7B%24e%7D%3B%0A%0A%20%20%20%20(%24(%24tts%3Att)*)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20foo!(%40as_expr%20%24(%24tts)*)%0A%20%20%20%20%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20assert_eq!(foo!(42)%2C%2042)%3B%0A%7D%0A">Run</a></pre>
 
-<p>Because macros do not interact with regular item privacy or lookup, any public macro <em>must</em> bring with it all other macros that it depends on.  This can lead to pollution of the global macro namespace, or even conflicts with macros from other crates.  It may also cause confusion to users who attempt to <em>selectively</em> import macros: they must transitively import <em>all</em> macros, including ones that may not be publicly documented.</p>
+<p>宏并不参与标准的条目可见性与查找流程，因此，如果一个公共可见宏在其内部调用了其它宏，那么被调用的宏也将必须公共可见。这会污染全局命名空间，甚至会与来自其它<code>crate</code>的宏发生冲突。那些想对宏进行*选择性*导入的用户也会因之感到困惑；他们必须导入*所有*宏——包括公开文档并未记录的——才能使代码正常运转。</p>
 
-<p>A good solution is to conceal what would otherwise be other public macros <em>inside</em> the macro being exported.  The above example shows how the common <code>as_expr!</code> macro could be moved <em>into</em> the publicly exported macro that is using it.</p>
+<p>将这些本不该公共可见的宏封装进需要被导出的宏内部，是一个不错的解决方案。上例展示了如何将常用的<code>as_expr!</code>宏移至另一个宏的内部，仅有后者公共可见。</p>
 
-<p>The reason for using <code>@</code> is that, as of Rust 1.2, the <code>@</code> token is <em>not</em> used in prefix position; as such, it cannot conflict with anything.  Other symbols or unique prefixes may be used as desired, but use of <code>@</code> has started to become widespread, so using it may aid readers in understanding your code.</p>
+<p>之所以用<code>@</code>，是因为在Rust 1.2下，该标记尚无任何在前缀位置的用法；因此，我们的语法定义不会与任何东西撞车。想用的话，别的符号或特有前缀都可以；但<code>@</code>的用例已被传播开来，因此，使用它可能更容易帮助读者理解你的代码。</p>
 
 <blockquote>
-<p><strong>Note</strong>: the <code>@</code> token was previously used in prefix position to denote a garbage-collected pointer, back when the language used sigils to denote pointer types.  Its only <em>current</em> purpose is for binding names to patterns.  For this, however, it is used as an <em>infix</em> operator, and thus does not conflict with its use here.</p>
+<p><strong>注意</strong>：标记<code>@</code>先前曾作为前缀被用于表示被垃圾回收了的指针，那时的语言还在采用各种记号代表指针类型。现在的标记<code>@</code>只有一种用法：将名称绑定至模式中。而在此用法中它是中缀运算符，与我们的上述用例并不冲突。</p>
 </blockquote>
 
-<p>Additionally, internal rules will often come <em>before</em> any &quot;bare&quot; rules, to avoid issues with <code>macro_rules!</code> incorrectly attempting to parse an internal invocation as something it cannot possibly be, such as an expression.</p>
+<p>还有一点，内用规则通常应排在“真正的”规则之前。这样做可避免<code>macro_rules!</code>错把内规调用解析成别的东西，比如表达式。</p>
 
-<p>If exporting at least one internal macro is unavoidable (<em>e.g.</em> you have many macros that depend on a common set of utility rules), you can use this pattern to combine <em>all</em> internal macros into a single uber-macro.</p>
+<p>如果导出内用规则无法避免(比如说，有一干效用性的宏规则，很多应被导出的宏都同时需要用到它们)，你仍可以采用此规则，将所有内用规则封装到一个“究极”效用宏里去：</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>crate_name_util</span> {

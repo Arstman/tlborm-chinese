@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <title>Repetition replacement</title>
+    <title>重复替代</title>
 
     <link rel="stylesheet" type="text/css" href="rustbook.css">
 
@@ -65,39 +65,39 @@
 </li>
 <li><a  href='pim-README.html'><b>3.</b> 宏，实践介绍</a>
 </li>
-<li><a  href='pat-README.html'><b>4.</b> Patterns</a>
+<li><a  href='pat-README.html'><b>4.</b> 常用模式</a>
 <ol class='section'>
-<li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
+<li><a  href='pat-callbacks.html'><b>4.1.</b> 回调</a>
 </li>
-<li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
+<li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> 标记树撕咬机</a>
 </li>
-<li><a  href='pat-internal-rules.html'><b>4.3.</b> Internal Rules</a>
+<li><a  href='pat-internal-rules.html'><b>4.3.</b> 内用规则</a>
 </li>
-<li><a  href='pat-push-down-accumulation.html'><b>4.4.</b> Push-Down Accumulation</a>
+<li><a  href='pat-push-down-accumulation.html'><b>4.4.</b> 下推累积</a>
 </li>
-<li><a class='active' href='pat-repetition-replacement.html'><b>4.5.</b> Repetition Replacement</a>
+<li><a class='active' href='pat-repetition-replacement.html'><b>4.5.</b> 重复替代</a>
 </li>
-<li><a  href='pat-trailing-separators.html'><b>4.6.</b> Trailing Separators</a>
+<li><a  href='pat-trailing-separators.html'><b>4.6.</b> 尾部分隔符</a>
 </li>
-<li><a  href='pat-tt-bundling.html'><b>4.7.</b> TT Bundling</a>
+<li><a  href='pat-tt-bundling.html'><b>4.7.</b> 标记树聚束</a>
 </li>
-<li><a  href='pat-visibility.html'><b>4.8.</b> Visibility</a>
+<li><a  href='pat-visibility.html'><b>4.8.</b> 可见性</a>
 </li>
-<li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
+<li><a  href='pat-provisional.html'><b>4.9.</b> 临时措施</a>
 </li>
 </ol>
 </li>
-<li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
+<li><a  href='blk-README.html'><b>5.</b> 轮子</a>
 <ol class='section'>
-<li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
+<li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST强转</a>
 </li>
-<li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
+<li><a  href='blk-counting.html'><b>5.2.</b> 计数</a>
 </li>
-<li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
+<li><a  href='blk-enum-parsing.html'><b>5.3.</b> 枚举解析</a>
 </li>
 </ol>
 </li>
-<li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
+<li><a  href='aeg-README.html'><b>6.</b> 实例注解</a>
 <ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
@@ -109,16 +109,16 @@
 <div id='page'>
 
 
-    <h1 class="title">Repetition replacement</h1>
+    <h1 class="title">重复替代</h1>
     
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>replace_expr</span> {
     (<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>_t</span>:<span class='ident'>tt</span> <span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>sub</span>:<span class='ident'>expr</span>) <span class='op'>=&gt;</span> {<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>sub</span>};
 }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Amacro_rules!%20replace_expr%20%7B%0A%20%20%20%20(%24_t%3Att%20%24sub%3Aexpr)%20%3D%3E%20%7B%24sub%7D%3B%0A%7D%0A%7D">Run</a></pre>
 
-<p>This pattern is where a matched repetition sequence is simply discarded, with the variable being used to instead drive some repeated pattern that is related to the input only in terms of length.</p>
+<p>在此模式中，匹配到的重复序列将被直接丢弃，仅留用它所带来的长度信息；原本标记所在的位置将被替换成某种重复要素。</p>
 
-<p>For example, consider constructing a default instance of a tuple with more than 12 elements (the limit as of Rust 1.2).</p>
+<p>举个例子，考虑如何为一个元素多于12个(Rust 1.2下的最大值)的<code>tuple</code>提供默认值。</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>tuple_default</span> {
@@ -135,10 +135,10 @@
 }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Amacro_rules!%20tuple_default%20%7B%0A%20%20%20%20(%24(%24tup_tys%3Aty)%2C*)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20(%0A%20%20%20%20%20%20%20%20%20%20%20%20%24(%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20replace_expr!(%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20(%24tup_tys)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Default%3A%3Adefault()%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20)%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20)*%0A%20%20%20%20%20%20%20%20)%0A%20%20%20%20%7D%3B%0A%7D%0A%0Amacro_rules!%20replace_expr%20%7B%0A%20%20%20%20(%24_t%3Att%20%24sub%3Aexpr)%20%3D%3E%20%7B%24sub%7D%3B%0A%7D%0A%0Aassert_eq!(tuple_default!(i32%2C%20bool%2C%20String)%2C%20(0%2C%20false%2C%20String%3A%3Anew()))%3B%0A%7D">Run</a></pre>
 
 <blockquote>
-<p><strong><abbr title="Just for this example">JFTE</abbr></strong>: we <em>could</em> have simply used <code>$tup_tys::default()</code>.</p>
+<p><strong><abbr title="Just for this example">仅对此例</abbr></strong>：我们其实可以直接用<code>$tup_tys::default()</code>。</p>
 </blockquote>
 
-<p>Here, we are not actually <em>using</em> the matched types.  Instead, we throw them away and instead replace them with a single, repeated expression.  To put it another way, we don&#39;t care <em>what</em> the types are, only <em>how many</em> there are.</p>
+<p>上例中，我们并未真正使用匹配到的类型。实际上，我们把它抛开了，并用用一个表达式重复替代。换句话说，我们实际关心的不是有哪些类型，而是有多少个类型。</p>
 
     <script src='rustbook.js'></script>
 </div></div>

@@ -65,39 +65,39 @@
 </li>
 <li><a class='active' href='pim-README.html'><b>3.</b> 宏，实践介绍</a>
 </li>
-<li><a  href='pat-README.html'><b>4.</b> Patterns</a>
+<li><a  href='pat-README.html'><b>4.</b> 常用模式</a>
 <ol class='section'>
-<li><a  href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
+<li><a  href='pat-callbacks.html'><b>4.1.</b> 回调</a>
 </li>
-<li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
+<li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> 标记树撕咬机</a>
 </li>
-<li><a  href='pat-internal-rules.html'><b>4.3.</b> Internal Rules</a>
+<li><a  href='pat-internal-rules.html'><b>4.3.</b> 内用规则</a>
 </li>
-<li><a  href='pat-push-down-accumulation.html'><b>4.4.</b> Push-Down Accumulation</a>
+<li><a  href='pat-push-down-accumulation.html'><b>4.4.</b> 下推累积</a>
 </li>
-<li><a  href='pat-repetition-replacement.html'><b>4.5.</b> Repetition Replacement</a>
+<li><a  href='pat-repetition-replacement.html'><b>4.5.</b> 重复替代</a>
 </li>
-<li><a  href='pat-trailing-separators.html'><b>4.6.</b> Trailing Separators</a>
+<li><a  href='pat-trailing-separators.html'><b>4.6.</b> 尾部分隔符</a>
 </li>
-<li><a  href='pat-tt-bundling.html'><b>4.7.</b> TT Bundling</a>
+<li><a  href='pat-tt-bundling.html'><b>4.7.</b> 标记树聚束</a>
 </li>
-<li><a  href='pat-visibility.html'><b>4.8.</b> Visibility</a>
+<li><a  href='pat-visibility.html'><b>4.8.</b> 可见性</a>
 </li>
-<li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
+<li><a  href='pat-provisional.html'><b>4.9.</b> 临时措施</a>
 </li>
 </ol>
 </li>
-<li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
+<li><a  href='blk-README.html'><b>5.</b> 轮子</a>
 <ol class='section'>
-<li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
+<li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST强转</a>
 </li>
-<li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
+<li><a  href='blk-counting.html'><b>5.2.</b> 计数</a>
 </li>
-<li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
+<li><a  href='blk-enum-parsing.html'><b>5.3.</b> 枚举解析</a>
 </li>
 </ol>
 </li>
-<li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
+<li><a  href='aeg-README.html'><b>6.</b> 实例注解</a>
 <ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
@@ -319,7 +319,7 @@
         <tr>
             <td colspan="4" style="font-size:.7em;">
 
-<em>注意</em>：这有两个 ⌂，因为下一个输入标记既能匹配重复元素间的分隔符逗号，也能匹配标志重复结束的逗号。宏系统将同时追踪这两种可能，直到决定具体选择为止。
+<em>注意</em>：这有两个 ⌂，因为下个输入标记既能匹配 重复元素间的分隔符逗号，也能匹配 标志重复结束的逗号。宏系统将同时追踪这两种可能，直到决定具体选择为止。
 
             </td>
         </tr>
@@ -340,7 +340,7 @@
         <tr>
             <td colspan="4" style="font-size:.7em;">
 
-<em>注意</em>：第三个被划掉的记号表明，基于上个被消耗的标记，宏系统排除了一项先前存在的分支可能。
+<em>注意</em>：第三个被划掉的记号表明，基于上个被消耗的标记，宏系统排除了一项先前存在的可能。
 
             </td>
         </tr>
@@ -375,7 +375,7 @@
         <tr>
             <td colspan="4" style="font-size:.7em;">
 
-<em>注意</em>：这一步表明，类似<tt>$recur:expr</tt>的绑定将消耗<em>一整个表达式</em>。此处什么组成一个有效的表达式由编译器决定。稍后我们会谈到，其它语言构造也能够有类似的行为。
+<em>注意</em>：这一步表明，类似<tt>$recur:expr</tt>的绑定将消耗<em>一个完整的表达式</em>。此处，究竟什么算是一个完整的表达式，将由编译器决定。稍后我们会谈到语言其它部分的类似行为。
 
             </td>
         </tr>
@@ -386,7 +386,7 @@
 
 <p>从此表中得到的最关键收获在于，宏系统会依次尝试将提供给它的每个标记当作输入，与提供给它的每条规则进行匹配。我们稍后还将谈回到这一“尝试”。</p>
 
-<p>现在，我们将写出宏完全展开后的最终版本。对此，我们所期望的结果类似：</p>
+<p>接下来我们首先将写出宏调用完全展开后的形态。我们想要的结构类似：</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='ident'>fib</span> <span class='op'>=</span> {
@@ -395,10 +395,10 @@
         <span class='ident'>pos</span>: <span class='ident'>usize</span>,
     }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Alet%20fib%20%3D%20%7B%0A%20%20%20%20struct%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20mem%3A%20%5Bu64%3B%202%5D%2C%0A%20%20%20%20%20%20%20%20pos%3A%20usize%2C%0A%20%20%20%20%7D%0A%7D">Run</a></pre>
 
-<p>这就是我们实际会使用的迭代器类型。其中，<code>mem</code>将负责存储最近算得的两个斐波那契值，保证递推计算能够顺利进行；<code>pos</code>则负责记录当前的<code>n</code>值。</p>
+<p>它就是我们实际使用的迭代器类型。其中，<code>mem</code>负责存储最近算得的两个斐波那契值，保证递推计算能够顺利进行；<code>pos</code>则负责记录当前的<code>n</code>值。</p>
 
 <blockquote>
-<p><strong>附注</strong>：此处选用<code>u64</code>是因为，对斐波那契数列来说，它已经“足够大”了。先不必担心其它数列是否适用，我们会提到的。</p>
+<p><strong>附注</strong>：此处选用<code>u64</code>是因为，对斐波那契数列来说，它已经“足够”了。先不必担心它是否适用于其它数列，我们会提到这一点的。</p>
 </blockquote>
 
 <pre class='rust rust-example-rendered'>
@@ -428,7 +428,7 @@
         }
     }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20a%20%3D%20%2F*%20something%20*%2F%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20n%20%3D%20self.pos%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20(a%5Bn-1%5D%20%2B%20a%5Bn-2%5D)%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.mem.TODO_shuffle_down_and_append(next_val)%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%7D">Run</a></pre>
 
-<p>这段相对难些。对于具体如何定义<code>a</code>，我们稍后再提。<code>TODO_shuffle_down_and_append</code>的真面目也将留到稍后揭晓；我们想使之做到：将<code>next_val</code>放至数组末尾，并将数组中剩下的元素依次前移一格，丢掉首个元素。</p>
+<p>这段稍微难办一点。对于具体如何定义<code>a</code>，我们稍后再提。<code>TODO_shuffle_down_and_append</code>的真面目也将留到稍后揭晓；我们想让它做到：将<code>next_val</code>放至数组末尾，并将数组中剩下的元素依次前移一格，最后丢掉原先的首元素。</p>
 
 <pre class='rust rust-example-rendered'>
 
@@ -477,7 +477,7 @@
 <p><strong>附注</strong>：是的，这样做的确意味着每次调用该宏时，我们都会重新定义并实现一个<code>Recurrence</code>结构。如果<code>#[inline]</code>属性应用得当，在最终编译出的二进制文件中，大部分冗余都将被优化掉。</p>
 </blockquote>
 
-<p>写展开部分时，边写边检查也很有用。如果在过程中发现展开的某些内容需要根据调用的不同发生改变，但这些内容并未被我们的宏语法定义囊括，那就应去考虑清楚该在哪儿引入它们。在此示例中，我们先前用过一次<code>u64</code>，但调用端不一定想要这种类型；而且我们的宏语法定义并没有提供其他选择。因此，我们可以做一些修改。</p>
+<p>在写展开部分的过程中时常检查，也是一个有效的技巧。如果在过程中发现，展开中的某些内容需要根据调用的不同发生改变，但这些内容并未被我们的宏语法定义囊括；那就要去考虑，应该怎样去引入它们。在此示例中，我们先前用过一次<code>u64</code>，但调用端想要的类型不一定是它；然而我们的宏语法并没有提供其它选择。因此，我们可以做一些修改。</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>recurrence</span> {
@@ -490,18 +490,18 @@ let fib = recurrence![a[n]: u64 = 0, 1, ..., a[n-1] + a[n-2]];
 for e in fib.take(10) { println!(&quot;{}&quot;, e) }
 */</span><a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20recurrence%20%7B%0A%20%20%20%20(%20a%5Bn%5D%3A%20%24sty%3Aty%20%3D%20%24(%24inits%3Aexpr)%2C%2B%20%2C%20...%20%2C%20%24recur%3Aexpr%20)%20%3D%3E%20%7B%20%2F*%20...%20*%2F%20%7D%3B%0A%7D%0A%0A%2F*%0Alet%20fib%20%3D%20recurrence!%5Ba%5Bn%5D%3A%20u64%20%3D%200%2C%201%2C%20...%2C%20a%5Bn-1%5D%20%2B%20a%5Bn-2%5D%5D%3B%0A%0Afor%20e%20in%20fib.take(10)%20%7B%20println!(%22%7B%7D%22%2C%20e)%20%7D%0A*%2F%0Afn%20main()%20%7B%7D%0A">Run</a></pre>
 
-<p>我们加入了一个新的捕获<code>sty</code>，它应该是一个类型(type)。</p>
+<p>我们加入了一个新的捕获<code>sty</code>，它应是一个类型(type)。</p>
 
 <blockquote>
-<p><strong>附注</strong>：在捕获的冒号之后的部分，可以是几种语法匹配候选项之一；如果你不清楚的话。最常用的包括<code>item</code>，<code>expr</code>和<code>ty</code>。完整的解释可在<a href="mbe-macro-rules.html#%E6%8D%95%E8%8E%B7">宏，彻底解析-<code>macro_rules!</code>-捕获</a>部分找到。</p>
+<p><strong>附注</strong>：如果你不清楚的话，在捕获冒号之后的部分，可是几种语法匹配候选项之一。最常用的包括<code>item</code>，<code>expr</code>和<code>ty</code>。完整的解释可在<a href="mbe-macro-rules.html#%E6%8D%95%E8%8E%B7">宏，彻底解析-<code>macro_rules!</code>-捕获</a>部分找到。</p>
 
-<p>还有一件事值得注意：为方便语言的未来发展，对于跟在某些特定的匹配之后的标记，编译器施加了一些限制。这种情况常常在试图匹配至表达式(expression)或语句(statement)时出现：仅允许<code>=&gt;</code>，<code>,</code>和<code>;</code>这些标记之一跟在它们后面。</p>
+<p>还有一点值得注意：为方便语言的未来发展，对于跟在某些特定的匹配之后的标记，编译器施加了一些限制。这种情况常在试图匹配至表达式(expression)或语句(statement)时出现：它们后面仅允许跟进<code>=&gt;</code>，<code>,</code>和<code>;</code>这些标记之一。</p>
 
 <p>完整清单可在<a href="mbe-min-captures-and-expansion-redux.html">宏，彻底解析-细枝末节-再探捕获与展开</a>找到。</p>
 </blockquote>
 
 <h2 id='索引与移位' class='section-header'><a href='#索引与移位'>索引与移位</a></h2>
-<p>在此节中我们将跳过一些内容，因为它们实际上与宏的联系不甚紧密。我们本节的目标是，让用户可以通过索引<code>a</code>来访问数列中先前的值；它应该就像切口一样，让我们能持续访问数列中最近的几个(在本例中，两个)值。</p>
+<p>在此节中我们将略去一些实际上与宏的联系不甚紧密的内容。本节我们的目标是，让用户可以通过索引<code>a</code>来访问数列中先前的值。<code>a</code>应该如同一个切口，让我们得以持续访问数列中最近几个(在本例中，两个)值。</p>
 
 <p>通过采用封装类，我们可以相对简单地做到这点：</p>
 
@@ -538,7 +538,7 @@ for e in fib.take(10) { println!(&quot;{}&quot;, e) }
 <pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='ident'>a</span> <span class='op'>=</span> <span class='ident'>IndexOffset</span> { <span class='ident'>slice</span>: <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>mem</span>, <span class='ident'>offset</span>: <span class='ident'>n</span> };<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Alet%20a%20%3D%20IndexOffset%20%7B%20slice%3A%20%26self.mem%2C%20offset%3A%20n%20%7D%3B%0A%7D">Run</a></pre>
 
-<p>如何处理<code>TODO_shuffle_down_and_append</code>是我们现在唯一剩下的问题了。我没能在标准库中找到可以直接使用的方法，但自己造一个并不难。</p>
+<p>如何处理<code>TODO_shuffle_down_and_append</code>是我们现在剩下的唯一问题了。我没能在标准库中寻得可以直接使用的方法，但自己造一个出来并不难。</p>
 
 <pre class='rust rust-example-rendered'>
 {
@@ -553,7 +553,7 @@ for e in fib.take(10) { println!(&quot;{}&quot;, e) }
 <p>它把新值替换至数组末尾，并把其他值向前移动一位。</p>
 
 <blockquote>
-<p><strong>附注</strong>：采用这种做法，将使得我们的代码可同时被用于不可拷贝(non-copyable，即没有实现Copy trait)的类型。</p>
+<p><strong>附注</strong>：采用这种做法，将使得我们的代码可同时被用于不可拷贝(non-copyable)的类型。</p>
 </blockquote>
 
 <p>至此，最终起作用的代码将是：</p>
@@ -635,13 +635,14 @@ for e in fib.take(10) { println!(&quot;{}&quot;, e) }
     <span class='kw'>for</span> <span class='ident'>e</span> <span class='kw'>in</span> <span class='ident'>fib</span>.<span class='ident'>take</span>(<span class='number'>10</span>) { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;{}&quot;</span>, <span class='ident'>e</span>) }
 }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20recurrence%20%7B%0A%20%20%20%20(%20a%5Bn%5D%3A%20%24sty%3Aty%20%3D%20%24(%24inits%3Aexpr)%2C%2B%20%2C%20...%20%2C%20%24recur%3Aexpr%20)%20%3D%3E%20%7B%20%2F*%20...%20*%2F%20%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20%2F*%0A%20%20%20%20let%20fib%20%3D%20recurrence!%5Ba%5Bn%5D%3A%20u64%20%3D%200%2C%201%2C%20...%2C%20a%5Bn-1%5D%20%2B%20a%5Bn-2%5D%5D%3B%0A%0A%20%20%20%20for%20e%20in%20fib.take(10)%20%7B%20println!(%22%7B%7D%22%2C%20e)%20%7D%0A%20%20%20%20*%2F%0A%20%20%20%20let%20fib%20%3D%20%7B%0A%20%20%20%20%20%20%20%20use%20std%3A%3Aops%3A%3AIndex%3B%0A%0A%20%20%20%20%20%20%20%20struct%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20mem%3A%20%5Bu64%3B%202%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20pos%3A%20usize%2C%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20struct%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20slice%3A%20%26'a%20%5Bu64%3B%202%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20offset%3A%20usize%2C%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20impl%3C'a%3E%20Index%3Cusize%3E%20for%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20type%20Output%20%3D%20u64%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%23%5Binline(always)%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20fn%20index%3C'b%3E(%26'b%20self%2C%20index%3A%20usize)%20-%3E%20%26'b%20u64%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Anum%3A%3AWrapping%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20index%20%3D%20Wrapping(index)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20offset%20%3D%20Wrapping(self.offset)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20window%20%3D%20Wrapping(2)%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20real_index%20%3D%20index%20-%20offset%20%2B%20window%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%26self.slice%5Breal_index.0%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20impl%20Iterator%20for%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20type%20Item%20%3D%20u64%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%23%5Binline%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20fn%20next(%26mut%20self)%20-%3E%20Option%3Cu64%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20self.pos%20%3C%202%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20self.mem%5Bself.pos%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20n%20%3D%20self.pos%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20a%20%3D%20IndexOffset%20%7B%20slice%3A%20%26self.mem%2C%20offset%3A%20n%20%7D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20(a%5Bn-1%5D%20%2B%20a%5Bn-2%5D)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Amem%3A%3Aswap%3B%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20mut%20swap_tmp%20%3D%20next_val%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20for%20i%20in%20(0..2).rev()%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20swap(%26mut%20swap_tmp%2C%20%26mut%20self.mem%5Bi%5D)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%20%20Recurrence%20%7B%20mem%3A%20%5B0%2C%201%5D%2C%20pos%3A%200%20%7D%0A%20%20%20%20%7D%3B%0A%0A%20%20%20%20for%20e%20in%20fib.take(10)%20%7B%20println!(%22%7B%7D%22%2C%20e)%20%7D%0A%7D%0A">Run</a></pre>
 
-<p>注意我们改变了<code>n</code>与<code>a</code>的声明顺序，同时将它们(与递推表达式一同)用一个新区块包裹了起来。改变声明顺序的理由很明显(<code>n</code>得在<code>a</code>前被定义才能被<code>a</code>使用)。而包裹的理由则是，如果不，借用引用<code>&amp;self.mem</code>将会阻止随后的<code>swap</code>操作(在某物仍存在其它别名时，无法对其进行改变)。包裹块将确保<code>&amp;self.mem</code>产生的借用在彼时过期。</p>
+<p>注意我们改变了<code>n</code>与<code>a</code>的声明顺序，同时将它们(与递推表达式一同)用一个新区块包裹了起来。改变声明顺序的理由很明显(<code>n</code>得在<code>a</code>前被定义才能被<code>a</code>使用)。而包裹的理由则是：如果不，借用引用<code>&amp;self.mem</code>将会阻止随后的<code>swap</code>操作(在某物仍存在其它别名时，无法对其进行改变)。包裹区块将确保<code>&amp;self.mem</code>产生的借用在彼时过期。</p>
 
 <p>顺带一提，将交换<code>mem</code>的代码包进区块里的唯一原因，正是为了缩减<code>std::mem::swap</code>的可用范畴，以保持代码整洁。</p>
 
 <p>如果我们直接拿上段代码来跑，将会得到：</p>
 
 <pre><code class="language-text">0
+1
 1
 2
 3
@@ -652,7 +653,7 @@ for e in fib.take(10) { println!(&quot;{}&quot;, e) }
 34
 </code></pre>
 
-<p>成功了！现在，让我们把这段代码复制粘贴进宏的展开部分，并在它们原本的位置换上一次宏调用。这样我们得到：</p>
+<p>成功了！现在，让我们把这段代码复制粘贴进宏的展开部分，并把它们原本所在的位置换成一次宏调用。这样我们得到：</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>recurrence</span> {
@@ -746,14 +747,14 @@ recurrence.rs:69     let fib = recurrence![a[n]: u64 = 0, 1, ..., a[n-1] + a[n-2
 <blockquote>
 <p><strong>附注</strong>：有关宏系统如何解读我们的规则，我之前的确撒了点小谎。通常来说，宏系统确实应当如我前述的那般运作，但在这里它没有。<code>macro_rules</code>的机制，由此看来，是存在一些小毛病的；我们得记得偶尔去做一些调控，好让它我们期许的那般运作。</p>
 
-<p>在这例情况下，问题有两个。其一，宏系统不清楚什么东西能够组成各式语法元素(如表达式)而什么不能；那是语法解析器的工作。其二，在试图捕获复合语法元素(如表达式)的过程中，它没可能不100%地陷入该捕获中去。</p>
+<p>在本例中，问题有两个。其一，宏系统不清楚各式各样的语法元素(如表达式)可由什么样的东西构成，或不能由什么样的东西构成；那是语法解析器的工作。其二，在试图捕获复合语法元素(如表达式)的过程中，它无法不100%地首先陷入该捕获中去。</p>
 
-<p>换句话说，宏系统可以请求语法解析器去试图把某些输入当作表达式来进行解析；但无论语法解析器在此间遇见任何问题，都将中止进程以示回应。目前，宏系统处理这种窘境的唯一方式，就是对任何可能产生这类问题的情境下达禁令。</p>
+<p>换句话说，宏系统可以向语法解析器发出请求，让后者试图把某段输入当作表达式来进行解析；但此间无论语法解析器遇见任何问题，都将中止整个进程以示回应。目前，宏系统处理这种窘境的唯一方式，就是对任何可能产生此类问题的情境加以禁止。</p>
 
-<p>好的一面在于，对于这些情况，完全没有任何人感到高兴。关键词<code>macro</code>早已被预留，已被未来更加严密的宏系统采用。直到那天来临之前，该做的事我们只好做。</p>
+<p>好的一面在于，对于这摊子情况，没有任何人感到高兴。关键词<code>macro</code>早已被预留，以备未来更加严密的宏系统使用。直到那天来临之前，我们还是只得该怎么做就怎么做。</p>
 </blockquote>
 
-<p>还好，修正方案也挺简单：从宏句法中去掉逗号。出于平衡考量，我们将移除<code>...</code>双边的逗号：</p>
+<p>还好，修正方案也很简单：从宏句法中去掉逗号即可。出于平衡考量，我们将移除<code>...</code>双边的逗号：<sup id="fnref1"><a href="#fn1" rel="footnote">1</a></sup></p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>recurrence</span> {
@@ -773,7 +774,7 @@ recurrence.rs:69     let fib = recurrence![a[n]: u64 = 0, 1, ..., a[n-1] + a[n-2
 <p>成功！现在，我们该将捕获部分捕获到的内容替代进展开部分中了。</p>
 
 <h3 id='替换' class='section-header'><a href='#替换'>替换</a></h3>
-<p>在宏中替换你捕获到的内容相对简单，通过<code>$sty:ty</code>捕获到的内容可以使用<code>$sty</code>来替换。好，让我们换掉那些<code>u64</code>吧：</p>
+<p>在宏中替换你捕获到的内容相对简单，通过<code>$sty:ty</code>捕获到的内容可用<code>$sty</code>来替换。好，让我们换掉那些<code>u64</code>吧：</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>recurrence</span> {
@@ -839,16 +840,16 @@ recurrence.rs:69     let fib = recurrence![a[n]: u64 = 0, 1, ..., a[n-1] + a[n-2
             <span class='ident'>Recurrence</span> { <span class='ident'>mem</span>: [$(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>inits</span>),<span class='op'>+</span>], <span class='ident'>pos</span>: <span class='number'>0</span> }
 <span class='comment'>//                             ^~~~~~~~~~~ changed</span><a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20Recurrence%20%7B%20mem%3A%20%5B%24(%24inits)%2C%2B%5D%2C%20pos%3A%200%20%7D%0A%2F%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5E~~~~~~~~~~%20changed%0A%7D">Run</a></pre>
 
-<p>此句与捕获的效果正好相反：将<code>inits</code>重复1或多次，用逗号分隔。展开结果与期望一致，我们得到标记序列：<code>0, 1</code>。</p>
+<p>此段代码与捕获的效果正好相反：将<code>inits</code>捕得的内容排列开来，总共有1或多次，每条内容之间用逗号分隔。展开的结果与期望一致，我们得到标记序列：<code>0, 1</code>。</p>
 
-<p>不过，从<code>inits</code>转换出字面值<code>2</code>需要一些技巧。没有直接有效的方法，但我们可以通过另一个宏做到。我们一步一步来。</p>
+<p>不过，通过<code>inits</code>转换出字面值<code>2</code>需要一些技巧。没有直接可行的方法，但我们可以通过另一个宏做到。我们一步一步来。</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>count_exprs</span> {
     <span class='comment'>/* ??? */</span>
 }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20count_exprs%20%7B%0A%20%20%20%20%2F*%20%3F%3F%3F%20*%2F%0A%20%20%20%20()%20%3D%3E%20%7B%7D%0A%7D%0Afn%20main()%20%7B%7D%0A">Run</a></pre>
 
-<p>先做显而易见的情况：未给表达式时，我们期望<code>count_exprs</code>展开为字面值<code>0</code>。</p>
+<p>先写显而易见的情况：未给表达式时，我们期望<code>count_exprs</code>展开为字面值<code>0</code>。</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>count_exprs</span> {
@@ -859,7 +860,7 @@ recurrence.rs:69     let fib = recurrence![a[n]: u64 = 0, 1, ..., a[n-1] + a[n-2
 <blockquote>
 <p><strong>附注</strong>：你可能已经注意到了，这里的展开部分我用的是括号而非花括号。<code>macro_rules</code>其实不关心你用的是什么，只要它成对匹配即可：<code>( )</code>，<code>{ }</code>或<code>[ ]</code>。实际上，宏本身的匹配符(即紧跟宏名称后的匹配符)、语法规则外的匹配符及相应展开部分外的匹配符都可以替换。</p>
 
-<p>在调用宏时它们也可被替换，但有些限制：当宏被以<code>{...}</code>或<code>(...);</code>形式调用时，它总是会被解析为一个条目(item，比如，<code>struct</code>或<code>fn</code>声明)。在函数体内这一点很重要，它将消除“解析成表达式”和“解析成语句”之间的歧义。</p>
+<p>调用宏时的括号也可被替换，但有些限制：当宏被以<code>{...}</code>或<code>(...);</code>形式调用时，它总是会被解析为一个条目(item，比如，<code>struct</code>或<code>fn</code>声明)。在函数体内部时，这一特征很重要，它将消除“解析成表达式”和“解析成语句”之间的歧义。</p>
 </blockquote>
 
 <p>有一个表达式的情况该怎么办？应该展开为字面值<code>1</code>。</p>
@@ -881,7 +882,7 @@ recurrence.rs:69     let fib = recurrence![a[n]: u64 = 0, 1, ..., a[n-1] + a[n-2
 <span class='comment'>//  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~ added</span>
 }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20count_exprs%20%7B%0A%20%20%20%20()%20%3D%3E%20(0)%3B%0A%20%20%20%20(%24e%3Aexpr)%20%3D%3E%20(1)%3B%0A%20%20%20%20(%24e0%3Aexpr%2C%20%24e1%3Aexpr)%20%3D%3E%20(2)%3B%0A%2F%2F%20%20%5E~~~~~~~~~~~~~~~~~~~~~~~~~~~%20added%0A%7D%0Afn%20main()%20%7B%0A%20%20%20%20const%20_0%3A%20usize%20%3D%20count_exprs!()%3B%0A%20%20%20%20const%20_1%3A%20usize%20%3D%20count_exprs!(x)%3B%0A%20%20%20%20const%20_2%3A%20usize%20%3D%20count_exprs!(x%2C%20y)%3B%0A%20%20%20%20assert_eq!(_0%2C%200)%3B%0A%20%20%20%20assert_eq!(_1%2C%201)%3B%0A%20%20%20%20assert_eq!(_2%2C%202)%3B%0A%7D%0A">Run</a></pre>
 
-<p>We can &quot;simplify&quot; this a little by re-expressing the case of two expressions recursively.</p>
+<p>通过递归调用重新表达，我们可将扩展部分“精简”出来：</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>count_exprs</span> {
@@ -891,7 +892,7 @@ recurrence.rs:69     let fib = recurrence![a[n]: u64 = 0, 1, ..., a[n-1] + a[n-2
 <span class='comment'>//                           ^~~~~~~~~~~~~~~~~~~~~ changed</span>
 }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20count_exprs%20%7B%0A%20%20%20%20()%20%3D%3E%20(0)%3B%0A%20%20%20%20(%24e%3Aexpr)%20%3D%3E%20(1)%3B%0A%20%20%20%20(%24e0%3Aexpr%2C%20%24e1%3Aexpr)%20%3D%3E%20(1%20%2B%20count_exprs!(%24e1))%3B%0A%2F%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5E~~~~~~~~~~~~~~~~~~~~%20changed%0A%7D%0Afn%20main()%20%7B%0A%20%20%20%20const%20_0%3A%20usize%20%3D%20count_exprs!()%3B%0A%20%20%20%20const%20_1%3A%20usize%20%3D%20count_exprs!(x)%3B%0A%20%20%20%20const%20_2%3A%20usize%20%3D%20count_exprs!(x%2C%20y)%3B%0A%20%20%20%20assert_eq!(_0%2C%200)%3B%0A%20%20%20%20assert_eq!(_1%2C%201)%3B%0A%20%20%20%20assert_eq!(_2%2C%202)%3B%0A%7D%0A">Run</a></pre>
 
-<p>这样做可行，因为Rust可将<code>1 + 1</code>封装成一个常量。那么三种表达式的情况呢？</p>
+<p>这样做可行是因为，Rust可将<code>1 + 1</code>合并成一个常量。那么，三种表达式的情况呢？</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>count_exprs</span> {
@@ -903,10 +904,10 @@ recurrence.rs:69     let fib = recurrence![a[n]: u64 = 0, 1, ..., a[n-1] + a[n-2
 }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20count_exprs%20%7B%0A%20%20%20%20()%20%3D%3E%20(0)%3B%0A%20%20%20%20(%24e%3Aexpr)%20%3D%3E%20(1)%3B%0A%20%20%20%20(%24e0%3Aexpr%2C%20%24e1%3Aexpr)%20%3D%3E%20(1%20%2B%20count_exprs!(%24e1))%3B%0A%20%20%20%20(%24e0%3Aexpr%2C%20%24e1%3Aexpr%2C%20%24e2%3Aexpr)%20%3D%3E%20(1%20%2B%20count_exprs!(%24e1%2C%20%24e2))%3B%0A%2F%2F%20%20%5E~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%20added%0A%7D%0Afn%20main()%20%7B%0A%20%20%20%20const%20_0%3A%20usize%20%3D%20count_exprs!()%3B%0A%20%20%20%20const%20_1%3A%20usize%20%3D%20count_exprs!(x)%3B%0A%20%20%20%20const%20_2%3A%20usize%20%3D%20count_exprs!(x%2C%20y)%3B%0A%20%20%20%20const%20_3%3A%20usize%20%3D%20count_exprs!(x%2C%20y%2C%20z)%3B%0A%20%20%20%20assert_eq!(_0%2C%200)%3B%0A%20%20%20%20assert_eq!(_1%2C%201)%3B%0A%20%20%20%20assert_eq!(_2%2C%202)%3B%0A%20%20%20%20assert_eq!(_3%2C%203)%3B%0A%7D%0A">Run</a></pre>
 
 <blockquote>
-<p><strong>附注</strong>：你可能会想，我们是否能反转这些规则的排序。在此情境下，可以。但在有些情况下，宏系统可能会对此挑剔。如果你发现自己的一个多规则宏系统老是报错或者给出期望外的结果，但你发誓它应该能用，试着调一下规则的排序吧。</p>
+<p><strong>附注</strong>：你可能会想，我们是否能翻转这些规则的排列顺序。在此情境下，可以。但在有些情况下，宏系统可能会对此挑剔。如果你发现自己有一个包含多项规则的宏系统老是报错，或给出期望外的结果；但你发誓它应该能用，试着调换一下规则的排序吧。</p>
 </blockquote>
 
-<p>我们希望你现在已经能看出套路。通过匹配至一个表达式加上0或多个表达式并展开成1+a，我们可以减少规则列表的数目：</p>
+<p>我们希望你现在已经能看出规律。通过匹配至一个表达式加上0或多个表达式并展开成1+a，我们可以减少规则列表的数目：</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>count_exprs</span> {
@@ -917,10 +918,10 @@ recurrence.rs:69     let fib = recurrence![a[n]: u64 = 0, 1, ..., a[n-1] + a[n-2
 }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20count_exprs%20%7B%0A%20%20%20%20()%20%3D%3E%20(0)%3B%0A%20%20%20%20(%24head%3Aexpr)%20%3D%3E%20(1)%3B%0A%20%20%20%20(%24head%3Aexpr%2C%20%24(%24tail%3Aexpr)%2C*)%20%3D%3E%20(1%20%2B%20count_exprs!(%24(%24tail)%2C*))%3B%0A%2F%2F%20%20%5E~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%20changed%0A%7D%0Afn%20main()%20%7B%0A%20%20%20%20const%20_0%3A%20usize%20%3D%20count_exprs!()%3B%0A%20%20%20%20const%20_1%3A%20usize%20%3D%20count_exprs!(x)%3B%0A%20%20%20%20const%20_2%3A%20usize%20%3D%20count_exprs!(x%2C%20y)%3B%0A%20%20%20%20const%20_3%3A%20usize%20%3D%20count_exprs!(x%2C%20y%2C%20z)%3B%0A%20%20%20%20assert_eq!(_0%2C%200)%3B%0A%20%20%20%20assert_eq!(_1%2C%201)%3B%0A%20%20%20%20assert_eq!(_2%2C%202)%3B%0A%20%20%20%20assert_eq!(_3%2C%203)%3B%0A%7D%0A">Run</a></pre>
 
 <blockquote>
-<p><strong><abbr title="Just for this example">仅对此例</abbr></strong>：这并非计数仅有或其最好的方法。稍后你可再研读<a href="blk-counting.html">计数</a>一节。</p>
+<p><strong><abbr title="Just for this example">仅对此例</abbr></strong>：这段代码并非计数仅有或其最好的方法。若有兴趣，稍后可以研读<a href="blk-counting.html">计数</a>一节。</p>
 </blockquote>
 
-<p>有此工具后，我们可修改<code>recurrence</code>以决定<code>mem</code>所需的大小。</p>
+<p>有此工具后，我们可再次修改<code>recurrence</code>，确定<code>mem</code>所需的大小。</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='comment'>// added:</span>
@@ -1036,7 +1037,7 @@ recurrence.rs:69     let fib = recurrence![a[n]: u64 = 0, 1, ..., a[n-1] + a[n-2
                 }
 <span class='comment'>/* ... */</span><a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20count_exprs%20%7B%0A%20%20%20%20()%20%3D%3E%20(0)%3B%0A%20%20%20%20(%24head%3Aexpr%20%24(%2C%20%24tail%3Aexpr)*)%20%3D%3E%20(1%20%2B%20count_exprs!(%24(%24tail)%2C*))%3B%0A%7D%0Amacro_rules!%20recurrence%20%7B%0A%20%20%20%20(%20a%5Bn%5D%3A%20%24sty%3Aty%20%3D%20%24(%24inits%3Aexpr)%2C%2B%20...%20%24recur%3Aexpr%20)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20const%20MEMORY%3A%20uint%20%3D%20count_exprs!(%24(%24inits)%2C%2B)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20struct%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20mem%3A%20%5B%24sty%3B%20MEMORY%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20pos%3A%20uint%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20struct%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20slice%3A%20%26'a%20%5B%24sty%3B%20MEMORY%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20offset%3A%20uint%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20impl%3C'a%3E%20Index%3Cuint%2C%20%24sty%3E%20for%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%5Binline(always)%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20fn%20index%3C'b%3E(%26'b%20self%2C%20index%3A%20%26uint)%20-%3E%20%26'b%20%24sty%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20real_index%20%3D%20*index%20-%20self.offset%20%2B%20MEMORY%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%26self.slice%5Breal_index%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20impl%20Iterator%3Cu64%3E%20for%20Recurrence%20%7B%0A%2F*%20...%20*%2F%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%5Binline%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20fn%20next(%26mut%20self)%20-%3E%20Option%3Cu64%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20self.pos%20%3C%20MEMORY%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20self.mem%5Bself.pos%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20n%20%3D%20self.pos%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20a%20%3D%20IndexOffset%20%7B%20slice%3A%20%26self.mem%2C%20offset%3A%20n%20%7D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%24recur%0A%2F%2F%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5E~~~~~%20changed%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Amem%3A%3Aswap%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20mut%20swap_tmp%20%3D%20next_val%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20for%20i%20in%20range(0%2C%20MEMORY).rev()%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20swap(%26mut%20swap_tmp%2C%20%26mut%20self.mem%5Bi%5D)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%2F*%20...%20*%2F%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20Recurrence%20%7B%20mem%3A%20%5B%24(%24inits)%2C%2B%5D%2C%20pos%3A%200%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%7D%0Afn%20main()%20%7B%0A%20%20%20%20let%20fib%20%3D%20recurrence!%5Ba%5Bn%5D%3A%20u64%20%3D%201%2C%201%20...%20a%5Bn-1%5D%20%2B%20a%5Bn-2%5D%5D%3B%0A%20%20%20%20for%20e%20in%20fib.take(10)%20%7B%20println!(%22%7B%7D%22%2C%20e)%20%7D%0A%7D%0A">Run</a></pre>
 
-<p>现在，试图编译的话...</p>
+<p>现在试图编译的话...</p>
 
 <pre><code class="language-text">recurrence.rs:77:48: 77:49 error: unresolved name `a`
 recurrence.rs:77     let fib = recurrence![a[n]: u64 = 0, 1 ... a[n-1] + a[n-2]];
@@ -1065,7 +1066,7 @@ recurrence.rs:77:15: 77:64 note: expansion site
 <pre><code class="language-shell">$ rustc -Z unstable-options --pretty expanded recurrence.rs
 </code></pre>
 
-<p>参数<code>--pretty expanded</code>将促使<code>rustc</code>展开宏，并将输出的AST重新转换为源代码。此选项当前被认定为不稳定，因此我们还要添加<code>-Z unstable-options</code>。输出信息(经过格式清理后)如下；特别留意<code>$recur</code>被替换的位置：</p>
+<p>参数<code>--pretty expanded</code>将促使<code>rustc</code>展开宏，并将输出的AST再重转为源代码。此选项当前被认定为是<code>unstable</code>，因此我们还要添加<code>-Z unstable-options</code>。输出的信息(经过整理格式后)如下；特别留意<code>$recur</code>被替换掉的位置：</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>feature</span>(<span class='ident'>no_std</span>)]</span>
@@ -1161,7 +1162,7 @@ recurrence.rs:77:15: 77:64 note: expansion site
     }
 }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=%23!%5Bfeature(no_std)%5D%0A%23!%5Bno_std%5D%0A%23%5Bprelude_import%5D%0Ause%20std%3A%3Aprelude%3A%3Av1%3A%3A*%3B%0A%23%5Bmacro_use%5D%0Aextern%20crate%20std%20as%20std%3B%0Afn%20main()%20%7B%0A%20%20%20%20let%20fib%20%3D%20%7B%0A%20%20%20%20%20%20%20%20use%20std%3A%3Aops%3A%3AIndex%3B%0A%20%20%20%20%20%20%20%20const%20MEM_SIZE%3A%20usize%20%3D%201%20%2B%201%3B%0A%20%20%20%20%20%20%20%20struct%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20mem%3A%20%5Bu64%3B%20MEM_SIZE%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20pos%3A%20usize%2C%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20struct%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20slice%3A%20%26'a%20%5Bu64%3B%20MEM_SIZE%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20offset%3A%20usize%2C%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20impl%20%3C'a%3E%20Index%3Cusize%3E%20for%20IndexOffset%3C'a%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20type%20Output%20%3D%20u64%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%23%5Binline(always)%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20fn%20index%3C'b%3E(%26'b%20self%2C%20index%3A%20usize)%20-%3E%20%26'b%20u64%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Anum%3A%3AWrapping%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20index%20%3D%20Wrapping(index)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20offset%20%3D%20Wrapping(self.offset)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20window%20%3D%20Wrapping(MEM_SIZE)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20real_index%20%3D%20index%20-%20offset%20%2B%20window%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%26self.slice%5Breal_index.0%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20impl%20Iterator%20for%20Recurrence%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20type%20Item%20%3D%20u64%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%23%5Binline%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20fn%20next(%26mut%20self)%20-%3E%20Option%3Cu64%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20self.pos%20%3C%20MEM_SIZE%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20self.mem%5Bself.pos%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%20else%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20next_val%20%3D%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20n%20%3D%20self.pos%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20a%20%3D%20IndexOffset%7Bslice%3A%20%26self.mem%2C%20offset%3A%20n%2C%7D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20a%5Bn%20-%201%5D%20%2B%20a%5Bn%20-%202%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20use%20std%3A%3Amem%3A%3Aswap%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20mut%20swap_tmp%20%3D%20next_val%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20let%20result%20%3D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20match%20%3A%3Astd%3A%3Aiter%3A%3AIntoIterator%3A%3Ainto_iter((0..MEM_SIZE).rev())%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20mut%20iter%20%3D%3E%20loop%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20match%20%3A%3Astd%3A%3Aiter%3A%3AIterator%3A%3Anext(%26mut%20iter)%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3A%3Astd%3A%3Aoption%3A%3AOption%3A%3ASome(i)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20swap(%26mut%20swap_tmp%2C%20%26mut%20self.mem%5Bi%5D)%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3A%3Astd%3A%3Aoption%3A%3AOption%3A%3ANone%20%3D%3E%20break%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20result%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20self.pos%20%2B%3D%201%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Some(next_val)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20Recurrence%7Bmem%3A%20%5B0%2C%201%5D%2C%20pos%3A%200%2C%7D%0A%20%20%20%20%7D%3B%0A%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20let%20result%20%3D%0A%20%20%20%20%20%20%20%20%20%20%20%20match%20%3A%3Astd%3A%3Aiter%3A%3AIntoIterator%3A%3Ainto_iter(fib.take(10))%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20mut%20iter%20%3D%3E%20loop%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20match%20%3A%3Astd%3A%3Aiter%3A%3AIterator%3A%3Anext(%26mut%20iter)%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3A%3Astd%3A%3Aoption%3A%3AOption%3A%3ASome(e)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3A%3Astd%3A%3Aio%3A%3A_print(%3A%3Astd%3A%3Afmt%3A%3AArguments%3A%3Anew_v1(%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20static%20__STATIC_FMTSTR%3A%20%26'static%20%5B%26'static%20str%5D%20%3D%20%26%5B%22%22%2C%20%22%5Cn%22%5D%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20__STATIC_FMTSTR%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%26match%20(%26e%2C)%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20(__arg0%2C)%20%3D%3E%20%5B%3A%3Astd%3A%3Afmt%3A%3AArgumentV1%3A%3Anew(__arg0%2C%20%3A%3Astd%3A%3Afmt%3A%3ADisplay%3A%3Afmt)%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20))%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3A%3Astd%3A%3Aoption%3A%3AOption%3A%3ANone%20%3D%3E%20break%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%3B%0A%20%20%20%20%20%20%20%20result%0A%20%20%20%20%7D%0A%7D%0A&amp;version=nightly">Run</a></pre>
 
-<p>呃..这看起来完全可以！如果我们加上几条<code>#![feature(...)]</code>属性，并把它送去给一个nightly版本的<code>rustc</code>，甚至能够编译成功...什么情况？！</p>
+<p>呃..这看起来完全合法！如果我们加上几条<code>#![feature(...)]</code>属性，并把它送去给一个nightly版本的<code>rustc</code>，甚至真能通过编译...究竟什么情况？！</p>
 
 <blockquote>
 <p><strong>附注</strong>：上述代码无法通过非nightly版<code>rustc</code>编译。这是因为，<code>println!</code>宏的展开结果依赖于编译器内部的细节，这些细节尚未被公开稳定化。</p>
@@ -1182,7 +1183,7 @@ recurrence.rs:77:15: 77:64 note: expansion site
 
 <span class='kw'>let</span> <span class='ident'>four</span> <span class='op'>=</span> <span class='macro'>using_a</span><span class='macro'>!</span>(<span class='ident'>a</span> <span class='op'>/</span> <span class='number'>10</span>);<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=%2F*%0Amacro_rules!%20using_a%20%7B%0A%20%20%20%20(%24e%3Aexpr)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20let%20a%20%3D%2042i%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%24e%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%7D%0A%0Alet%20four%20%3D%20using_a!(a%20%2F%2010)%3B%0A*%2F%0Afn%20main()%20%7B%7D%0A">Run</a></pre>
 
-<p>此宏接受一个表达式，然后把它包进一个定义了变量<code>a</code>的区块里。我们随后用它绕个弯子来求<code>4</code>。这个例子中实际上存在2种句法上下文，但我们看不见它们。为了帮助说明，我们给每个上下文都上一种不同的颜色。我们从未展开的代码开始，此时仅有一种上下文：</p>
+<p>此宏接受一个表达式，然后把它包进一个定义了变量<code>a</code>的区块里。我们随后用它绕个弯子来求<code>4</code>。这个例子中实际上存在2种句法上下文，但我们看不见它们。为了帮助说明，我们给每个上下文都上一种不同的颜色。我们从未展开的代码开始上色，此时仅看得见一种上下文：</p>
 
 <pre class="rust rust-example-rendered"><span class="synctx-0"><span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">using_a</span> {&#xa;    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> {&#xa;        {&#xa;            <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="number">42</span>;&#xa;            <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>&#xa;        }&#xa;    }&#xa;}&#xa;&#xa;<span class="kw">let</span> <span class="ident">four</span> <span class="op">=</span> <span class="macro">using_a</span><span class="macro">!</span>(<span class="ident">a</span> <span class="op">/</span> <span class="number">10</span>);</span></pre>
 
@@ -1192,9 +1193,9 @@ recurrence.rs:77:15: 77:64 note: expansion site
 
 <p>可以看到，在宏中定义的<code><span class="synctx-1">a</span></code>与调用所提供的<code><span class="synctx-0">a</span></code>处于不同的上下文中。因此，虽然它们的字母表示一致，编译器仍将它们视作完全不同的标识符。</p>
 
-<p>宏的这一特性需要格外留意：它们可能会产生无法编译的AST，但同样的代码手写或者通过<code>--pretty expanded</code>转印出来则能够通过编译。</p>
+<p>宏的这一特性需要格外留意：它们可能会产出无法通过编译的AST；但同样的代码，手写或通过<code>--pretty expanded</code>转印出来则能够通过编译。</p>
 
-<p>解决方案是，采用适当的句法上下文来捕获标识符。我们沿用上例，并作修改：</p>
+<p>解决方案是，采用合适的句法上下文来捕获标识符。我们沿用上例，并作修改：</p>
 
 <pre class="rust rust-example-rendered"><span class="synctx-0"><span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">using_a</span> {&#xa;    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> {&#xa;        {&#xa;            <span class="kw">let</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="op">=</span> <span class="number">42</span>;&#xa;            <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>&#xa;        }&#xa;    }&#xa;}&#xa;&#xa;<span class="kw">let</span> <span class="ident">four</span> <span class="op">=</span> <span class="macro">using_a</span><span class="macro">!</span>(<span class="ident">a</span>, <span class="ident">a</span> <span class="op">/</span> <span class="number">10</span>);</span></pre>
 
@@ -1311,6 +1312,17 @@ recurrence.rs:77:15: 77:64 note: expansion site
 </code></pre>
 
 <p>成功了！</p>
+
+<div class="footnotes">
+<hr>
+<ol>
+
+<li id="fn1">
+<p>在目前的稳定版本(Rust 1.14.0)下，去掉双边逗号后的代码无法通过编译。<code>rustc</code>报错“error: <code>$inits:expr</code> may be followed by <code>...</code>, which is not allowed for <code>expr</code> fragments”。解决方案是将这两处逗号替换为其它字面值，如分号；与之前的捕获所用分隔符不同即可。&nbsp;<a href="#fnref1" rev="footnote">&#8617;</a></p>
+</li>
+
+</ol>
+</div>
 
     <script src='rustbook.js'></script>
 </div></div>

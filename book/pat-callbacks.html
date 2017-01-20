@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <title>Callbacks</title>
+    <title>回调</title>
 
     <link rel="stylesheet" type="text/css" href="rustbook.css">
 
@@ -65,39 +65,39 @@
 </li>
 <li><a  href='pim-README.html'><b>3.</b> 宏，实践介绍</a>
 </li>
-<li><a  href='pat-README.html'><b>4.</b> Patterns</a>
+<li><a  href='pat-README.html'><b>4.</b> 常用模式</a>
 <ol class='section'>
-<li><a class='active' href='pat-callbacks.html'><b>4.1.</b> Callbacks</a>
+<li><a class='active' href='pat-callbacks.html'><b>4.1.</b> 回调</a>
 </li>
-<li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> Incremental TT Munchers</a>
+<li><a  href='pat-incremental-tt-munchers.html'><b>4.2.</b> 标记树撕咬机</a>
 </li>
-<li><a  href='pat-internal-rules.html'><b>4.3.</b> Internal Rules</a>
+<li><a  href='pat-internal-rules.html'><b>4.3.</b> 内用规则</a>
 </li>
-<li><a  href='pat-push-down-accumulation.html'><b>4.4.</b> Push-Down Accumulation</a>
+<li><a  href='pat-push-down-accumulation.html'><b>4.4.</b> 下推累积</a>
 </li>
-<li><a  href='pat-repetition-replacement.html'><b>4.5.</b> Repetition Replacement</a>
+<li><a  href='pat-repetition-replacement.html'><b>4.5.</b> 重复替代</a>
 </li>
-<li><a  href='pat-trailing-separators.html'><b>4.6.</b> Trailing Separators</a>
+<li><a  href='pat-trailing-separators.html'><b>4.6.</b> 尾部分隔符</a>
 </li>
-<li><a  href='pat-tt-bundling.html'><b>4.7.</b> TT Bundling</a>
+<li><a  href='pat-tt-bundling.html'><b>4.7.</b> 标记树聚束</a>
 </li>
-<li><a  href='pat-visibility.html'><b>4.8.</b> Visibility</a>
+<li><a  href='pat-visibility.html'><b>4.8.</b> 可见性</a>
 </li>
-<li><a  href='pat-provisional.html'><b>4.9.</b> Provisional</a>
+<li><a  href='pat-provisional.html'><b>4.9.</b> 临时措施</a>
 </li>
 </ol>
 </li>
-<li><a  href='blk-README.html'><b>5.</b> Building Blocks</a>
+<li><a  href='blk-README.html'><b>5.</b> 轮子</a>
 <ol class='section'>
-<li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST Coercion</a>
+<li><a  href='blk-ast-coercion.html'><b>5.1.</b> AST强转</a>
 </li>
-<li><a  href='blk-counting.html'><b>5.2.</b> Counting</a>
+<li><a  href='blk-counting.html'><b>5.2.</b> 计数</a>
 </li>
-<li><a  href='blk-enum-parsing.html'><b>5.3.</b> Enum Parsing</a>
+<li><a  href='blk-enum-parsing.html'><b>5.3.</b> 枚举解析</a>
 </li>
 </ol>
 </li>
-<li><a  href='aeg-README.html'><b>6.</b> Annotated Examples</a>
+<li><a  href='aeg-README.html'><b>6.</b> 实例注解</a>
 <ol class='section'>
 <li><a  href='aeg-ook.html'><b>6.1.</b> Ook!</a>
 </li>
@@ -109,7 +109,7 @@
 <div id='page'>
 
 
-    <h1 class="title">Callbacks</h1>
+    <h1 class="title">回调</h1>
     
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>call_with_larch</span> {
@@ -121,22 +121,22 @@
 }
 
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>recognise_tree</span> {
-    (<span class='ident'>larch</span>) <span class='op'>=&gt;</span> { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;#1, the Larch.&quot;</span>) };
-    (<span class='ident'>redwood</span>) <span class='op'>=&gt;</span> { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;#2, the Mighty Redwood.&quot;</span>) };
-    (<span class='ident'>fir</span>) <span class='op'>=&gt;</span> { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;#3, the Fir.&quot;</span>) };
-    (<span class='ident'>chestnut</span>) <span class='op'>=&gt;</span> { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;#4, the Horse Chestnut.&quot;</span>) };
-    (<span class='ident'>pine</span>) <span class='op'>=&gt;</span> { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;#5, the Scots Pine.&quot;</span>) };
-    ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>other</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;I don&#39;t know; some kind of birch maybe?&quot;</span>) };
+    (<span class='ident'>larch</span>) <span class='op'>=&gt;</span> { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;#1, 落叶松。&quot;</span>) };
+    (<span class='ident'>redwood</span>) <span class='op'>=&gt;</span> { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;#2, THE巨红杉。&quot;</span>) };
+    (<span class='ident'>fir</span>) <span class='op'>=&gt;</span> { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;#3, 冷杉。&quot;</span>) };
+    (<span class='ident'>chestnut</span>) <span class='op'>=&gt;</span> { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;#4, 七叶树。&quot;</span>) };
+    (<span class='ident'>pine</span>) <span class='op'>=&gt;</span> { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;#5, 欧洲赤松。&quot;</span>) };
+    ($(<span class='macro-nonterminal'>$</span><span class='macro-nonterminal'>other</span>:<span class='ident'>tt</span>)<span class='kw-2'>*</span>) <span class='op'>=&gt;</span> { <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;不懂，可能是种桦树？&quot;</span>) };
 }
 
 <span class='kw'>fn</span> <span class='ident'>main</span>() {
     <span class='macro'>recognise_tree</span><span class='macro'>!</span>(<span class='macro'>expand_to_larch</span><span class='macro'>!</span>());
     <span class='macro'>call_with_larch</span><span class='macro'>!</span>(<span class='ident'>recognise_tree</span>);
-}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20call_with_larch%20%7B%0A%20%20%20%20(%24callback%3Aident)%20%3D%3E%20%7B%20%24callback!(larch)%20%7D%3B%0A%7D%0A%0Amacro_rules!%20expand_to_larch%20%7B%0A%20%20%20%20()%20%3D%3E%20%7B%20larch%20%7D%3B%0A%7D%0A%0Amacro_rules!%20recognise_tree%20%7B%0A%20%20%20%20(larch)%20%3D%3E%20%7B%20println!(%22%231%2C%20the%20Larch.%22)%20%7D%3B%0A%20%20%20%20(redwood)%20%3D%3E%20%7B%20println!(%22%232%2C%20the%20Mighty%20Redwood.%22)%20%7D%3B%0A%20%20%20%20(fir)%20%3D%3E%20%7B%20println!(%22%233%2C%20the%20Fir.%22)%20%7D%3B%0A%20%20%20%20(chestnut)%20%3D%3E%20%7B%20println!(%22%234%2C%20the%20Horse%20Chestnut.%22)%20%7D%3B%0A%20%20%20%20(pine)%20%3D%3E%20%7B%20println!(%22%235%2C%20the%20Scots%20Pine.%22)%20%7D%3B%0A%20%20%20%20(%24(%24other%3Att)*)%20%3D%3E%20%7B%20println!(%22I%20don't%20know%3B%20some%20kind%20of%20birch%20maybe%3F%22)%20%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20recognise_tree!(expand_to_larch!())%3B%0A%20%20%20%20call_with_larch!(recognise_tree)%3B%0A%7D%0A">Run</a></pre>
+}<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20call_with_larch%20%7B%0A%20%20%20%20(%24callback%3Aident)%20%3D%3E%20%7B%20%24callback!(larch)%20%7D%3B%0A%7D%0A%0Amacro_rules!%20expand_to_larch%20%7B%0A%20%20%20%20()%20%3D%3E%20%7B%20larch%20%7D%3B%0A%7D%0A%0Amacro_rules!%20recognise_tree%20%7B%0A%20%20%20%20(larch)%20%3D%3E%20%7B%20println!(%22%231%2C%20%E8%90%BD%E5%8F%B6%E6%9D%BE%E3%80%82%22)%20%7D%3B%0A%20%20%20%20(redwood)%20%3D%3E%20%7B%20println!(%22%232%2C%20THE%E5%B7%A8%E7%BA%A2%E6%9D%89%E3%80%82%22)%20%7D%3B%0A%20%20%20%20(fir)%20%3D%3E%20%7B%20println!(%22%233%2C%20%E5%86%B7%E6%9D%89%E3%80%82%22)%20%7D%3B%0A%20%20%20%20(chestnut)%20%3D%3E%20%7B%20println!(%22%234%2C%20%E4%B8%83%E5%8F%B6%E6%A0%91%E3%80%82%22)%20%7D%3B%0A%20%20%20%20(pine)%20%3D%3E%20%7B%20println!(%22%235%2C%20%E6%AC%A7%E6%B4%B2%E8%B5%A4%E6%9D%BE%E3%80%82%22)%20%7D%3B%0A%20%20%20%20(%24(%24other%3Att)*)%20%3D%3E%20%7B%20println!(%22%E4%B8%8D%E6%87%82%EF%BC%8C%E5%8F%AF%E8%83%BD%E6%98%AF%E7%A7%8D%E6%A1%A6%E6%A0%91%EF%BC%9F%22)%20%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20recognise_tree!(expand_to_larch!())%3B%0A%20%20%20%20call_with_larch!(recognise_tree)%3B%0A%7D%0A">Run</a></pre>
 
-<p>Due to the order that macros are expanded in, it is (as of Rust 1.2) impossible to pass information to a macro from the expansion of <em>another</em> macro.  This can make modularising macros very difficult.</p>
+<p>由于宏展开的机制限制，(在Rust1.2中)不可能做到把一例宏的展开结果作为有效信息提供给另一例宏。这为宏的模组化工作施加了难度。</p>
 
-<p>An alternative is to use recursion and pass a callback.  Here is a trace of the above example to demonstrate how this takes place:</p>
+<p>使用递归并传递回调是条出路。作为演示，上例两处宏调用的展开过程如下：</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>recognise_tree</span><span class='macro'>!</span> { <span class='ident'>expand_to_larch</span> <span class='op'>!</span> (  ) }
@@ -148,7 +148,7 @@
 <span class='macro'>println</span><span class='macro'>!</span> { <span class='string'>&quot;#1, the Larch.&quot;</span> }
 <span class='comment'>// ...</span><a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Arecognise_tree!%20%7B%20expand_to_larch%20!%20(%20%20)%20%7D%0Aprintln!%20%7B%20%22I%20don't%20know%3B%20some%20kind%20of%20birch%20maybe%3F%22%20%7D%0A%2F%2F%20...%0A%0Acall_with_larch!%20%7B%20recognise_tree%20%7D%0Arecognise_tree!%20%7B%20larch%20%7D%0Aprintln!%20%7B%20%22%231%2C%20the%20Larch.%22%20%7D%0A%2F%2F%20...%0A%7D">Run</a></pre>
 
-<p>Using a <code>tt</code> repetition, one can also forward arbitrary arguments to a callback.</p>
+<p>可以使用<code>tt</code>的重复来将任意参数转发给回调：</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>callback</span> {
@@ -161,7 +161,7 @@
     <span class='macro'>callback</span><span class='macro'>!</span>(<span class='ident'>callback</span>(<span class='ident'>println</span>(<span class='string'>&quot;Yes, this *was* unnecessary.&quot;</span>)));
 }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20callback%20%7B%0A%20%20%20%20(%24callback%3Aident(%24(%24args%3Att)*))%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20%24callback!(%24(%24args)*)%0A%20%20%20%20%7D%3B%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20callback!(callback(println(%22Yes%2C%20this%20*was*%20unnecessary.%22)))%3B%0A%7D%0A">Run</a></pre>
 
-<p>You can, of course, insert additional tokens in the arguments as needed.</p>
+<p>如有需要，当然还可以在参数中增加额外的标记。</p>
 
     <script src='rustbook.js'></script>
 </div></div>

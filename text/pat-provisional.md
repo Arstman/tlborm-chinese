@@ -2,11 +2,11 @@
 
 本节将留给那些价值有待探讨，以及那些可能有缺陷因而不适合出现在正文中的模式与技巧。
 
-## Abacus Counters
+## 算盘计数
 
-> **Provisional**: needs a more compelling example.  Although an important part of the `Ook!` macro, matching nested groups that are *not* denoted by Rust groups is sufficiently unusual that it may not merit inclusion.
+> **临时信息**：需要更合适的例子。虽然它是[`Ook!`宏](aeg-ook.md#提取循环区块)的重要组成部分之一，但该用例——匹配Rust分组机制无法表示的嵌套结构——实在是过于特殊，因此不适作为例子使用。
 
-> **Note**: this section assumes understanding of [push-down accumulation](#push-down-accumulation) and [incremental TT munchers](#incremental-tt-munchers).
+> **注意**：此节预设读者了解[下推累积](pat-push-down-accumulation.md)以及[标记树撕咬机](pat-incremental-tt-munchers.md)。
 
 ```rust
 macro_rules! abacus {
@@ -23,7 +23,7 @@ macro_rules! abacus {
         abacus!(($($moves)*) -> (+ $($count)*))
     };
 
-    // Check if the final result is zero.
+    // 检查最终结果是否为零
     (() -> ()) => { true };
     (() -> ($($count:tt)+)) => { false };
 }
@@ -34,56 +34,55 @@ fn main() {
 }
 ```
 
-This technique can be used in cases where you need to keep track of a varying counter that starts at or near zero, and must support the following operations:
+当需要记录的计数会发生变化，且初始值为零或在零附近，且必须支持如下操作：
 
-* Increment by one.
-* Decrement by one.
-* Compare to zero (or any other fixed, finite value).
+* 增加一；
+* 减少一；
+* 与0(或任何其它固定有限值)相比较；
 
-A value of *n* is represented by *n* instances of a specific token stored in a group.  Modifications are done using recursion and [push-down accumulation](#push-down-accumulation).  Assuming the token used is `x`, the operations above are implemented as follows:
+时，可以使用次技巧。
 
-* Increment by one: match `($($count:tt)*)`, substitute `(x $($count)*)`.
-* Decrement by one: match `(x $($count:tt)*)`, substitute `($($count)*)`.
-* Compare to zero: match `()`.
-* Compare to one: match `(x)`.
-* Compare to two: match `(x x)`.
-* *(and so on...)*
+数值n将由一组共n个相同的特定标记来表示。对数值的修改操作将采用[下推累积](pat-push-down-accumulation.md)模式由递归调用完成。假设所采用的特定标记是`x`，则上述操作可实现为：
 
-In this way, operations on the counter are like flicking tokens back and forth like an abacus.[^abacus]
+* 增加一：匹配`($($count:tt)*)`并替换为`(x $($count)*)`。
+* 减少一：匹配`(x $($count:tt)*)`并替换为`($($count)*)`。
+* 与0相比较：匹配`()`。
+* 与1相比较：匹配`(x)`。
+* 与2相比较：匹配`(x x)`。
+* *(依此类推...)*
 
-[^abacus]: 
-    This desperately thin reasoning conceals the *real* reason for this name: to avoid having *yet another* thing with "token" in the name.  Talk to your writer about avoiding [semantic satiation](https://en.wikipedia.org/wiki/Semantic_satiation) today!
+作用于计数值的操作将所选的标记来回摆动，如同算盘摆动算子。[^abacus]
 
-    In fairness, it could *also* have been called ["unary counting"](https://en.wikipedia.org/wiki/Unary_numeral_system).
+[^abacus]: 在这句极度单薄的辩解下，隐藏着选用此名称的*真实*理由：避免造出又一个名含“标记”的术语。今天就该跟你认识的作者谈谈规避[语义饱和](https://en.wikipedia.org/wiki/Semantic_satiation)吧！公平来讲，本来也可以称它为[“一元计数(unary counting)”](https://en.wikipedia.org/wiki/Unary_numeral_system)。
 
-In cases where you want to represent negative values, *-n* can be represented as *n* instances of a *different* token.  In the example given above, *+n* is stored as *n* `+` tokens, and *-m* is stored as *m* `-` tokens.
+在想表示负数的情况下，值*-n*可被表示成*n*个相同的其它标记。在上例中，值*+n*被表示成*n*个`+`标记，而值*-m*被表示成*m*个`-`标记。
 
-In this case, the operations become slightly more complicated; increment and decrement effectively reverse their usual meanings when the counter is negative.  To whit given `+` and `-` for the positive and negative tokens respectively, the operations change to:
+有负数的情况下操作起来稍微复杂一些，增减操作在当前数值为负时实际上互换了角色。给定`+`和`-`分别作为正数与负数标记，相应操作的实现将变成：
 
-* Increment by one:
-  * match `()`, substitute `(+)`.
-  * match `(- $($count:tt)*)`, substitute `($($count)*)`.
-  * match `($($count:tt)+)`, substitute `(+ $($count)+)`.
-* Decrement by one:
-  * match `()`, substitute `(-)`.
-  * match `(+ $($count:tt)*)`, substitute `($($count)*)`.
-  * match `($($count:tt)+)`, substitute `(- $($count)+)`.
-* Compare to 0: match `()`.
-* Compare to +1: match `(+)`.
-* Compare to -1: match `(-)`.
-* Compare to +2: match `(++)`.
-* Compare to -2: match `(--)`.
-* *(and so on...)*
+* 增加一：
+  * 匹配`()`并替换为`(+)`
+  * 匹配`(- $($count:tt)*)`并替换为`($($count)*)`
+  * 匹配`($($count:tt)+)`并替换为`(+ $($count)+)`
+* 减少一：
+  * 匹配`()`并替换为`(-)`
+  * 匹配`(+ $($count:tt)*)`并替换为`($($count)*)`
+  * 匹配`($($count:tt)+)`并替换为`(- $($count)+)`
+* 与0相比较：匹配 `()`
+* 与+1相比较：匹配`(+)`
+* 与-1相比较：匹配`(-)`
+* 与+2相比较：匹配`(++)`
+* 与-2相比较：匹配`(--)`
+* *(依此类推...)*
 
-Note that the example at the top combines some of the rules together (for example, it combines increment on `()` and `($($count:tt)+)` into an increment on `($($count:tt)*)`).
+注意在顶部的示例中，某些规则被合并到一起了(举例来说，对`()`及`($($count:tt)+)`的增加操作被合并为对`($($count:tt)*)`的增加操作)。
 
-If you want to extract the actual *value* of the counter, this can be done using a regular [counter macro](../blk/README.html#counting).  For the example above, the terminal rules can be replaced with the following:
+如果想要提取出所计数目的实际值，可再使用普通的[计数宏](blk-counting.md)。对上例来说，终结规则可换为：
 
 ```ignore
 macro_rules! abacus {
     // ...
 
-    // This extracts the counter as an integer expression.
+    // 下列规则将计数替换成实际值的表达式
     (() -> ()) => {0};
     (() -> (- $($count:tt)*)) => {
         {(-1i32) $(- replace_expr!($count 1i32))*}
@@ -98,7 +97,7 @@ macro_rules! replace_expr {
 }
 ```
 
-> **<abbr title="Just for this example">JFTE</abbr>**: strictly speaking, the above formulation of `abacus!` is needlessly complex.  It can be implemented much more efficiently using repetition, provided you *do not* need to match against the counter's value in a macro:
+> **<abbr title="Just for this example">仅限此例</abbr>**：严格来说，想要达到此例的效果，没必要做的这么复杂。如果你不需要在宏中匹配所计的值，可直接采用重复来更加高效地实现：
 >
 > ```ignore
 > macro_rules! abacus {

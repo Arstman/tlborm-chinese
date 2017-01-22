@@ -1,53 +1,53 @@
 % Ook!
 
-This macro is an implementation of the [Ook! esoteric language](http://www.dangermouse.net/esoteric/ook.html), which is isomorphic to the [Brainfuck esoteric language](http://www.muppetlabs.com/~breadbox/bf/).
+此宏是对[Ook!密文](http://www.dangermouse.net/esoteric/ook.html)的实现，该语言与[Brainfuck密文](http://www.muppetlabs.com/~breadbox/bf/)同构。
 
-The execution model for the language is very simple: memory is represented as an array of "cells" (typically at least 8-bits) of some indeterminate number (usually at least 30,000).  There is a pointer into memory which starts off at position 0.  Finally, there is an execution stack (used to implement looping) and pointer into the program, although these last two are not exposed to the running program; they are properties of the runtime itself.
+此语言的执行模式非常简单：内存被表示为一列总量不定(通常至少包括30,000个)的“单元”(每个单元至少8bit)；另有一个指向该内存的指针，最初指向位置0；还有一个执行栈(用来实现循环)和一个指向程序代码的指针。最后两个组件并未暴露给程序本身，它们属于程序的运行时性质。
 
-The language itself is comprised of just three tokens: `Ook.`, `Ook?`, and `Ook!`.  These are combined in pairs to form the eight different operations:
+语言本身仅由三种标记，`Ook.`、`Ook?`及`Ook!`构成。它们两两组合，构成了八种运算符：
 
-* `Ook. Ook?` - increment pointer.
-* `Ook? Ook.` - decrement pointer.
-* `Ook. Ook.` - increment pointed-to memory cell.
-* `Ook! Ook!` - decrement pointed-to memory cell.
-* `Ook! Ook.` - write pointed-to memory cell to standard output.
-* `Ook. Ook!` - read from standard input into pointed-to memory cell.
-* `Ook! Ook?` - begin a loop.
-* `Ook? Ook!` - jump back to start of loop if pointed-to memory cell is not zero; otherwise, continue.
+* `Ook. Ook?` - 指针增。
+* `Ook? Ook.` - 指针减。
+* `Ook. Ook.` - 所指单元增。
+* `Ook! Ook!` - 所指单元减。
+* `Ook! Ook.` - 将所指单元写至标准输出。
+* `Ook. Ook!` - 从标准输入读至所指单元。
+* `Ook! Ook?` - 进入循环。
+* `Ook? Ook!` - 如果所指单元非零，跳回循环起始位置；否则，继续执行。
 
-Ook! is interesting because it is known to be Turing-complete, meaning that any environment in which you can implement it must *also* be Turing-complete.
+Ook!之所以有趣，是因为它图灵完备。这意味着，你必须要在同样图灵完备的环境中才能实现它。
 
-## Implementation
+## 实现
 
 ```ignore
 #![recursion_limit = "158"]
 ```
 
-This is, in fact, the lowest possible recursion limit for which the example program provided at the end will actually compile.  If you're wondering what could be so fantastically complex that it would *justify* a recursion limit nearly five times the default limit... [take a wild guess](https://en.wikipedia.org/wiki/Hello_world_program).
+实际上，这个值将是我们随后给出的示例程序编译成功所需的最低值。如果你很好奇究竟是怎样的程序，会如此这般复杂，以至于必须要把递归极限调至默认值的近五倍大... [请大胆猜测](https://en.wikipedia.org/wiki/Hello_world_program)。
 
 ```ignore
 type CellType = u8;
 const MEM_SIZE: usize = 30_000;
 ```
 
-These are here purely to ensure they are visible to the macro expansion.[^*]
+加入这些定义，以供宏展开使用[^*]
 
-[^*]: They *could* have been defined within the macro, but then they would have to have been explicitly passed around (due to hygiene).  To be honest, by the time I realised I *needed* to define these, the macro was already mostly written and... well, would *you* want to go through and fix this thing up if you didn't *absolutely need* to?
+[^*]: 我们的确可以在宏内部定义这些，但那样一来它们就必须被显式的传来传去(由于宏的卫生性)。坦率地讲，当我意识到真的需要这些定义的时候，我的宏已经写得七七八八了...如果没有绝对的必要，你想跟我一样尝试修补那样的烂摊子吗？
 
 ```ignore
 macro_rules! Ook {
 ```
 
-The name should *probably* have been `ook!` to match the standard naming convention, but the opportunity was simply too good to pass up.
+可能应该取名`ook!`以符合Rust标准的命名传统。然而良机不可错失，我们就用本名吧！
 
-The rules for this macro are broken up into sections using the [internal rules](../pat/README.html#internal-rules) pattern.
+我们使用了[内用规则](pat-internal-rules.md)模式；此宏的规则因而可被分为几个模块。
 
-The first of these will be a `@start` rule, which takes care of setting up the block in which the rest of our expansion will happen.  There is nothing particularly interesting in this: we define some variables and helper functions, then do the bulk of the expansion.
+第一块是`@start`规则，负责为之后的展开搭建舞台。没什么特别的地方：先定义一些变量、效用函数，然后处理展开的大头。
 
-A few small notes:
+一些脚注：
 
-* We are expanding into a function largely so that we can use `try!` to simplify error handling.
-* The use of underscore-prefixed names is so that the compiler will not complain about unused functions or variables if, for example, the user writes an Ook! program that does no I/O.
+* 我们之所以选择展开为函数，很大原因在于，这样以来就可以采用`try!`来简化错误处理流程。
+* 有些时候，举例来说，如果用户想写一个不做I/O的程序，那么I/O相关的名称就不会被用到。我们让部分名称以`_`起头，正是为了使编译器不对此类情况产生抱怨。
 
 ```ignore
     (@start $($Ooks:tt)*) => {
@@ -89,22 +89,22 @@ A few small notes:
     };
 ```
 
-### Opcode parsing
+### 解析运算符码
 
-Next are the "execute" rules, which are used to parse opcodes from the input.
+接下来，是一列“执行”规则，用于从输入中解析运算符码。
 
-The general form of these rules is `(@e $syms; ($input))`.  As you can see from the `@start` rule, `$syms` is the collection of symbols needed to actually implement the program: input, output, the memory array, *etc.*.  We are using [TT bundling](../pat/README.html#tt-bundling) to simplify forwarding of these symbols through later, intermediate rules.
+这列规则的通用形式是`(@e $syms; ($input))`。从`@start`规则种我们可以看出，`$syms`包含了实现Ook程序所必须的符号：输入、输出、内存等等。我们使用了[标记树聚束](pat-tt-bundling.md)来简化转发这些符号的流程。
 
-First, is the rule that terminates our recursion: once we have no more input, we stop.
+第一条规则是终止规则：一旦没有更多输入，我们就停下来。
 
 ```ignore
     (@e $syms:tt; ()) => {};
 ```
 
-Next, we have a single rule for *almost* each opcode.  For these, we strip off the opcode, emit the corresponding Rust code, then recurse on the input tail: a textbook [TT muncher](../pat/README.html#incremental-tt-munchers).
+其次，是一些适用于绝大部分运算符码的规则：我们剥下运算符码，换上其相应的Rust代码，然后继续递归处理输入剩下的部分。教科书式的[标记树撕咬机](pat-incremental-tt-munchers.md)。
 
 ```ignore
-    // Increment pointer.
+    // 指针增
     (@e ($a:expr, $i:expr, $inc:expr, $dec:expr, $r:expr, $w:expr, $re:expr);
         (Ook. Ook? $($tail:tt)*))
     => {
@@ -112,7 +112,7 @@ Next, we have a single rule for *almost* each opcode.  For these, we strip off t
         Ook!(@e ($a, $i, $inc, $dec, $r, $w, $re); ($($tail)*));
     };
     
-    // Decrement pointer.
+    // 指针减
     (@e ($a:expr, $i:expr, $inc:expr, $dec:expr, $r:expr, $w:expr, $re:expr);
         (Ook? Ook. $($tail:tt)*))
     => {
@@ -120,7 +120,7 @@ Next, we have a single rule for *almost* each opcode.  For these, we strip off t
         Ook!(@e ($a, $i, $inc, $dec, $r, $w, $re); ($($tail)*));
     };
     
-    // Increment pointee.
+    // 所指增
     (@e ($a:expr, $i:expr, $inc:expr, $dec:expr, $r:expr, $w:expr, $re:expr);
         (Ook. Ook. $($tail:tt)*))
     => {
@@ -128,7 +128,7 @@ Next, we have a single rule for *almost* each opcode.  For these, we strip off t
         Ook!(@e ($a, $i, $inc, $dec, $r, $w, $re); ($($tail)*));
     };
     
-    // Decrement pointee.
+    // 所指减
     (@e ($a:expr, $i:expr, $inc:expr, $dec:expr, $r:expr, $w:expr, $re:expr);
         (Ook! Ook! $($tail:tt)*))
     => {
@@ -136,7 +136,7 @@ Next, we have a single rule for *almost* each opcode.  For these, we strip off t
         Ook!(@e ($a, $i, $inc, $dec, $r, $w, $re); ($($tail)*));
     };
     
-    // Write to stdout.
+    // 输出
     (@e ($a:expr, $i:expr, $inc:expr, $dec:expr, $r:expr, $w:expr, $re:expr);
         (Ook! Ook. $($tail:tt)*))
     => {
@@ -144,7 +144,7 @@ Next, we have a single rule for *almost* each opcode.  For these, we strip off t
         Ook!(@e ($a, $i, $inc, $dec, $r, $w, $re); ($($tail)*));
     };
     
-    // Read from stdin.
+    // 读入
     (@e ($a:expr, $i:expr, $inc:expr, $dec:expr, $r:expr, $w:expr, $re:expr);
         (Ook. Ook! $($tail:tt)*))
     => {
@@ -159,19 +159,19 @@ Next, we have a single rule for *almost* each opcode.  For these, we strip off t
     };
 ```
 
-Here is where things get more complicated.  This opcode, `Ook! Ook?`, marks the start of a loop.  Ook! loops are translated to the following Rust code:
+现在要弄复杂的了。运算符码`Ook! Ook?`标记着循环的开始。Ook!中的循环，翻译成Rust代码的话，类似：
 
-> **Note**: this is *not* part of the larger code.
+> **注意**：这不是宏定义的组成部分。
 >
 > ```ignore
 > while memory[ptr] != 0 {
->     // Contents of loop
+>     // 循环内容
 > }
 > ```
 
-Of course, we cannot *actually* emit an incomplete loop.  This *could* be solved by using [pushdown](../pat/README.html#push-down-accumulation), were it not for a more fundamental problem: we cannot *write* `while memory[ptr] != {`, at all, *anywhere*.  This is because doing so would introduce an unbalanced brace.
+显然，我们无法为中间步骤生成不完整的循环。这一问题似可用[下推累积](pat-push-down-accumulation.md)解决，但更根本的困难在于，我们无论如何都没办法生成类似`while memory[ptr] != {`的中间结果，完全不可能。因为它引入了不匹配的花括号。
 
-The solution to this is to actually split the input into two parts: everything *inside* the loop, and everything *after* it.  The `@x` rules handle the first, `@s` the latter.
+解决方法是，把输入分成两部分：循环内部的，循环之后的。前者由`@x`规则处理，后者由`@s`处理。
 
 ```ignore
     (@e ($a:expr, $i:expr, $inc:expr, $dec:expr, $r:expr, $w:expr, $re:expr);
@@ -184,61 +184,60 @@ The solution to this is to actually split the input into two parts: everything *
     };
 ```
 
-### Loop extraction
+### 提取循环区块
 
-Next are the `@x`, or "extraction", rules.  These are responsible for taking an input tail and extracting the contents of a loop.  The general form of these rules is: `(@x $sym; $depth; $buf; $tail)`.
+接下来是“提取”规则组`@x`。它们负责接受输入尾，并将之展开为循环的内容。这组规则的一般形式为：`(@x $sym; $depth; $buf; $tail)`。
 
-The purpose of `$sym` is the same as above.  `$tail` is the input to be parsed, whilst `$buf` is a [push-down accumulation buffer](../pat/README.html#push-down-accumulation) into which we will collect the opcodes that are inside the loop.  But what of `$depth`?
+`$sym`的用处与上相同。`$tail`表示需要被解析的输入；而`$buf`则作为[下推累积的缓存](pat-push-down-accumulation.md)，循环内的运算符码在经过解析后将被存入其中。那么，`$depth`代表什么？
 
-A complication to all this is that loops can be *nested*.  Thus, we must have some way of keeping track of how many levels deep we currently are.  We must track this accurately enough to not stop parsing too early, nor too late, but when the level is *just right*.[^justright]
+目前为止，我们还未提及如何处理嵌套循环。`$depth`的作用正在于此：我们需要记录当前循环在整个嵌套之中的深度，同时保证解析不会过早或过晚终止，而是刚好停在恰当的位置。[^justright]
 
-[^justright]:
-    It is a little known fact[^fact] that the story of Goldie Locks was actually an allegory for accurate lexical parsing techniques.
+[^justright]: 一个鲜有人知的事实[^fact]是，金发姑娘的故事实际上是一则写给准确词法解析技术的寓言。
 
-[^fact]: And by "fact" I mean "shameless fabrication".
+[^fact]: 这个“事实”实际上意思是“臭不要脸的谣言”。
 
-Since we cannot do arithmetic in macros, and it would be infeasible to write out explicit integer-matching rules (imagine the following rules all copy & pasted for a non-trivial number of positive integers), we will instead fall back on one of the most ancient and venerable counting methods in history: counting on our fingers.
+由于在宏中没办法进行计算，而将数目匹配规则一一列出又不太可行(想想下面这一整套规则都得复制粘贴一堆不算小的整数的话，会是什么样子)，我们将只好回头采用最古老最珍贵的计数方法之一：亲手去数。
 
-But as macros don't *have* fingers, we'll use a [token abacus counter](../pat/README.html#abacus-counters) instead.  Specifically, we will use `@`s, where each `@` represents one additional level of depth.  If we keep these `@`s contained in a group, we can implement the three important operations we need:
+当然了，宏没有手，我们实际采用的是[标记驱动计数](pat-provisional.md#标记驱动计数)。具体来说，我们选用标记`@`，每个`@`都表示新的一层嵌套。把这些`@`们放进一组后，我们就可以实现所需的操作了：
 
-* Increment: match `($($depth:tt)*)`, substitute `(@ $($depth)*)`.
-* Decrement: match `(@ $($depth:tt)*)`, substitute `($($depth)*)`.
-* Compare to zero: match `()`.
+* 增加层数：匹配`($($depth:tt)*)`并用`(@ $($depth)*)`替换。
+* 减少层数：匹配`(@ $($depth:tt)*)`并用`($($depth)*)`替换。
+* 与0相比较：匹配`()`。
 
-First is a rule to detect when we find the matching `Ook? Ook!` sequence that closes the loop we're parsing.  In this case, we feed the accumulated loop contents to the previously defined `@e` rules.
+规则组中的第一条规则，用于在找到 `Ook? Ook!`输入序列时，终止当前循环体的解析。随后，我们需要把累积所得的循环体内容发给先前定义的`@e`组规则。
 
-Note that we *do not* need to do anything with the remaining input tail (that will be handled by the `@s` rules).
+注意，规则对于输入所剩的尾部不作任何处理(这项工作将由`@s`组的规则完成)。
 
 ```ignore
     (@x $syms:tt; (); ($($buf:tt)*);
         (Ook? Ook! $($tail:tt)*))
     => {
-        // Outer-most loop is closed.  Process the buffered tokens.
+        // 最外层的循环已被处理完毕，现在转而处理缓存到的标记。
         Ook!(@e $syms; ($($buf)*));
     };
 ```
 
-Next, we have rules for entering and exiting nested loops.  These adjust the counter and add the opcodes to the buffer.
+紧接着，是负责进出嵌套的一些规则。它们修改深度计数，并将运算符码放入缓存。
 
 ```ignore
     (@x $syms:tt; ($($depth:tt)*); ($($buf:tt)*);
         (Ook! Ook? $($tail:tt)*))
     => {
-        // One level deeper.
+        // 嵌套变深
         Ook!(@x $syms; (@ $($depth)*); ($($buf)* Ook! Ook?); ($($tail)*));
     };
     
     (@x $syms:tt; (@ $($depth:tt)*); ($($buf:tt)*);
         (Ook? Ook! $($tail:tt)*))
     => {
-        // One level higher.
+        // 嵌套变浅
         Ook!(@x $syms; ($($depth)*); ($($buf)* Ook? Ook!); ($($tail)*));
     };
 ```
 
-Finally, we have a rule for "everything else".  Note the `$op0` and `$op1` captures: as far as Rust is concerned, our Ook! tokens are always *two* Rust tokens: the identifier `Ook`, and another token.  Thus, we can generalise over all non-loop opcodes by matching `!`, `?`, and `.` as `tt`s.
+最后剩下的所有情况将交由一条规则处理。注意到它用的`$op0`和`$op1`两处捕获；对于Rust来说，Ook!中的一个标记将被视作两个标记：标识符`Ook`与剩下的符号。因此，我们用此规则来处理其它任何Ook!的非循环运算符，将`!`, `?`和`.`作为`tt`匹配，并捕获之。
 
-Here, we leave `$depth` untouched and just add the opcodes to the buffer.
+我们放置`$depth`，仅将运算符码推至缓存区中。
 
 ```ignore
     (@x $syms:tt; $depth:tt; ($($buf:tt)*);
@@ -248,11 +247,11 @@ Here, we leave `$depth` untouched and just add the opcodes to the buffer.
     };
 ```
 
-### Loop Skipping
+### 跳过循环区块
 
-This is *broadly* the same as loop extraction, except we don't care about the *contents* of the loop (and as such, don't need the accumulation buffer).  All we need to know is when we are *past* the loop.  At that point, we resume processing the input using the `@e` rules.
+这组规则与循环提取大致相同，不过它们并不关心循环的内容(也因此不需要累积缓存)。它们仅仅关心循环何时被完全跳过。彼时，我们将恢复到`@e`组规则中并继续处理剩下的输入。
 
-As such, these rules are presented without further exposition.
+因此，我们将不加进一步说明地列出它们：
 
 ```ignore
     // End of loop.
@@ -284,13 +283,13 @@ As such, these rules are presented without further exposition.
     };
 ```
 
-### Entry point
+### 入口
 
-This is the only non-internal rule.
+这是唯一一条非内用规则。
 
-It is worth noting that because this formulation simply matches *all* tokens provided to it, it is *extremely dangerous*.  Any mistake can cause an invocation to fail to match all the above rules, thus falling down to this one and triggering an infinite recursion.
+需注意的一点是，由于此规则单纯地匹配*所有*提供的标记，它极其危险。任何错误输入，都将造成其上的内用规则匹配完全失败，进而又落至匹配它(成功)的后果；引发无尽递归。
 
-When you are writing, modifying, or debugging a macro like this, it is wise to temporarily prefix rules such as this one with something, such as `@entry`.  This prevents the infinite recursion case, and you are more likely to get matcher errors at the appropriate place.
+当在写、改及调试此类宏的过程中，明智的做法是，在此类规则的匹配头部加上临时性前缀，比如给此例加上一个`@entry`；以防止无尽递归，并得到更加恰当有效的错误信息。
 
 ```ignore
     ($($Ooks:tt)*) => {
@@ -299,9 +298,9 @@ When you are writing, modifying, or debugging a macro like this, it is wise to t
 }
 ```
 
-### Usage
+### 用例
 
-Here, finally, is our test program.
+现在终于是时候上测试了。
 
 ```ignore
 fn main() {
@@ -349,18 +348,18 @@ fn main() {
 }
 ```
 
-The output when run (after a considerable pause for the compiler to do hundreds of recursive macro expansions) is:
+运行(在编译器进行数百次递归宏展开而停顿相当长一段时间之后)的输出将是：
 
 ```text
 Hello World!
 ```
 
-With that, we have demonstrated the horrifying truth that `macro_rules!` is Turing-complete!
+由此，我们揭示出了令人惊恐的真相：`macro_rules!`是图灵完备的！
 
-### An aside
+### 附注
 
-This was based on a macro implementing an isomorphic language called "Hodor!".  Manish Goregaokar then [implemented a Brainfuck interpreter using the Hodor! macro](https://www.reddit.com/r/rust/comments/39wvrm/hodor_esolang_as_a_rust_macro/cs76rqk?context=10000).  So that is a Brainfuck interpreter written in Hodor! which was itself implemented using `macro_rules!`.
+此文所基的宏，是一个名为“Hodor!”的同构语言实现。Manish Goregaokar后来[用那个宏实现了一个Brainfuck的解析器](https://www.reddit.com/r/rust/comments/39wvrm/hodor_esolang_as_a_rust_macro/cs76rqk?context=10000)。也就是说，那个Brainfuck解析器用`Hodor!`宏写成，而后者本身则又是由`macro_rules!`实现的！
 
-Legend has it that after raising the recursion limit to *three million* and allowing it to run for *four days*, it finally finished.
+传说在把递归极限提至*三百万*，并让之编译了*四天*后，整个过程终于得以完成。
 
-...by overflowing the stack and aborting.  To this day, esolang-as-macro remains a decidedly *non-viable* method of development with Rust.
+...收场的方式是栈溢出中止。时至今日，Rust宏驱动的密文编程语言仍然绝非可行的开发手段。

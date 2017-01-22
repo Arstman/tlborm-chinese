@@ -32,7 +32,7 @@ each_tt! {  }
 
 它在调试递归很深的宏时尤其有用。同时，它可以在命令提示符中被打开，在编译指令中附加`-Z trace-macros`即可。
 
-第二个有用的宏是`log_syntax!`。它将使得编译器输出所有经过编译器处理的标记。举个例子，下述代码可以让编译器唱一首歌：
+另一有用的宏是`log_syntax!`。它将使得编译器输出所有经过编译器处理的标记。举个例子，下述代码可以让编译器唱一首歌：
 
 ```rust
 # // Note: make sure to use a nightly channel compiler.

@@ -30,7 +30,7 @@ fn main() {
 
 fn process(buffer: &[u8], buffer_new: &mut Vec<u8>) {
     let mut index = 0 as usize;
-    let mut state = 1;
+    let mut state = 0;
     let mut temp = Vec::new();
     while index < buffer.len() {
         if state == 0 {
@@ -46,6 +46,14 @@ fn process(buffer: &[u8], buffer_new: &mut Vec<u8>) {
                 },
             }
         }else if state == 1 {
+            if let Ok(seg) = try_inspect(buffer, index, 4) {
+                if seg == "</p>".as_bytes() {
+                    index += 4;
+                    state = 0;
+                    buffer_new.write(seg);
+                    continue;
+                }
+            }
             match try_inspect(buffer, index, 6) {
                 Ok(seg) if seg == "<code>".as_bytes() => {
                     state = 2;

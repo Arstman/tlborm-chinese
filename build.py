@@ -1,5 +1,17 @@
 #!/usr/bin/env python3
 
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+import time
+from contextlib import contextmanager, ExitStack
+from itertools import chain
+import re
+
 TEXT_PATH = 'text'
 OUT_PATH = 'target'
 BOOK_OUT_PATH = OUT_PATH + '/book'
@@ -14,16 +26,7 @@ TEMP_PREFIX = 'tlborm-build-'
 WATCH_DELAY = 0.25 # sec
 WATCH_SLEEP = 0.5 # sec
 
-import json
-import os
-import re
-import shutil
-import subprocess
-import sys
-import tempfile
-import time
-from contextlib import contextmanager, ExitStack
-from itertools import chain
+
 
 TRACE = os.environ.get('TLBORM_TRACE_BUILD', '') != ''
 
@@ -89,7 +92,7 @@ def main():
 def build():
     msg('Building...')
     sh(RUSTBOOK_BIN_PATH, 'build', TEXT_PATH)
-
+    sh('cargo', 'run', RUSTBOOK_OUT_PATH)
     if os.path.exists(OUT_PATH):
         really_rmtree(OUT_PATH)
 

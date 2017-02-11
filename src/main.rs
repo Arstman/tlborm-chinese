@@ -36,12 +36,13 @@ fn process(buffer: &[u8], buffer_new: &mut Vec<u8>) {
         if state == 0 {
             match try_inspect(buffer, index, 3) {
                 Ok(seg) if seg == "<p>".as_bytes() => {
+                    println!("Hit!");
                     state = 1;
                     index += 3;
                     buffer_new.write(seg);
                 },
                 _ => {
-                    let next = try_read(buffer, &mut index, buffer.len()).expect("zzz1");
+                    let next = try_read(buffer, &mut index, 1).expect("zzz1");
                     buffer_new.write(next);
                 },
             }

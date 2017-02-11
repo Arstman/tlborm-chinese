@@ -173,7 +173,7 @@
 <pre class='rust rust-example-rendered'>
 <span class='kw'>let</span> <span class='ident'>eight</span> <span class='op'>=</span> <span class='number'>2</span> <span class='op'>*</span> (<span class='number'>1</span> <span class='op'>+</span> <span class='number'>3</span>);<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=fn%20main()%20%7B%0Alet%20eight%20%3D%202%20*%20(1%20%2B%203)%3B%0A%7D">Run</a></pre>
 
-<p>注意到虽然表达式本身不包含括号，我们仍加上了它们。这是因为，编译器总是将宏展开结果作为完整的AST节点对待，而**不是**仅仅作为一列标记。换句话说，即便不显式地把复杂的表达式用括号包起来，编译器也不可能“错意”宏替换的结果，或者改变求值顺序。</p>
+<p>注意到虽然表达式本身不包含括号，我们仍加上了它们。这是因为，编译器总是将宏展开结果作为完整的AST节点对待，而<b>不是</b>仅仅作为一列标记。换句话说，即便不显式地把复杂的表达式用括号包起来，编译器也不可能“错意”宏替换的结果，或者改变求值顺序。</p>
 
 <p>理解这一点——宏展开被当作AST节点看待——非常重要，它表明：</p>
 

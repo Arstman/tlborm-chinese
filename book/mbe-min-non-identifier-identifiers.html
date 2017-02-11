@@ -159,7 +159,7 @@ the keyword `self`
                                     ^~
 </code></pre>
 
-<p>所以说，宏在匹配的时候，会欣然把<code>self</code>当作标识符接受，进而允许你把<code>self</code>带到那些实际上没办法使用的情况中去。但是，也成吧，既然得同时记住<code>self</code>既是关键词又是标识符，那下面这个**讲道理**应该可行，对吧？</p>
+<p>所以说，宏在匹配的时候，会欣然把<code>self</code>当作标识符接受，进而允许你把<code>self</code>带到那些实际上没办法使用的情况中去。但是，也成吧，既然得同时记住<code>self</code>既是关键词又是标识符，那下面这个<b>讲道理</b>应该可行，对吧？</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>make_self_mutable</span> {
@@ -223,7 +223,7 @@ the keyword `self`
     }}
 }<a class="test-arrow" target="_blank" href="https://play.rust-lang.org/?code=macro_rules!%20double_method%20%7B%0A%20%20%20%20(%24self_%3Aident%2C%20%24body%3Aexpr)%20%3D%3E%20%7B%0A%20%20%20%20%20%20%20%20fn%20double(mut%20%24self_)%20-%3E%20Dummy%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%24body%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%3B%0A%7D%0A%0Astruct%20Dummy(i32)%3B%0A%0Aimpl%20Dummy%20%7B%0A%20%20%20%20double_method!%20%7Bself%2C%20%7B%0A%20%20%20%20%20%20%20%20self.0%20*%3D%202%3B%0A%20%20%20%20%20%20%20%20self%0A%20%20%20%20%7D%7D%0A%7D%0A%0Afn%20main()%20%7B%0A%20%20%20%20println!(%22%7B%3A%3F%7D%22%2C%20Dummy(4).double().0)%3B%0A%7D%0A">Run</a></pre>
 
-<p>终于管用了。所以说，<code>self</code>是关键词，但当它想的时候，它**同时**也能是一个标识符。那么，相同的道理对类似的其它东西有用吗？</p>
+<p>终于管用了。所以说，<code>self</code>是关键词，但当它想的时候，它<b>同时</b>也能是一个标识符。那么，相同的道理对类似的其它东西有用吗？</p>
 
 <pre class='rust rust-example-rendered'>
 <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>double_method</span> {

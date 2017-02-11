@@ -36,7 +36,7 @@ fn process(buffer: &[u8], buffer_new: &mut Vec<u8>) {
         if state == 0 {
             match try_inspect(buffer, index, 3) {
                 Ok(seg) if seg == "<p>".as_bytes() => {
-                    println!("Hit!");
+                    //println!("Hit!");
                     state = 1;
                     index += 3;
                     buffer_new.write(seg);
@@ -55,22 +55,22 @@ fn process(buffer: &[u8], buffer_new: &mut Vec<u8>) {
                     continue;
                 }
             }
-            match try_inspect(buffer, index, 6) {
-                Ok(seg) if seg == "<code>".as_bytes() => {
+            match try_inspect(buffer, index, 5) {
+                Ok(seg) if seg == "<code".as_bytes() => {
                     state = 2;
-                    index += 6;
+                    index += 5;
                     buffer_new.write(seg);
                 },
-                Ok(seg) if seg == "<pre c".as_bytes() => {
+                Ok(seg) if seg == "<pre ".as_bytes() => {
                     //println!("Enter span");
                     state = 5;
-                    index += 6;
+                    index += 5;
                     buffer_new.write(seg);
                 },
-                Ok(seg) if seg == "<style".as_bytes() => {
+                Ok(seg) if seg == "<styl".as_bytes() => {
                     //println!("Enter style");
                     state = 6;
-                    index += 6;
+                    index += 5;
                     buffer_new.write(seg);
                 },
                 _ => {
